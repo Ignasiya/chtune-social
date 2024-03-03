@@ -1,0 +1,19 @@
+# Laravel - Server folder
+/src/*.lock
+/src/vendor
+/src/.env
+/src/.phpunit.cache
+/src/node_modules
+/src/public/build
+/src/public/hot
+/src/public/storage
+/src/storage/*.key
+
+# MySQL Database - DB folder
+/mysql
+/redis
+*.sql
+*.sql.gz
+
+# PHPStorm - .idea folder
+/.idea
