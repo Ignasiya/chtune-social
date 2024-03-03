@@ -12,7 +12,7 @@ docker compose run php composer install
 ````
 docker compose exec php php artisan migrate
 ````
-Для аутенфикации Breeze:
+Аутенфикации Breeze(для себя):
 ````
 docker compose exec php composer require laravel/breeze --dev
 docker compose exec php php artisan breeze:install // Vue with Inertia

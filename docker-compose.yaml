@@ -49,7 +49,7 @@ services:
     volumes:
       - ./redis:/data
     ports:
-      - "9003:6379"
+      - "8003:6379"
     networks:
       - app
 
