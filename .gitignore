@@ -17,3 +17,4 @@
 
 # PHPStorm - .idea folder
 /.idea
+.env
