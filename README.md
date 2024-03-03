@@ -12,13 +12,15 @@ docker compose run php composer install
 ````
 docker compose exec php php artisan migrate
 ````
-Аутенфикации Breeze(для себя):
+Аутенфикации Breeze:
 ````
 docker compose exec php composer require laravel/breeze --dev
 docker compose exec php php artisan breeze:install // Vue with Inertia
+docker compose exec php composer require spatie/laravel-sluggable
 ````
 Установка npm, версия 20x:
 ````
 docker compose exec php npm install
 docker compose exec php npm run build
+docker compose exec php npm run dev
 ````
