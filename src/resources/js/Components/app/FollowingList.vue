@@ -1,24 +1,36 @@
 <script setup>
-import TextInput from "@/Components/TextInput.vue";
-import {ref} from "vue";
-import FollowingItem from "@/Components/app/FollowingItem.vue";
-
-const searchKeyword = ref('');
+import FollowingItems from "@/Components/app/FollowingItems.vue";
+import {Disclosure, DisclosureButton, DisclosurePanel} from "@headlessui/vue";
 
 </script>
 
 <template>
-    <div class="px-3 py-3 bg-white rounded border">
-        <h2 class="text-xl font-bold mb-4">Мои подписчики</h2>
-        <TextInput :model-value="searchKeyword" placeholder="Введите для поиска" class="w-full"/>
-        <div class="py-8">
-            <div v-if="false" class="text-gray-400 flex text-center">
-                У Вас ещё нет друзей
-            </div>
-            <div v-else>
-                <FollowingItem image="https://loremflickr.com/100/100" title="John Doe"/>
-                <FollowingItem image="https://loremflickr.com/100/100" title="Elon Musk"/>
-            </div>
+    <div class="px-3 py-3 bg-white rounded border h-full overflow-hidden">
+        <div class="block lg:hidden">
+            <Disclosure v-slot="{ open }">
+                <DisclosureButton class="w-full">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-xl font-bold">Мои подписчики</h2>
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 24 24" fill="currentColor"
+                            class="w-6 h-6 transition-all" :class="open ? 'rotate-90 transform'
+                            : ''">
+                            <path
+                                fill-rule="evenodd"
+                                d="M16.28 11.47a.75.75 0 0 1 0 1.06l-7.5 7.5a.75.75 0 0 1-1.06-1.06L14.69 12 7.72 5.03a.75.75 0 0 1 1.06-1.06l7.5 7.5Z"
+                                clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+                </DisclosureButton>
+                <DisclosurePanel>
+                    <FollowingItems />
+                </DisclosurePanel>
+            </Disclosure>
+        </div>
+        <div class="hidden lg:flex h-full flex-col overflow-hidden">
+            <h2 class="text-xl font-bold">Мои подписчики</h2>
+            <FollowingItems />
         </div>
     </div>
 </template>

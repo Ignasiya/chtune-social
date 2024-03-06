@@ -24,17 +24,6 @@ services:
     depends_on:
       - mysql
 
-  node:
-    image: node:latest
-    working_dir: ${PATH_ROOT}
-    volumes:
-      - ./src:${PATH_ROOT}
-    entrypoint: tail -f /dev/null
-    networks:
-      - app
-    depends_on:
-      - php
-
   mysql:
     image: mysql:8.0
     volumes:
@@ -48,15 +37,6 @@ services:
       MYSQL_ALLOW_EMPTY_PASSWORD: 1
     ports:
       - "8002:3306"
-    networks:
-      - app
-
-  redis:
-    image: redis:alpine
-    volumes:
-      - ./redis:/data
-    ports:
-      - "8003:6379"
     networks:
       - app
 
