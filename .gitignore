@@ -1,19 +1,20 @@
-/.phpunit.cache
-/node_modules
-/public/build
-/public/hot
-/public/storage
-/storage/*.key
-/vendor
-.env
-.env.backup
-.env.production
-.phpunit.result.cache
-Homestead.json
-Homestead.yaml
-auth.json
-npm-debug.log
-yarn-error.log
-/.fleet
+# Laravel - Server folder
+/src/*.lock
+/src/vendor
+/src/.env
+/src/.phpunit.cache
+/src/node_modules
+/src/public/build
+/src/public/hot
+/src/public/storage
+/src/storage/*.key
+
+# MySQL Database - DB folder
+/mysql
+/redis
+*.sql
+*.sql.gz
+
+# PHPStorm - .idea folder
 /.idea
-/.vscode
+.env
