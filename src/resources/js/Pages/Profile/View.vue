@@ -13,6 +13,7 @@ const imagesForm = useForm({
     cover: null,
 });
 
+const showNotification = ref(true);
 const coverImageSrc = ref('');
 const authUser = usePage().props.auth.user;
 
@@ -48,8 +49,17 @@ function cancelCoverImage() {
 }
 
 function submitCoverImage() {
-    imagesForm.post(route('profile.updateImage'));
+    imagesForm.post(route('profile.updateImage'), {
+        onSuccess: () => {
+            cancelCoverImage();
+            setTimeout(() => {
+                showNotification.value = false;
+            }, 3000);
+        }
+    });
 }
+
+
 
 </script>
 
@@ -58,6 +68,18 @@ function submitCoverImage() {
 
     <AuthenticatedLayout>
         <div class="max-w-[768px] bg-white mx-auto h-full overflow-auto">
+            <div
+                v-show="showNotification && status === 'cover-update'"
+                class="my-2 py-2 px-3 font-medium text-sm bg-emerald-500 text-white"
+            >
+                Ваша обложка обновлена.
+            </div>
+            <div
+                v-if="errors.cover"
+                class="my-2 py-2 px-3 font-medium text-sm bg-red-400 text-white"
+            >
+                {{ errors.cover }}
+            </div>
             <div class="group relative bg-white">
                 <img class="h-[200px] object-cover w-full"
                      :src="coverImageSrc || user.cover_url || '/image/cover_default.jpg'"

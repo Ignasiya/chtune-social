@@ -8,6 +8,7 @@ use App\Models\User;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
@@ -64,16 +65,25 @@ class ProfileController extends Controller
         return Redirect::to('/');
     }
 
-    public function updateImage(Request $request, User $user)
+    public function updateImage(Request $request)
     {
         $data = $request->validate([
             'cover' => ['nullable', 'image'],
             'avatar' => ['nullable', 'image'],
         ]);
 
+        $user = $request->user();
+
         $avatar = $data['avatar'] ?? null;
+
+        /** @var UploadedFile $cover */
         $cover = $data['cover'] ?? null;
 
+        if ($cover) {
+            $path = $cover->store('avatars/' . $user->id, 'public');
+            $user->update(['cover_path' => $path]);
+        }
 
+        return back()->with('status', 'cover-update');
     }
 }
