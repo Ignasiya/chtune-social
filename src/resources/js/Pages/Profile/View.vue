@@ -1,129 +1,99 @@
 <script setup>
-import {usePage} from "@inertiajs/vue3";
-import { ref } from 'vue'
-import { TabGroup, TabList, Tab, TabPanels, TabPanel } from '@headlessui/vue'
+import {Head, usePage} from "@inertiajs/vue3";
+import {TabGroup, TabList, Tab, TabPanels, TabPanel} from '@headlessui/vue'
+import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
+import TabItem from "@/Pages/Profile/Partials/TabItem.vue";
+import Edit from "@/Pages/Profile/Edit.vue";
+import PrimaryButton from "@/Components/PrimaryButton.vue";
+import {computed} from "vue";
 
-const user = usePage().props.auth.user;
-const categories = ref({
-    Recent: [
-        {
-            id: 1,
-            title: 'Does drinking coffee make you smarter?',
-            date: '5h ago',
-            commentCount: 5,
-            shareCount: 2,
-        },
-        {
-            id: 2,
-            title: "So you've bought coffee... now what?",
-            date: '2h ago',
-            commentCount: 3,
-            shareCount: 2,
-        },
-    ],
-    Popular: [
-        {
-            id: 1,
-            title: 'Is tech making coffee better or worse?',
-            date: 'Jan 7',
-            commentCount: 29,
-            shareCount: 16,
-        },
-        {
-            id: 2,
-            title: 'The most innovative things happening in coffee',
-            date: 'Mar 19',
-            commentCount: 24,
-            shareCount: 12,
-        },
-    ],
-    Trending: [
-        {
-            id: 1,
-            title: 'Ask Me Anything: 10 answers to your questions about coffee',
-            date: '2d ago',
-            commentCount: 9,
-            shareCount: 5,
-        },
-        {
-            id: 2,
-            title: "The worst advice we've ever heard about coffee",
-            date: '4d ago',
-            commentCount: 1,
-            shareCount: 2,
-        },
-    ],
-})
+const authUser = usePage().props.auth.user;
+
+const isMyProfile = computed(() => authUser && authUser.id === props.user.id);
+
+const props = defineProps({
+    mustVerifyEmail: {
+        type: Boolean,
+    },
+    status: {
+        type: String,
+    },
+    user: {
+        type: Object,
+    }
+});
+
 </script>
 
 <template>
-    <div class="container mx-auto">
-        <div class="px-2 py-16 sm:px-0">
-            <TabGroup>
-                <TabList class="flex space-x-1 rounded-xl bg-blue-900/20 p-1">
-                    <Tab
-                        v-for="category in Object.keys(categories)"
-                        as="template"
-                        :key="category"
-                        v-slot="{ selected }"
-                    >
-                        <button
-                            :class="[
-              'w-full rounded-lg py-2.5 text-sm font-medium leading-5',
-              'ring-white/60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
-              selected
-                ? 'bg-white text-blue-700 shadow'
-                : 'text-blue-100 hover:bg-white/[0.12] hover:text-white',
-            ]"
-                        >
-                            {{ category }}
-                        </button>
-                    </Tab>
-                </TabList>
+    <Head title="Профиль"/>
 
-                <TabPanels class="mt-2">
-                    <TabPanel
-                        v-for="(posts, idx) in Object.values(categories)"
-                        :key="idx"
-                        :class="[
-            'rounded-xl bg-white p-3',
-            'ring-white/60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2',
-          ]"
-                    >
-                        <ul>
-                            <li
-                                v-for="post in posts"
-                                :key="post.id"
-                                class="relative rounded-md p-3 hover:bg-gray-100"
-                            >
-                                <h3 class="text-sm font-medium leading-5">
-                                    {{ post.title }}
-                                </h3>
+    <AuthenticatedLayout>
+        <div class="w-[768px] bg-white mx-auto h-full overflow-auto">
+            <div class="bg-white">
+                <img class="h-[200px] object-cover w-full"
+                     src="https://img.razrisyika.ru/kart/83/328790-it-26.jpg"
+                     alt="cover">
+                <div class="flex">
+                    <img class="ml-[48px] w-[128px] h-[128px] -mt-[64px]"
+                         src="https://pol-24.ru/wp-content/uploads/2021/12/1_x7X2oAehk5M9IvGwO_K0Pg.png"
+                         alt="avatar">
+                    <div class="flex flex-1 justify-between items-center p-4">
+                        <h2 class="font-bold text-lg">{{ user.name }}</h2>
+                        <PrimaryButton v-if="isMyProfile">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 viewBox="0 0 24 24"
+                                 fill="currentColor"
+                                 class="w-4 h-4 mr-2">
+                                <path d="M21.731 2.269a2.625 2.625 0 0 0-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 0 0 0-3.712ZM19.513 8.199l-3.712-3.712-12.15 12.15a5.25 5.25 0 0 0-1.32 2.214l-.8 2.685a.75.75 0 0 0 .933.933l2.685-.8a5.25 5.25 0 0 0 2.214-1.32L19.513 8.2Z" />
+                            </svg>
 
-                                <ul
-                                    class="mt-1 flex space-x-1 text-xs font-normal leading-4 text-gray-500"
-                                >
-                                    <li>{{ post.date }}</li>
-                                    <li>&middot;</li>
-                                    <li>{{ post.commentCount }} comments</li>
-                                    <li>&middot;</li>
-                                    <li>{{ post.shareCount }} shares</li>
-                                </ul>
+                            Редактирование
+                        </PrimaryButton>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t">
+                <TabGroup>
+                    <TabList class="flex bg-white">
+                        <Tab v-if="isMyProfile" v-slot="{ selected }" as="template">
+                            <TabItem text="Обо мне" :selected="selected"></TabItem>
+                        </Tab>
+                        <Tab v-slot="{ selected }" as="template">
+                            <TabItem text="Записи" :selected="selected"></TabItem>
+                        </Tab>
+                        <Tab v-slot="{ selected }" as="template">
+                            <TabItem text="Подписчики" :selected="selected"></TabItem>
+                        </Tab>
+                        <Tab v-slot="{ selected }" as="template">
+                            <TabItem text="Последователи" :selected="selected"></TabItem>
+                        </Tab>
+                        <Tab v-slot="{ selected }" as="template">
+                            <TabItem text="Фото" :selected="selected"></TabItem>
+                        </Tab>
+                    </TabList>
 
-                                <a
-                                    href="#"
-                                    :class="[
-                  'absolute inset-0 rounded-md',
-                  'ring-blue-400 focus:z-10 focus:outline-none focus:ring-2',
-                ]"
-                                />
-                            </li>
-                        </ul>
-                    </TabPanel>
-                </TabPanels>
-            </TabGroup>
+                    <TabPanels class="mt-2">
+                        <TabPanel v-if="isMyProfile">
+                            <Edit :must-verify-email="mustVerifyEmail" :status="status"/>
+                        </TabPanel>
+                        <TabPanel class="bg-white p-3 shadow">
+                            Мои записи
+                        </TabPanel>
+                        <TabPanel class="bg-white p-3 shadow">
+                            Подписчики
+                        </TabPanel>
+                        <TabPanel class="bg-white p-3 shadow">
+                            Последователи
+                        </TabPanel>
+                        <TabPanel class="bg-white p-3 shadow">
+                            Фото
+                        </TabPanel>
+                    </TabPanels>
+                </TabGroup>
+            </div>
         </div>
-    </div>
+    </AuthenticatedLayout>
 </template>
 
 <style scoped>

@@ -1,5 +1,8 @@
 <template>
-    <svg viewBox="0 0 480 350" xmlns="http://www.w3.org/2000/svg">
+    <svg viewBox="0 0 480 350"
+         xmlns="http://www.w3.org/2000/svg"
+         fill="currentColor">
+
         <g transform="scale(0.9)">
             <g
                transform="translate(147.530635496924, -14.467822565988074) scale(2.3130012095904235)">
