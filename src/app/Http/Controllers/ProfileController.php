@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -24,6 +25,7 @@ class ProfileController extends Controller
         return Inertia::render('Profile/View', [
             'mustVerifyEmail' => $user instanceof MustVerifyEmail,
             'status' => session('status'),
+            'success' => session('success'),
             'user' => new UserResource($user)
         ]);
     }
@@ -41,7 +43,7 @@ class ProfileController extends Controller
 
         $request->user()->save();
 
-        return Redirect::route('profile.edit');
+        return to_route('profile', $request->user())->with('success', 'Профиль обновлен.');
     }
 
     /**
@@ -74,16 +76,32 @@ class ProfileController extends Controller
 
         $user = $request->user();
 
+        /** @var UploadedFile $avatar */
         $avatar = $data['avatar'] ?? null;
 
         /** @var UploadedFile $cover */
         $cover = $data['cover'] ?? null;
 
+        $success = '';
+
         if ($cover) {
-            $path = $cover->store('avatars/' . $user->id, 'public');
+            if ($user->cover_path) {
+                Storage::disk('public')->delete($user->cover_path);
+            }
+            $path = $cover->store('user-' . $user->id, 'public');
             $user->update(['cover_path' => $path]);
+            $success = 'Ваша обложка обновлена.';
         }
 
-        return back()->with('status', 'cover-update');
+        if ($avatar) {
+            if ($user->avatar_path) {
+                Storage::disk('public')->delete($user->avatar_path);
+            }
+            $path = $avatar->store('user-' . $user->id, 'public');
+            $user->update(['avatar_path' => $path]);
+            $success = 'Ваш аватар обновлен.';
+        }
+
+        return back()->with('success', $success);
     }
 }
