@@ -4,7 +4,6 @@ import {TabGroup, TabList, Tab, TabPanels, TabPanel} from '@headlessui/vue'
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import TabItem from "@/Pages/Profile/Partials/TabItem.vue";
 import Edit from "@/Pages/Profile/Edit.vue";
-import PrimaryButton from "@/Components/PrimaryButton.vue";
 import {computed, ref} from "vue";
 import {XMarkIcon, CameraIcon, CheckIcon} from '@heroicons/vue/24/solid'
 

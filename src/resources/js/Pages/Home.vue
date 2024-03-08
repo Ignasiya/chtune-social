@@ -6,14 +6,16 @@ import CreatePost from "@/Components/app/CreatePost.vue";
 import PostList from "@/Components/app/PostList.vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 
-defineProps({});
+defineProps({
+    posts: Object
+});
 </script>
 
 <template>
     <Head title="Социальная сеть"/>
 
     <AuthenticatedLayout>
-        <div class="grid lg:grid-cols-12 gap-3 p-4 h-full">
+        <div class="container mx-auto grid lg:grid-cols-12 gap-3 p-4 h-full">
             <div class="lg:col-span-3 lg:order-1 h-full overflow-hidden">
                 <GroupList/>
             </div>
@@ -22,7 +24,7 @@ defineProps({});
             </div>
             <div class="lg:col-span-6 lg:order-2 h-full overflow-hidden flex flex-col">
                 <CreatePost/>
-                <PostList class="flex-1"/>
+                <PostList :posts="posts.data" class="flex-1"/>
             </div>
         </div>
     </AuthenticatedLayout>
