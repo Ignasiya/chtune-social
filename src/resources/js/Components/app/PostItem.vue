@@ -4,6 +4,7 @@ import {HandThumbUpIcon, ChatBubbleLeftEllipsisIcon, ArrowDownTrayIcon, Document
 import {Menu, MenuButton, MenuItems, MenuItem} from '@headlessui/vue'
 import {EllipsisVerticalIcon, PencilIcon, TrashIcon} from '@heroicons/vue/20/solid'
 import PostUserHeader from "@/Components/app/PostUserHeader.vue";
+import {router} from "@inertiajs/vue3";
 
 
 const props = defineProps({
@@ -19,6 +20,14 @@ const emit = defineEmits(['editClick'])
 
 function openEditModal() {
     emit('editClick', props.post);
+}
+
+function deletePost() {
+    if (window.confirm('Вы уверены что хотите удалить этот пост?')) {
+        router.delete(route('post.destroy', props.post), {
+            preserveScroll: true
+        });
+    }
 }
 
 </script>
@@ -68,6 +77,7 @@ function openEditModal() {
                         <div class="px-1 py-1">
                             <MenuItem v-slot="{ active }">
                                 <button
+                                    @click="deletePost"
                                     :class="[
                                           active ? 'bg-indigo-600 text-white' : 'text-gray-900',
                                           'group flex w-full items-center rounded-md px-2 py-2 text-sm',
@@ -87,10 +97,10 @@ function openEditModal() {
         </div>
         <div class="mb-3">
             <Disclosure v-slot="{ open }">
-                <div v-if="!open" v-html="post.body.substring(0, 200)"/>
+                <div class="ck-content-output" v-if="!open" v-html="post.body.substring(0, 200)"/>
                 <template v-if="post.body.length > 200">
                     <DisclosurePanel>
-                        <div v-html="post.body"/>
+                        <div class="ck-content-output" v-html="post.body"/>
                     </DisclosurePanel>
                     <div class="flex justify-end">
                         <DisclosureButton class="text-blue-500 hover:underline">

@@ -7,10 +7,10 @@ import {
     DialogPanel,
     DialogTitle,
 } from '@headlessui/vue'
-import TextareaInput from "@/Components/TextareaInput.vue";
 import PostUserHeader from "@/Components/app/PostUserHeader.vue";
 import {XMarkIcon} from '@heroicons/vue/24/solid'
 import {useForm} from "@inertiajs/vue3";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 
 const props = defineProps({
     post: {
@@ -19,6 +19,22 @@ const props = defineProps({
     },
     modelValue: Boolean
 });
+
+const editor = ClassicEditor;
+const editorConfig = {
+    toolbar: [
+        'heading',
+        '|',
+        'bold',
+        'italic',
+        '|',
+        'link',
+        '|',
+        'bulletedList',
+        'numberedList',
+        '|',
+        'blockQuote',
+    ]};
 
 const form = useForm({
     id: null,
@@ -97,7 +113,12 @@ function submit() {
                                 </DialogTitle>
                                 <div class="p-4">
                                     <PostUserHeader class="mb-4" :post="post" :show-time="false"/>
-                                    <TextareaInput v-model="form.body" class="mb-3 w-full"/>
+                                    <ckeditor
+                                        :editor="editor"
+                                        v-model="form.body"
+                                        :config="editorConfig">
+                                    </ckeditor>
+<!--                                   <TextareaInput v-model="form.body" class="mb-3 w-full"/>-->
                                 </div>
 
                                 <div class="py-3 px-4">
