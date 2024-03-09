@@ -10,7 +10,7 @@ const props = defineProps({
     placeholder: String,
     autoResize: {
         type: Boolean,
-        default: true
+        default: false
     }
 });
 
