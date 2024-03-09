@@ -22,13 +22,13 @@ function submit() {
 <template>
     <div class="p-4 bg-white rounded-lg border mb-3">
 
-        <textarea-input
+        <TextareaInput
             @click="postCreating = true"
             class="mb-3 w-full"
             placeholder="Новая запись"
             rows="1"
             v-model="newPostForm.body">
-        </textarea-input>
+        </TextareaInput>
 
         <div v-if="postCreating" class="flex gap-2 justify-between">
             <button

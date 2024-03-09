@@ -1,5 +1,5 @@
 <script setup>
-import {computed, ref} from 'vue'
+import {computed, watch,} from 'vue'
 import {
     TransitionRoot,
     TransitionChild,
@@ -7,6 +7,10 @@ import {
     DialogPanel,
     DialogTitle,
 } from '@headlessui/vue'
+import TextareaInput from "@/Components/TextareaInput.vue";
+import PostUserHeader from "@/Components/app/PostUserHeader.vue";
+import {XMarkIcon} from '@heroicons/vue/24/solid'
+import {useForm} from "@inertiajs/vue3";
 
 const props = defineProps({
     post: {
@@ -16,7 +20,17 @@ const props = defineProps({
     modelValue: Boolean
 });
 
+const form = useForm({
+    id: null,
+    body: ''
+});
+
 const emit = defineEmits(['update:modelValue'])
+
+watch(() => props.post, () => {
+    form.id = props.post.id;
+    form.body = props.post.body;
+})
 
 const show = computed({
     get: () => props.modelValue,
@@ -25,6 +39,15 @@ const show = computed({
 
 function closeModal() {
     show.value = false
+}
+
+function submit() {
+    form.put(route('post.update', props.post.id), {
+        preserveScroll: true,
+        onSuccess: () => {
+            show.value = false
+        }
+    });
 }
 
 </script>
@@ -59,28 +82,31 @@ function closeModal() {
                             leave-to="opacity-0 scale-95"
                         >
                             <DialogPanel
-                                class="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle shadow-xl transition-all"
+                                class="w-full max-w-md transform overflow-hidden rounded bg-white text-left align-middle shadow-xl transition-all"
                             >
                                 <DialogTitle
                                     as="h3"
-                                    class="text-lg font-medium leading-6 text-gray-900"
+                                    class="flex items-center justify-between py-3 px-4 font-medium bg-gray-100 text-gray-900"
                                 >
                                     Редактирование записи
+                                <button
+                                    @click="show = false"
+                                    class="h-8 w-8 rounded-full hover:bg-black/5 transition flex items-center justify-center">
+                                    <XMarkIcon class="w-4 h-4" />
+                                </button>
                                 </DialogTitle>
-                                <div class="mt-2">
-                                    <p class="text-sm text-gray-500">
-                                        Your payment has been successfully submitted. We’ve sent you
-                                        an email with all of the details of your order.
-                                    </p>
+                                <div class="p-4">
+                                    <PostUserHeader class="mb-4" :post="post" :show-time="false"/>
+                                    <TextareaInput v-model="form.body" class="mb-3 w-full"/>
                                 </div>
 
-                                <div class="mt-4">
+                                <div class="py-3 px-4">
                                     <button
                                         type="button"
-                                        class="inline-flex justify-center rounded-md border border-transparent bg-blue-100 px-4 py-2 text-sm font-medium text-blue-900 hover:bg-blue-200 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-offset-2"
-                                        @click="closeModal"
+                                        class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 w-full"
+                                        @click="submit"
                                     >
-                                        Got it, thanks!
+                                        Сохранить
                                     </button>
                                 </div>
                             </DialogPanel>

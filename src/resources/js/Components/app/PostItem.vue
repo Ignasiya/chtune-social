@@ -3,12 +3,10 @@ import {Disclosure, DisclosureButton, DisclosurePanel} from '@headlessui/vue'
 import {HandThumbUpIcon, ChatBubbleLeftEllipsisIcon, ArrowDownTrayIcon, DocumentIcon} from '@heroicons/vue/24/solid'
 import {Menu, MenuButton, MenuItems, MenuItem} from '@headlessui/vue'
 import {EllipsisVerticalIcon, PencilIcon, TrashIcon} from '@heroicons/vue/20/solid'
-import PostModal from "@/Components/app/PostModal.vue";
-import {ref} from "vue";
+import PostUserHeader from "@/Components/app/PostUserHeader.vue";
 
-const showEditModal = ref(false);
 
-defineProps({
+const props = defineProps({
     post: Object
 });
 
@@ -16,27 +14,19 @@ function isImage(attachment) {
     const mime = attachment.mime.split('/');
     return mime[0].toLowerCase() === 'image';
 }
+
+const emit = defineEmits(['editClick'])
+
+function openEditModal() {
+    emit('editClick', props.post);
+}
+
 </script>
 
 <template>
     <div class="bg-white border rounded p-4 mb-3">
         <div class="flex justify-between items-center mb-3">
-            <div class="flex items-center gap-2">
-                <a href="javascript:void(0)">
-                    <img :src="post.user.avatar_url || '/image/no-avatar.png'" alt="avatar"
-                         class="w-[40px] rounded-full border-2 transition-all hover:border-blue-500"/>
-                </a>
-                <div>
-                    <h4 class="font-bold">
-                        <a href="javascript:void(0)" class="hover:underline">{{ post.user.name }}</a>
-                        <template v-if="post.group">
-                            >
-                            <a href="javascript:void(0)" class="hover:underline">{{ post.group.name }}</a>
-                        </template>
-                    </h4>
-                    <small class="text-gray-400">{{ post.created_at }}</small>
-                </div>
-            </div>
+            <PostUserHeader :post="post" />
             <Menu as="div" class="relative inline-block text-left">
                 <div>
                     <MenuButton
@@ -61,7 +51,7 @@ function isImage(attachment) {
                         <div class="px-1 py-1">
                             <MenuItem v-slot="{ active }">
                                 <button
-                                    @click="showEditModal = true"
+                                    @click="openEditModal"
                                     :class="[
                                           active ? 'bg-indigo-600 text-white' : 'text-gray-900',
                                           'group flex w-full items-center rounded-md px-2 py-2 text-sm',
@@ -145,8 +135,6 @@ function isImage(attachment) {
             </button>
         </div>
     </div>
-
-    <PostModal :post="post" v-model="showEditModal"/>
 </template>
 
 <style scoped>

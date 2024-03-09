@@ -14,7 +14,6 @@ docker compose exec php php artisan key:generate
 docker compose exec php php artisan migrate
 docker compose exec php php artisan storage:link
 ````
-````
 npm, версия 20x:
 ````
 docker compose exec php npm install
