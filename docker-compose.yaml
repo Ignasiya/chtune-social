@@ -40,11 +40,11 @@ services:
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
       MYSQL_ALLOW_EMPTY_PASSWORD: 1
     ports:
-      - "3307:3306"
+      - "8006:3306"
     networks:
       - app
 
-  mail:
+  mailpit:
     image: axllent/mailpit:latest
     ports:
       - '1025:1025'

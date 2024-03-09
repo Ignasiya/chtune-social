@@ -95,7 +95,7 @@ function submitAvatarImage() {
     <Head title="Профиль"/>
 
     <AuthenticatedLayout>
-        <div class="container bg-white mx-auto h-full overflow-auto">
+        <div class="container max-w-[768px] bg-white mx-auto h-full overflow-auto">
             <div
                 v-show="showNotification && success"
                 class="my-2 py-2 px-3 font-medium text-sm bg-emerald-500 text-white"

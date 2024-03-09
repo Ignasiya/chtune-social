@@ -6,15 +6,17 @@ docker compose up --build
 ````
 Установка composer:
 ````
-docker compose run php composer install
+docker compose exec php composer install
 ````
 Для миграции:
 ````
+docker compose exec php php artisan key:generate
 docker compose exec php php artisan migrate
+docker compose exec php php artisan storage:link
 ````
 ````
 npm, версия 20x:
 ````
-docker compose exec node npm install
-docker compose exec node npm run build
+docker compose exec php npm install
+docker compose exec php npm run build
 ````

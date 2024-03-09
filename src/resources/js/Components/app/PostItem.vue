@@ -23,7 +23,7 @@ function isImage(attachment) {
         <div class="flex justify-between items-center mb-3">
             <div class="flex items-center gap-2">
                 <a href="javascript:void(0)">
-                    <img :src="post.user.avatar_url" alt="avatar"
+                    <img :src="post.user.avatar_url || '/image/no-avatar.png'" alt="avatar"
                          class="w-[40px] rounded-full border-2 transition-all hover:border-blue-500"/>
                 </a>
                 <div>
