@@ -1,5 +1,9 @@
 <script setup>
 import PostItem from "@/Components/app/PostItem.vue";
+import {ref} from "vue";
+
+const showEditModal = ref(false)
+const editPost = ref({})
 
 function openEditModal(post) {
     editPost.value = post;

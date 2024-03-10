@@ -5,16 +5,11 @@ import {Menu, MenuButton, MenuItems, MenuItem} from '@headlessui/vue'
 import {EllipsisVerticalIcon, PencilIcon, TrashIcon} from '@heroicons/vue/20/solid'
 import PostUserHeader from "@/Components/app/PostUserHeader.vue";
 import {router} from "@inertiajs/vue3";
-
+import {isImage} from '@/helpers.js'
 
 const props = defineProps({
     post: Object
 });
-
-function isImage(attachment) {
-    const mime = attachment.mime.split('/');
-    return mime[0].toLowerCase() === 'image';
-}
 
 const emit = defineEmits(['editClick'])
 
@@ -35,7 +30,7 @@ function deletePost() {
 <template>
     <div class="bg-white border rounded p-4 mb-3">
         <div class="flex justify-between items-center mb-3">
-            <PostUserHeader :post="post" />
+            <PostUserHeader :post="post"/>
             <Menu as="div" class="relative inline-block text-left">
                 <div>
                     <MenuButton
