@@ -50,7 +50,7 @@ function deletePost() {
                     leave-to-class="transform scale-95 opacity-0"
                 >
                     <MenuItems
-                        class="absolute right-0 mt-2 w-40 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none"
+                        class="z-40 absolute right-0 mt-2 w-40 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none"
                     >
                         <div class="px-1 py-1">
                             <MenuItem v-slot="{ active }">
@@ -105,20 +105,28 @@ function deletePost() {
                 </template>
             </Disclosure>
         </div>
-        <div class="grid grid-cols-2 lg:grid-cols-3 gap-3 mb-3">
-            <template v-for="attachment of post.attachments">
+        <div class="grid gap-3 mb-3" :class="[
+            post.attachments.length === 1 ? 'grid-cols-1' : 'grid-cols-2'
+        ]">
+            <template v-for="(attachment, ind) of post.attachments.slice(0, 4)">
                 <div
                     class="group aspect-square bg-blue-100 flex flex-col items-center justify-center text-gray-500 relative">
+
+                    <div
+                        v-if="ind === 3"
+                        class="absolute flex items-center justify-center z-10 left-0 top-0 right-0 bottom-0 z-10 bg-black/60 text-white">
+                        +{{post.attachments.length - 4}} ещё
+                    </div>
                     <!--Download-->
                     <button
-                        class="opacity-0 group-hover:opacity-100 transition-all w-8 h-8 flex items-center justify-center text-gray-100 bg-gray-700 rounded absolute right-2 top-2 cursor-pointer hover:bg-gray-800">
+                        class="opacity-0 z-20 group-hover:opacity-100 transition-all w-8 h-8 flex items-center justify-center text-gray-100 bg-gray-700 rounded absolute right-2 top-2 cursor-pointer hover:bg-gray-800">
                         <ArrowDownTrayIcon class="w-4 h-4"/>
                     </button>
                     <!--/ Download-->
 
                     <img v-if="isImage(attachment)"
                          :src="attachment.url"
-                         class="object-cover aspect-square"
+                         class="object-contain aspect-square"
                          alt="image"/>
                     <template v-else>
                         <DocumentIcon class="w-12 h-12"/>
@@ -130,12 +138,12 @@ function deletePost() {
         <div class="flex gap-2">
             <button
                 class="text-gray-800 flex gap-1 items-center justify-center py-2 bg-gray-100 rounded-lg hover:bg-gray-200 px-4 flex-1">
-                <HandThumbUpIcon class="w-6 h-6"/>
+                <HandThumbUpIcon class="w-6 h-6 mr-2"/>
                 Нравится
             </button>
             <button
                 class="text-gray-800 flex gap-1 items-center justify-center py-2 bg-gray-100 rounded-lg hover:bg-gray-200 px-4 flex-1">
-                <ChatBubbleLeftEllipsisIcon class="w-6 h-6"/>
+                <ChatBubbleLeftEllipsisIcon class="w-6 h-6 mr-2"/>
                 Комментарий
             </button>
         </div>
