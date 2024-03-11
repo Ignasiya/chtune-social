@@ -11,7 +11,7 @@ const props = defineProps({
     post: Object
 });
 
-const emit = defineEmits(['editClick'])
+const emit = defineEmits(['editClick', 'attachmentClick'])
 
 function openEditModal() {
     emit('editClick', props.post);
@@ -23,6 +23,10 @@ function deletePost() {
             preserveScroll: true
         });
     }
+}
+
+function openAttachment(index) {
+    emit('attachmentClick', props.post, index)
 }
 
 </script>
@@ -110,7 +114,8 @@ function deletePost() {
         ]">
             <template v-for="(attachment, ind) of post.attachments.slice(0, 4)">
                 <div
-                    class="group aspect-square bg-blue-100 flex flex-col items-center justify-center text-gray-500 relative">
+                    @click="openAttachment(ind)"
+                    class="group aspect-square bg-blue-100 flex flex-col items-center justify-center text-gray-500 relative cursor-pointer">
 
                     <div
                         v-if="ind === 3 && post.attachments.length > 4"
@@ -130,10 +135,12 @@ function deletePost() {
                          :src="attachment.url"
                          class="object-contain aspect-square"
                          alt="image"/>
-                    <template v-else>
+                    <div
+                        v-else
+                        class="flex flex-col justify-center items-center">
                         <DocumentIcon class="w-12 h-12"/>
                         <small>{{ attachment.name }}</small>
-                    </template>
+                    </div>
                 </div>
             </template>
         </div>

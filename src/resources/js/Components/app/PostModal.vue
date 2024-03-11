@@ -243,7 +243,6 @@ function undoDelete(myFile) {
                                     <button
                                         type="button"
                                         class="relative flex items-center justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 w-full"
-                                        @click="submit"
                                     >
                                         <PaperClipIcon class="w-4 h-4 mr-2"/>
                                         Вложить файлы
