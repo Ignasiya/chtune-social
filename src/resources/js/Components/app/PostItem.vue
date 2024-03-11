@@ -31,7 +31,7 @@ function deletePost() {
     <div class="bg-white border rounded p-4 mb-3">
         <div class="flex justify-between items-center mb-3">
             <PostUserHeader :post="post"/>
-            <Menu as="div" class="relative inline-block text-left">
+            <Menu as="div" class="z-30 relative inline-block text-left">
                 <div>
                     <MenuButton
                         class="h-8 w-8 rounded-full hover:bg-black/5 transition flex items-center justify-center">
@@ -50,7 +50,7 @@ function deletePost() {
                     leave-to-class="transform scale-95 opacity-0"
                 >
                     <MenuItems
-                        class="z-40 absolute right-0 mt-2 w-40 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none"
+                        class="absolute right-0 mt-2 w-40 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black/5 focus:outline-none"
                     >
                         <div class="px-1 py-1">
                             <MenuItem v-slot="{ active }">
@@ -113,10 +113,11 @@ function deletePost() {
                     class="group aspect-square bg-blue-100 flex flex-col items-center justify-center text-gray-500 relative">
 
                     <div
-                        v-if="ind === 3"
+                        v-if="ind === 3 && post.attachments.length > 4"
                         class="absolute flex items-center justify-center z-10 left-0 top-0 right-0 bottom-0 z-10 bg-black/60 text-white">
                         +{{post.attachments.length - 4}} ещё
                     </div>
+
                     <!--Download-->
                     <button
                         class="opacity-0 z-20 group-hover:opacity-100 transition-all w-8 h-8 flex items-center justify-center text-gray-100 bg-gray-700 rounded absolute right-2 top-2 cursor-pointer hover:bg-gray-800">
