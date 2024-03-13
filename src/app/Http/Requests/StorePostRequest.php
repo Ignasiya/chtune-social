@@ -4,6 +4,7 @@ namespace App\Http\Requests;
 
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Validation\Rules\File;
 
 class StorePostRequest extends FormRequest
@@ -32,10 +33,20 @@ class StorePostRequest extends FormRequest
     {
         return [
             'body' => ['nullable', 'string'],
-            'attachments' => 'array|max:50',
+            'attachments' => [
+                'array',
+                'max:50',
+                function ($value, $fail) {
+                    $totalSize = collect($value)->sum(fn(UploadedFile $file) => $file->getSize());
+
+                    if ($totalSize > 500 * 1024 * 1024) {
+                        $fail('Максимальный размер всех вложений 500MB.');
+                    }
+                }
+            ],
             'attachments.*' => [
                 'file',
-                File::types(StorePostRequest::$extensions)->max(500 * 1024 * 1024)
+                File::types(StorePostRequest::$extensions),
             ],
             'user_id' => ['numeric']
         ];
@@ -52,7 +63,8 @@ class StorePostRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'attachments.*' => 'Неверный файл'
+            'attachments.*.file' => 'Каждое вложение должно быть файлом.',
+            'attachments.*.mimes' => 'Недопустимый тип файла для вложений.',
         ];
     }
 }
