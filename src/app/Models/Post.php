@@ -7,7 +7,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
-use Illuminate\Mail\Attachment;
 
 class Post extends Model
 {
@@ -29,5 +28,10 @@ class Post extends Model
     public function attachments(): HasMany
     {
         return $this->hasMany(PostAttachment::class)->latest();
+    }
+
+    public function reactions(): HasMany
+    {
+        return $this->hasMany(PostReaction::class);
     }
 }

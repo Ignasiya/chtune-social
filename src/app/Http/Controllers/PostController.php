@@ -2,20 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Enums\PostReactionEnum;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdatePostRequest;
 use App\Models\Post;
 use App\Models\PostAttachment;
+use App\Models\PostReaction;
 use DB;
 use Exception;
+use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class PostController extends Controller
 {
     /**
      * Store a newly created resource in storage.
+     * @throws Exception
      */
     public function store(StorePostRequest $request)
     {
@@ -56,6 +61,7 @@ class PostController extends Controller
 
     /**
      * Update the specified resource in storage.
+     * @throws Exception
      */
     public function update(UpdatePostRequest $request, Post $post)
     {
@@ -126,5 +132,35 @@ class PostController extends Controller
         $post->delete();
 
         return back();
+    }
+
+    public function postReaction(Request $request, Post $post)
+    {
+        $data = $request->validate([
+            'reaction' => [Rule::enum(PostReactionEnum::class)],
+        ]);
+
+        $userId = Auth::id();
+        $reaction = PostReaction::where('user_id', $userId)->where('post_id', $post->id)->first();
+
+        if ($reaction) {
+            $hasReaction = false;
+            $reaction->delete();
+        } else {
+            $hasReaction = true;
+            PostReaction::create([
+                'post_id' => $post->id,
+                'user_id' => $userId,
+                'type' => $data['reaction']
+            ]);
+        }
+
+        $reactions = PostReaction::where('post_id', $post->id)->count();
+
+        return response([
+            'num_of_reactions' => $reactions,
+            'current_user_has_reaction' => $hasReaction,
+        ]);
+
     }
 }

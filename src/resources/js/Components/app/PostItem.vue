@@ -6,6 +6,7 @@ import {EllipsisVerticalIcon, PencilIcon, TrashIcon} from '@heroicons/vue/20/sol
 import PostUserHeader from "@/Components/app/PostUserHeader.vue";
 import {router} from "@inertiajs/vue3";
 import {isImage} from '@/helpers.js'
+import axiosClient from "@/axiosClient.js";
 
 const props = defineProps({
     post: Object
@@ -27,6 +28,16 @@ function deletePost() {
 
 function openAttachment(index) {
     emit('attachmentClick', props.post, index)
+}
+
+function sendReaction() {
+    axiosClient.post(route('post.reaction', props.post), {
+        reaction: 'like',
+    })
+        .then(({data}) => {
+            props.post.current_user_has_reaction = data.current_user_has_reaction;
+            props.post.num_of_reactions = data.num_of_reactions;
+        })
 }
 
 </script>
@@ -120,7 +131,7 @@ function openAttachment(index) {
                     <div
                         v-if="ind === 3 && post.attachments.length > 4"
                         class="absolute flex items-center justify-center z-10 left-0 top-0 right-0 bottom-0 z-10 bg-black/60 text-white">
-                        +{{post.attachments.length - 4}} ещё
+                        +{{ post.attachments.length - 4 }} ещё
                     </div>
 
                     <!--Download-->
@@ -147,14 +158,22 @@ function openAttachment(index) {
         </div>
         <div class="flex gap-2">
             <button
-                class="text-gray-800 flex gap-1 items-center justify-center py-2 bg-gray-100 rounded-lg hover:bg-gray-200 px-4 flex-1">
-                <HandThumbUpIcon class="w-6 h-6 mr-2"/>
-                Нравится
+                @click="sendReaction"
+                class="text-gray-800 flex gap-1 items-center justify-center py-2 rounded-lg px-4 flex-1"
+                :class="[
+                    post.current_user_has_reaction ?
+                    'bg-sky-100 hover:bg-sky-200' :
+                    'bg-gray-100 hover:bg-gray-200'
+                ]"
+            >
+                <HandThumbUpIcon class="w-6 h-6"/>
+                <span class="mr-2">{{ post.num_of_reactions }}</span>
+                {{ post.current_user_has_reaction ? 'Не нравится' : 'Нравится'}}
             </button>
             <button
                 class="text-gray-800 flex gap-1 items-center justify-center py-2 bg-gray-100 rounded-lg hover:bg-gray-200 px-4 flex-1">
                 <ChatBubbleLeftEllipsisIcon class="w-6 h-6 mr-2"/>
-                Комментарий
+                Комментарии
             </button>
         </div>
     </div>
