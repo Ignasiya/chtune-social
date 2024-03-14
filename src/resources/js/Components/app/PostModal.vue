@@ -12,6 +12,7 @@ import {XMarkIcon, PaperClipIcon, BookmarkIcon, ArrowUturnLeftIcon} from '@heroi
 import {useForm, usePage} from "@inertiajs/vue3";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import {isImage} from "@/helpers.js";
+import IndigoButton from "@/Components/app/IndigoButton.vue";
 
 const props = defineProps({
     post: {
@@ -282,10 +283,7 @@ function undoDelete(myFile) {
                                 </div>
 
                                 <div class="py-3 px-4 flex gap-2 ">
-                                    <button
-                                        type="button"
-                                        class="relative flex items-center justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 w-full"
-                                    >
+                                    <IndigoButton class="w-full">
                                         <PaperClipIcon class="w-4 h-4 mr-2"/>
                                         Вложить файлы
                                         <input
@@ -294,15 +292,11 @@ function undoDelete(myFile) {
                                             type="file"
                                             multiple
                                             class="absolute left-0 top-0 right-0 bottom-0 opacity-0">
-                                    </button>
-                                    <button
-                                        type="button"
-                                        class="flex items-center justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 w-full"
-                                        @click="submit"
-                                    >
+                                    </IndigoButton>
+                                    <IndigoButton class="w-full" @click="submit">
                                         <BookmarkIcon class="w-4 h-4 mr-2"/>
                                         Сохранить
-                                    </button>
+                                    </IndigoButton>
                                 </div>
                             </DialogPanel>
                         </TransitionChild>

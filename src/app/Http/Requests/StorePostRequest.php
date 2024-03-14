@@ -37,7 +37,12 @@ class StorePostRequest extends FormRequest
                 'array',
                 'max:50',
                 function ($value, $fail) {
-                    $totalSize = collect($value)->sum(fn(UploadedFile $file) => $file->getSize());
+                    $totalSize = collect($value)->sum(function ($file) {
+                        if ($file instanceof UploadedFile) {
+                            return $file->getSize();
+                        }
+                        return 0;
+                    });
 
                     if ($totalSize > 500 * 1024 * 1024) {
                         $fail('Максимальный размер всех вложений 500MB.');

@@ -4,13 +4,21 @@ import {HandThumbUpIcon, ChatBubbleLeftEllipsisIcon, ArrowDownTrayIcon, Document
 import {Menu, MenuButton, MenuItems, MenuItem} from '@headlessui/vue'
 import {EllipsisVerticalIcon, PencilIcon, TrashIcon} from '@heroicons/vue/20/solid'
 import PostUserHeader from "@/Components/app/PostUserHeader.vue";
-import {router} from "@inertiajs/vue3";
+import {router, usePage} from "@inertiajs/vue3";
 import {isImage} from '@/helpers.js'
 import axiosClient from "@/axiosClient.js";
+import TextareaInput from "@/Components/TextareaInput.vue";
+import IndigoButton from "@/Components/app/IndigoButton.vue";
+import {ref} from "vue";
+import ReadMoreReadLess from "@/Components/app/ReadMoreReadLess.vue";
+
+const authUser = usePage().props.auth.user;
 
 const props = defineProps({
     post: Object
 });
+
+const newCommentText = ref('');
 
 const emit = defineEmits(['editClick', 'attachmentClick'])
 
@@ -37,6 +45,17 @@ function sendReaction() {
         .then(({data}) => {
             props.post.current_user_has_reaction = data.current_user_has_reaction;
             props.post.num_of_reactions = data.num_of_reactions;
+        })
+}
+
+function createComment() {
+    axiosClient.post(route('post.comment.create', props.post), {
+        comment: newCommentText.value,
+    })
+        .then(({data}) => {
+            newCommentText.value = '';
+            props.post.comments.unshift(data);
+            props.post.num_of_comments++;
         })
 }
 
@@ -106,19 +125,7 @@ function sendReaction() {
             </Menu>
         </div>
         <div class="mb-3">
-            <Disclosure v-slot="{ open }">
-                <div class="ck-content-output" v-if="!open" v-html="post.body.substring(0, 200)"/>
-                <template v-if="post.body.length > 200">
-                    <DisclosurePanel>
-                        <div class="ck-content-output" v-html="post.body"/>
-                    </DisclosurePanel>
-                    <div class="flex justify-end">
-                        <DisclosureButton class="text-blue-500 hover:underline">
-                            {{ open ? 'Скрыть' : 'Показать ещё' }}
-                        </DisclosureButton>
-                    </div>
-                </template>
-            </Disclosure>
+            <ReadMoreReadLess :content="post.body"/>
         </div>
         <div class="grid gap-3 mb-3" :class="[
             post.attachments.length === 1 ? 'grid-cols-1' : 'grid-cols-2'
@@ -156,26 +163,72 @@ function sendReaction() {
                 </div>
             </template>
         </div>
-        <div class="flex gap-2">
-            <button
-                @click="sendReaction"
-                class="text-gray-800 flex gap-1 items-center justify-center py-2 rounded-lg px-4 flex-1"
-                :class="[
+        <Disclosure v-slot="{ open }">
+            <div class="flex gap-2">
+                <button
+                    @click="sendReaction"
+                    class="text-gray-800 flex gap-1 items-center justify-center py-2 rounded-lg px-4 flex-1"
+                    :class="[
                     post.current_user_has_reaction ?
                     'bg-sky-100 hover:bg-sky-200' :
                     'bg-gray-100 hover:bg-gray-200'
                 ]"
-            >
-                <HandThumbUpIcon class="w-6 h-6"/>
-                <span class="mr-2">{{ post.num_of_reactions }}</span>
-                {{ post.current_user_has_reaction ? 'Не нравится' : 'Нравится'}}
-            </button>
-            <button
-                class="text-gray-800 flex gap-1 items-center justify-center py-2 bg-gray-100 rounded-lg hover:bg-gray-200 px-4 flex-1">
-                <ChatBubbleLeftEllipsisIcon class="w-6 h-6 mr-2"/>
-                Комментарии
-            </button>
-        </div>
+                >
+                    <HandThumbUpIcon class="w-6 h-6"/>
+                    <span class="mr-2">{{ post.num_of_reactions }}</span>
+                    {{ post.current_user_has_reaction ? 'Не нравится' : 'Нравится' }}
+                </button>
+                <DisclosureButton
+                    class="text-gray-800 flex gap-1 items-center justify-center py-2 bg-gray-100 rounded-lg hover:bg-gray-200 px-4 flex-1"
+                >
+                    <ChatBubbleLeftEllipsisIcon class="w-6 h-6"/>
+                    <span class="mr-2">{{ post.num_of_comments }}</span>
+                    Комментарии
+                </DisclosureButton>
+            </div>
+            <DisclosurePanel class="mt-3">
+                <div class="flex gap-2 mb-3">
+                    <a href="javascript:void(0)">
+                        <img
+                            :src="authUser.avatar_url || '/image/no-avatar.png'"
+                            alt="avatar"
+                            class="w-[40px] rounded-full border-2 transition-all hover:border-blue-500"/>
+                    </a>
+                    <div class="flex flex-1">
+                        <TextareaInput
+                            v-model="newCommentText"
+                            placeholder="Введите ваш комментарий"
+                            class="w-full max-h-[160px] rounded-r-none resize-none"
+                            rows="1"/>
+                        <IndigoButton @click="createComment"
+                                      class="w-[100px] rounded-l-none">Отправить
+                        </IndigoButton>
+                    </div>
+                </div>
+                <div>
+                    <div
+                        class="mb-4"
+                        v-for="comment of post.comments"
+                        :key="comment.id">
+                        <div class="flex gap-2">
+                            <a href="javascript:void(0)">
+                                <img
+                                    :src="comment.user.avatar_url || '/image/no-avatar.png'"
+                                    alt="avatar"
+                                    class="w-[40px] rounded-full border-2 transition-all hover:border-blue-500"/>
+                            </a>
+                            <div>
+                                <h4 class="font-bold">
+                                    <a href="javascript:void(0)" class="hover:underline">{{ comment.user.name }}</a>
+                                </h4>
+                                <small class="text-xs text-gray-400">{{ comment.updated_at }}</small>
+                            </div>
+                        </div>
+                        <ReadMoreReadLess :content="comment.comment" content-class="text-sm flex flex-1 ml-12" />
+                    </div>
+                </div>
+            </DisclosurePanel>
+        </Disclosure>
     </div>
 </template>
 
