@@ -11,14 +11,20 @@ use Inertia\Response;
 
 class HomeController extends Controller
 {
-    public function index(Request $request): Response
+    public function index(): Response
     {
         $userId = Auth::id();
         $posts = Post::query()
             ->withCount('reactions')
             ->withCount('comments')
             ->with([
-               // 'comments',
+                'comments' => function ($query) use ($userId) {
+                    $query->withCount('reactions')
+                        ->with([
+                            'reactions' => function ($query) use ($userId) {
+                                $query->where('user_id', $userId);
+                            }]);
+                },
                 'reactions' => function ($query) use ($userId) {
                     $query->where('user_id', $userId);
                 }])
