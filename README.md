@@ -1,4 +1,4 @@
-SPA приложение на Laravel и Vue
+SPA приложение социальная сеть "Chtune" на стэке Laravel и Vue + Tailwind CSS
 
 Запуск проекта:
 ````
