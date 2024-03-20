@@ -11,7 +11,7 @@ use Inertia\Response;
 
 class HomeController extends Controller
 {
-    public function index(): Response
+    public function index(Request $request)
     {
         $userId = Auth::id();
         $posts = Post::query() // SELECT * FROM posts
@@ -25,10 +25,15 @@ class HomeController extends Controller
                     $query->where('user_id', $userId); // SELECT * FROM reactions WHERE user_id = ?
                 }])
             ->latest()
-            ->paginate(20);
+            ->paginate(10);
+
+        $posts = PostResource::collection($posts);
+        if ($request->wantsJson()) {
+            return $posts;
+        }
 
         return Inertia::render('Home', [
-            'posts' => PostResource::collection($posts)
+            'posts' => $posts
         ]);
     }
 }

@@ -2,6 +2,10 @@
 
 import {Disclosure, DisclosureButton, DisclosurePanel} from "@headlessui/vue";
 import GroupItems from "@/Components/app/GroupItems.vue";
+import GroupModal from "@/Components/app/GroupModal.vue";
+import {ref} from "vue";
+
+const showNewGroupModal = ref(false);
 
 </script>
 
@@ -25,15 +29,28 @@ import GroupItems from "@/Components/app/GroupItems.vue";
                     </div>
                 </DisclosureButton>
                 <DisclosurePanel>
+                    <button
+                        @click="showNewGroupModal = true"
+                        class="text-sm bg-indigo-500 hover:bg-indigo-600 text-white rounded py-1 px-2">
+                        Новая группа
+                    </button>
                     <GroupItems />
                 </DisclosurePanel>
             </Disclosure>
         </div>
         <div class="hidden lg:flex h-full flex-col overflow-hidden">
-            <h2 class="text-xl font-bold">Мои группы</h2>
+            <div class="flex justify-between">
+                <h2 class="text-xl font-bold">Мои группы</h2>
+                <button
+                    @click="showNewGroupModal = true"
+                    class="text-sm bg-indigo-500 hover:bg-indigo-600 text-white rounded py-1 px-2">
+                    Новая группа
+                </button>
+            </div>
             <GroupItems />
         </div>
     </div>
+    <GroupModal v-model="showNewGroupModal" />
 </template>
 
 <style scoped>

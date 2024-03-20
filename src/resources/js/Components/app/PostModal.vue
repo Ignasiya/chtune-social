@@ -87,7 +87,7 @@ function resetModal() {
     form.reset();
     formErrors.value = {};
     attachmentFiles.value = [];
-    showExtensionsText.value = false;
+    attachmentErrors.value = [];
     if (props.post.attachments) {
         props.post.attachments.forEach(file => file.deleted = false)
     }
