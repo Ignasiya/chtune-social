@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::create('group_users', function (Blueprint $table) {
             $table->id();
             $table->string('status', 25); // approved, pending
-            $table->string('role');
+            $table->string('role', 25);
             $table->string('token', 1024)->nullable();
             $table->timestamp('token_expire_date')->nullable();
             $table->timestamp('token_used')->nullable();

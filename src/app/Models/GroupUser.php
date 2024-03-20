@@ -11,5 +11,5 @@ class GroupUser extends Model
 
     const UPDATED_AT = null;
 
-    protected $fillable = ['status', 'role', 'user_id', 'group_id', 'created_at'];
+    protected $fillable = ['status', 'role', 'user_id', 'group_id', 'created_by'];
 }

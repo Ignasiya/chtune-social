@@ -26,7 +26,7 @@ const form = useForm({
     about: '',
 });
 
-const emit = defineEmits(['update:modelValue', 'hide'])
+const emit = defineEmits(['update:modelValue', 'hide', 'create'])
 
 const show = computed({
     get: () => props.modelValue,
@@ -46,8 +46,9 @@ function resetModal() {
 
 function submit() {
     axiosClient.post(route('group.create'), form)
-        .then(() => {
+        .then(({data}) => {
             closeModal();
+            emit('create', data)
         });
 }
 
@@ -130,6 +131,7 @@ function submit() {
                                 </div>
                                 <div class="py-3 px-4 flex justify-end gap-2 ">
                                     <button
+                                        @click="show = false"
                                         class="text-gray-800 flex gap-1 items-center justify-center py-2 bg-gray-100 rounded-md hover:bg-gray-200 px-4"
                                     >
                                         Отмена

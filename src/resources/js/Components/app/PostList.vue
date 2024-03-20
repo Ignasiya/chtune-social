@@ -14,14 +14,14 @@ const authUser = usePage().props.auth.user;
 const loadMoreIntersect = ref(null);
 const page = usePage();
 
-const props = defineProps({
-    posts: Array
-});
-
 const allPosts = ref({
     data: page.props.posts.data,
     next: page.props.posts.links.next
 })
+
+const props = defineProps({
+    posts: Array
+});
 
 function openEditModal(post) {
     editPost.value = post;

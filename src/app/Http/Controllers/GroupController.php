@@ -35,10 +35,12 @@ class GroupController extends Controller
             'role' => GroupUserRole::ADMIN->value,
             'user_id' => Auth::id(),
             'group_id' => $group->id,
-            'created_at' => Auth::id()
+            'created_by' => Auth::id()
         ];
 
         GroupUser::create($groupUserData);
+        $group->status = $groupUserData['status'];
+        $group->role = $groupUserData['role'];
 
         return response(new GroupResource($group), 201);
     }
