@@ -15,6 +15,9 @@ Route::get('/u/{user:username}', [ProfileController::class, 'index'])
 Route::get('/g/{group:slug}', [GroupController::class, 'profile'])
     ->name('group.profile');
 
+Route::get('/group/approve-invitation/{token}', [GroupController::class, 'approveInvitation'])
+    ->name('group.approveInvitation');
+
 Route::middleware('auth')->group(function () {
 
     // профиль пользователя
@@ -52,6 +55,8 @@ Route::middleware('auth')->group(function () {
         ->name('group.create');
     Route::post('/group/update-images/{group:slug}', [GroupController::class, 'updateImage'])
         ->name('group.updateImage');
+    Route::post('/group/invite/{group:slug}', [GroupController::class, 'inviteUsers'])
+        ->name('group.inviteUsers');
 });
 
 require __DIR__ . '/auth.php';

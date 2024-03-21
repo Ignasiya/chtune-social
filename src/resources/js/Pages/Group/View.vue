@@ -6,6 +6,7 @@ import TabItem from "@/Pages/Profile/Partials/TabItem.vue";
 import {computed, ref} from "vue";
 import {XMarkIcon, CameraIcon, CheckIcon} from '@heroicons/vue/24/solid'
 import PrimaryButton from "@/Components/PrimaryButton.vue";
+import InviteUserModal from "@/Components/app/InviteUserModal.vue";
 
 const imagesForm = useForm({
     thumbnail: null,
@@ -15,6 +16,7 @@ const imagesForm = useForm({
 const showNotification = ref(true);
 const coverImageSrc = ref('');
 const thumbnailImageSrc = ref('');
+const showInviteUserModal = ref(false);
 
 const isUserAdmin = computed(() => props.group.role === 'admin');
 
@@ -162,9 +164,19 @@ function submitThumbnailImage() {
                     <div class="flex flex-1 justify-between items-center p-4">
                         <h2 class="font-bold text-lg">{{ group.name }}</h2>
 
-                        <PrimaryButton v-if="isUserAdmin">Пригласить</PrimaryButton>
-                        <PrimaryButton v-if="!group.role && group.auto_approval">Вступить</PrimaryButton>
-                        <PrimaryButton v-if="!group.role && !group.auto_approval">Запросить</PrimaryButton>
+                        <PrimaryButton
+                            @click="showInviteUserModal= true"
+                            v-if="isUserAdmin">
+                            Пригласить
+                        </PrimaryButton>
+                        <PrimaryButton
+                            v-if="!group.role && group.auto_approval">
+                            Вступить
+                        </PrimaryButton>
+                        <PrimaryButton
+                            v-if="!group.role && !group.auto_approval">
+                            Запросить
+                        </PrimaryButton>
                     </div>
                 </div>
             </div>
@@ -203,6 +215,7 @@ function submitThumbnailImage() {
             </div>
         </div>
     </AuthenticatedLayout>
+    <InviteUserModal v-model="showInviteUserModal" />
 </template>
 
 <style scoped>
