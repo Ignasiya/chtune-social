@@ -57,6 +57,8 @@ Route::middleware('auth')->group(function () {
         ->name('group.updateImage');
     Route::post('/group/invite/{group:slug}', [GroupController::class, 'inviteUsers'])
         ->name('group.inviteUsers');
+    Route::post('/group/join/{group:slug}', [GroupController::class, 'join'])
+        ->name('group.join');
 });
 
 require __DIR__ . '/auth.php';

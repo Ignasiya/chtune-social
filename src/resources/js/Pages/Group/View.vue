@@ -1,12 +1,12 @@
 <script setup>
-import {Head, useForm} from "@inertiajs/vue3";
+import {Head, useForm, usePage} from "@inertiajs/vue3";
 import {TabGroup, TabList, Tab, TabPanels, TabPanel} from '@headlessui/vue'
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import TabItem from "@/Pages/Profile/Partials/TabItem.vue";
 import {computed, ref} from "vue";
 import {XMarkIcon, CameraIcon, CheckIcon} from '@heroicons/vue/24/solid'
 import PrimaryButton from "@/Components/PrimaryButton.vue";
-import InviteUserModal from "@/Components/app/InviteUserModal.vue";
+import InviteUserModal from "@/Pages/Group/InviteUserModal.vue";
 
 const imagesForm = useForm({
     thumbnail: null,
@@ -17,11 +17,13 @@ const showNotification = ref(true);
 const coverImageSrc = ref('');
 const thumbnailImageSrc = ref('');
 const showInviteUserModal = ref(false);
+const authUser = usePage().props.auth.user;
 
 const isUserAdmin = computed(() => props.group.role === 'admin');
 
 const props = defineProps({
     errors: Object,
+    users: Array,
     success: {
         type: String,
     },
@@ -84,6 +86,13 @@ function submitThumbnailImage() {
             }, 3000);
         }
     });
+}
+
+function joinToGroup(){
+    const form = useForm({
+
+    })
+    form.post(route('group.join', props.group.slug))
 }
 
 </script>
@@ -163,18 +172,24 @@ function submitThumbnailImage() {
                     </div>
                     <div class="flex flex-1 justify-between items-center p-4">
                         <h2 class="font-bold text-lg">{{ group.name }}</h2>
-
                         <PrimaryButton
-                            @click="showInviteUserModal= true"
-                            v-if="isUserAdmin">
+                            v-if="!authUser"
+                            :href="route('login')">
+                            Войти и вступить
+                        </PrimaryButton>
+                        <PrimaryButton
+                            v-if="isUserAdmin"
+                            @click="showInviteUserModal= true">
                             Пригласить
                         </PrimaryButton>
                         <PrimaryButton
-                            v-if="!group.role && group.auto_approval">
+                            v-if="authUser && !group.role && group.auto_approval"
+                            @click="joinToGroup">
                             Вступить
                         </PrimaryButton>
                         <PrimaryButton
-                            v-if="!group.role && !group.auto_approval">
+                            v-if="authUser && !group.role && !group.auto_approval"
+                            @click="joinToGroup">
                             Запросить
                         </PrimaryButton>
                     </div>
@@ -215,7 +230,7 @@ function submitThumbnailImage() {
             </div>
         </div>
     </AuthenticatedLayout>
-    <InviteUserModal v-model="showInviteUserModal" />
+    <InviteUserModal v-model="showInviteUserModal"/>
 </template>
 
 <style scoped>

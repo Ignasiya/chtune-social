@@ -6,27 +6,25 @@ use App\Http\Enums\GroupUserRole;
 use App\Http\Enums\GroupUserStatus;
 use App\Http\Requests\InviteUsersRequest;
 use App\Http\Requests\StoreGroupRequest;
-use App\Http\Requests\UpdateGroupRequest;
 use App\Http\Resources\GroupResource;
 use App\Models\Group;
 use App\Models\GroupUser;
 use App\Notifications\InvitationApproved;
 use App\Notifications\InvitationInGroup;
+use App\Notifications\RequestToJoinGroup;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
-use Symfony\Component\HttpFoundation\Exception\BadRequestException;
 
 class GroupController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+
     public function profile(Group $group): Response
     {
         $group->load('currentUserGroup');
@@ -36,9 +34,6 @@ class GroupController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(StoreGroupRequest $request)
     {
         $data = $request->validated();
@@ -58,30 +53,6 @@ class GroupController extends Controller
         $group->role = $groupUserData['role'];
 
         return response(new GroupResource($group), 201);
-    }
-
-    /**
-     * Display the specified resource.
-     */
-    public function show(Group $group)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(UpdateGroupRequest $request, Group $group)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(Group $group)
-    {
-        //
     }
 
     public function updateImage(Request $request, Group $group)
@@ -179,6 +150,31 @@ class GroupController extends Controller
         $adminUser->notify(new InvitationApproved($groupUser->group, $groupUser->user));
 
         return redirect(route('group.profile', $groupUser->group))
-            ->with('success', 'Вы успешно выступили в группу "' . $groupUser->group->name . '"');
+            ->with('success', 'Вы успешно вступили в группу "' . $groupUser->group->name . '"');
+    }
+
+    public function join(Group $group)
+    {
+        $user = \request()->user();
+
+        $status = GroupUserStatus::APPROVED->value;
+        $success = 'Вы вступили в группу "' . $group->name . '"';
+
+        if (!$group->auto_approval) {
+            $status = GroupUserStatus::PENDING->value;
+
+            Notification::send($group->adminUsers, new RequestToJoinGroup($group, $user));
+            $success = 'Запрос на принят. Вас уведомят об одобрении';
+        }
+
+        GroupUser::create([
+            'status' => $status,
+            'role' => GroupUserRole::USER->value,
+            'user_id' => $user->id,
+            'group_id' => $group->id,
+            'created_by' => $user->id,
+        ]);
+
+        return back()->with('success', $success);
     }
 }
