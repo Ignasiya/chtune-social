@@ -9,16 +9,25 @@ use App\Http\Requests\UpdateGroupRequest;
 use App\Http\Resources\GroupResource;
 use App\Models\Group;
 use App\Models\GroupUser;
+use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class GroupController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function profile(Group $group): Response
     {
-        //
+        $group->load('currentUserGroup');
+        return Inertia::render('Group/View', [
+            'success' => session('success'),
+            'group' => new GroupResource($group)
+        ]);
     }
 
     /**
@@ -67,5 +76,45 @@ class GroupController extends Controller
     public function destroy(Group $group)
     {
         //
+    }
+
+    public function updateImage(Request $request, Group $group)
+    {
+        if (!$group->isAdmin(Auth::id())) {
+            return response('У Вас нет доступа к этим действиям в группе', 403);
+        }
+
+        $data = $request->validate([
+            'cover' => ['nullable', 'image'],
+            'thumbnail' => ['nullable', 'image'],
+        ]);
+
+        /** @var UploadedFile $thumbnail */
+        $thumbnail = $data['thumbnail'] ?? null;
+
+        /** @var UploadedFile $cover */
+        $cover = $data['cover'] ?? null;
+
+        $success = '';
+
+        if ($cover) {
+            if ($group->cover_path) {
+                Storage::disk('public')->delete($group->cover_path);
+            }
+            $path = $cover->store('group-' . $group->id, 'public');
+            $group->update(['cover_path' => $path]);
+            $success = 'Обложка группы обновлена.';
+        }
+
+        if ($thumbnail) {
+            if ($group->thumbnail_path) {
+                Storage::disk('public')->delete($group->thumbnail_path);
+            }
+            $path = $thumbnail->store('group-' . $group->id, 'public');
+            $group->update(['thumbnail_path' => $path]);
+            $success = 'Иконка группы обновлена.';
+        }
+
+        return back()->with('success', $success);
     }
 }

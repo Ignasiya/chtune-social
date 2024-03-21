@@ -4,6 +4,7 @@
 /src/.env
 /src/.phpunit.cache
 /src/node_modules
+/src/public/vendor
 /src/public/build
 /src/public/hot
 /src/public/storage

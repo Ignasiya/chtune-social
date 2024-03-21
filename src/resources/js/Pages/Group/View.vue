@@ -1,36 +1,29 @@
 <script setup>
-import {Head, useForm, usePage} from "@inertiajs/vue3";
+import {Head, useForm} from "@inertiajs/vue3";
 import {TabGroup, TabList, Tab, TabPanels, TabPanel} from '@headlessui/vue'
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import TabItem from "@/Pages/Profile/Partials/TabItem.vue";
-import Edit from "@/Pages/Profile/Edit.vue";
 import {computed, ref} from "vue";
 import {XMarkIcon, CameraIcon, CheckIcon} from '@heroicons/vue/24/solid'
+import PrimaryButton from "@/Components/PrimaryButton.vue";
 
 const imagesForm = useForm({
-    avatar: null,
+    thumbnail: null,
     cover: null,
 });
 
 const showNotification = ref(true);
 const coverImageSrc = ref('');
-const avatarImageSrc = ref('');
-const authUser = usePage().props.auth.user;
+const thumbnailImageSrc = ref('');
 
-const isMyProfile = computed(() => authUser && authUser.id === props.user.id);
+const isUserAdmin = computed(() => props.group.role === 'admin');
 
 const props = defineProps({
     errors: Object,
-    mustVerifyEmail: {
-        type: Boolean,
-    },
-    status: {
-        type: String,
-    },
     success: {
         type: String,
     },
-    user: {
+    group: {
         type: Object,
     }
 });
@@ -52,7 +45,7 @@ function resetCoverImage() {
 }
 
 function submitCoverImage() {
-    imagesForm.post(route('profile.updateImage'), {
+    imagesForm.post(route('group.updateImage', props.group.slug), {
         onSuccess: () => {
             showNotification.value = true;
             resetCoverImage();
@@ -63,27 +56,27 @@ function submitCoverImage() {
     });
 }
 
-function onAvatarChange(event) {
-    imagesForm.avatar = event.target.files[0];
-    if (imagesForm.avatar) {
+function onThumbnailChange(event) {
+    imagesForm.thumbnail = event.target.files[0];
+    if (imagesForm.thumbnail) {
         const reader = new FileReader();
         reader.onload = () => {
-            avatarImageSrc.value = reader.result;
+            thumbnailImageSrc.value = reader.result;
         }
-        reader.readAsDataURL(imagesForm.avatar);
+        reader.readAsDataURL(imagesForm.thumbnail);
     }
 }
 
-function resetAvatarImage() {
-    imagesForm.avatar = null;
-    avatarImageSrc.value = null;
+function resetThumbnailImage() {
+    imagesForm.thumbnail = null;
+    thumbnailImageSrc.value = null;
 }
 
-function submitAvatarImage() {
-    imagesForm.post(route('profile.updateImage'), {
+function submitThumbnailImage() {
+    imagesForm.post(route('group.updateImage', props.group.slug), {
         onSuccess: () => {
             showNotification.value = true;
-            resetAvatarImage();
+            resetThumbnailImage();
             setTimeout(() => {
                 showNotification.value = false;
             }, 3000);
@@ -94,7 +87,7 @@ function submitAvatarImage() {
 </script>
 
 <template>
-    <Head title="Профиль"/>
+    <Head title="Группа"/>
 
     <AuthenticatedLayout>
         <div class="container max-w-[768px] bg-white mx-auto h-full overflow-auto">
@@ -112,9 +105,9 @@ function submitAvatarImage() {
             </div>
             <div class="group relative bg-white">
                 <img class="h-[200px] object-cover w-full"
-                     :src="coverImageSrc || user.cover_url"
+                     :src="coverImageSrc || group.cover_url"
                      alt="cover">
-                <div v-if="isMyProfile" class="absolute top-2 right-2">
+                <div v-if="isUserAdmin" class="absolute top-2 right-2">
                     <button
                         v-if="!coverImageSrc"
                         class="bg-gray-50 hover:bg-gray-100 text-gray-800 py-1 px-2 text-xs flex items-center opacity-0 group-hover:opacity-100">
@@ -140,26 +133,26 @@ function submitAvatarImage() {
                 </div>
                 <div class="flex">
                     <div
-                        class="flex items-center justify-center relative group/avatar ml-[48px] -mt-[64px] w-[128px] h-[128px] rounded-full">
+                        class="flex items-center justify-center relative group/thumbnail ml-[48px] -mt-[64px] w-[128px] h-[128px] rounded-full">
                         <img class="w-full h-full object-cover rounded-full"
-                             :src="avatarImageSrc || user.avatar_url"
-                             alt="avatar">
-                        <div v-if="isMyProfile">
+                             :src="thumbnailImageSrc || group.thumbnail_url"
+                             alt="thumbnail">
+                        <div v-if="isUserAdmin">
                             <button
-                                v-if="!avatarImageSrc"
-                                class="absolute left-0 right-0 bottom-0 top-0 bg-black/50 text-gray-200 rounded-full opacity-0 flex items-center justify-center group-hover/avatar:opacity-100">
+                                v-if="!thumbnailImageSrc"
+                                class="absolute left-0 right-0 bottom-0 top-0 bg-black/50 text-gray-200 rounded-full opacity-0 flex items-center justify-center group-hover/thumbnail:opacity-100">
                                 <CameraIcon class="h-8 w-8"/>
                                 <input type="file" class="absolute left-0 right-0 bottom-0 top-0 opacity-0"
-                                       @change="onAvatarChange"/>
+                                       @change="onThumbnailChange"/>
                             </button>
                             <div v-else class="absolute top-1 right-0 flex flex-col gap-2">
                                 <button
-                                    @click="resetAvatarImage"
+                                    @click="resetThumbnailImage"
                                     class="h-7 w-7 flex items-center justify-center bg-red-500/80 text-white rounded-full">
                                     <XMarkIcon class="h-5 w-5"/>
                                 </button>
                                 <button
-                                    @click="submitAvatarImage"
+                                    @click="submitThumbnailImage"
                                     class="h-7 w-7 flex items-center justify-center bg-emerald-500 text-white rounded-full">
                                     <CheckIcon class="h-5 w-5"/>
                                 </button>
@@ -167,7 +160,11 @@ function submitAvatarImage() {
                         </div>
                     </div>
                     <div class="flex flex-1 justify-between items-center p-4">
-                        <h2 class="font-bold text-lg">{{ user.name }}</h2>
+                        <h2 class="font-bold text-lg">{{ group.name }}</h2>
+
+                        <PrimaryButton v-if="isUserAdmin">Пригласить</PrimaryButton>
+                        <PrimaryButton v-if="!group.role && group.auto_approval">Вступить</PrimaryButton>
+                        <PrimaryButton v-if="!group.role && !group.auto_approval">Запросить</PrimaryButton>
                     </div>
                 </div>
             </div>
@@ -186,9 +183,6 @@ function submitAvatarImage() {
                         <Tab v-slot="{ selected }" as="template">
                             <TabItem text="Фото" :selected="selected"></TabItem>
                         </Tab>
-                        <Tab v-if="isMyProfile" v-slot="{ selected }" as="template">
-                            <TabItem text="Мой профиль" :selected="selected"></TabItem>
-                        </Tab>
                     </TabList>
 
                     <TabPanels class="mt-2">
@@ -204,9 +198,6 @@ function submitAvatarImage() {
                         <TabPanel class="bg-white p-3 shadow">
                             Фото
                         </TabPanel>
-                        <TabPanel v-if="isMyProfile">
-                            <Edit :must-verify-email="mustVerifyEmail" :status="status"/>
-                        </TabPanel>
                     </TabPanels>
                 </TabGroup>
             </div>
@@ -217,3 +208,4 @@ function submitAvatarImage() {
 <style scoped>
 
 </style>
+

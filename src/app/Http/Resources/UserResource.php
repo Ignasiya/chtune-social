@@ -23,8 +23,8 @@ class UserResource extends JsonResource
             'created_at' => $this->created_at,
             'update_at' => $this->update_at,
             'username' => $this->username,
-            'cover_url' => $this->cover_path ? Storage::url($this->cover_path) : null,
-            'avatar_url' => $this->avatar_path ? Storage::url($this->avatar_path) : null,
+            'cover_url' => $this->cover_path ? Storage::url($this->cover_path) : '/image/cover_default.jpg',
+            'avatar_url' => $this->avatar_path ? Storage::url($this->avatar_path) : '/image/no-avatar.png',
         ];
     }
 }
