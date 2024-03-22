@@ -10,10 +10,8 @@ import {
 import {XMarkIcon,} from '@heroicons/vue/24/solid'
 import {useForm} from "@inertiajs/vue3";
 import IndigoButton from "@/Components/app/IndigoButton.vue";
-import TextInput from "@/Components/TextInput.vue";
-import Checkbox from "@/Components/Checkbox.vue";
-import TextareaInput from "@/Components/TextareaInput.vue";
 import axiosClient from "@/axiosClient.js";
+import GroupForm from "@/Components/app/GroupForm.vue";
 
 const props = defineProps({
     modelValue: Boolean
@@ -98,36 +96,7 @@ function submit() {
                                     </button>
                                 </DialogTitle>
                                 <div class="p-4">
-                                    <div class="mb-3">
-                                        <label>
-                                            Название группы
-                                        </label>
-                                        <TextInput
-                                            type="text"
-                                            class="mt-1 block w-full"
-                                            v-model="form.name"
-                                            required
-                                            autofocus
-                                        />
-                                    </div>
-                                    <div class="mb-3">
-                                        <label>
-                                            <Checkbox
-                                                name="approval"
-                                                v-model:checked="form.auto_approval"
-                                            />
-                                            Включить автоодобрение
-                                        </label>
-                                    </div>
-                                    <div class="mb-3">
-                                        <label>
-                                            Описание группы
-                                        </label>
-                                        <TextareaInput
-                                            class="w-full"
-                                            v-model="form.about"
-                                        />
-                                    </div>
+                                    <GroupForm :form="form" />
                                 </div>
                                 <div class="py-3 px-4 flex justify-end gap-2 ">
                                     <button

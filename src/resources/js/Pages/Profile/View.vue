@@ -191,7 +191,7 @@ function submitAvatarImage() {
                             <TabItem text="Фото" :selected="selected"></TabItem>
                         </Tab>
                         <Tab v-if="isMyProfile" v-slot="{ selected }" as="template">
-                            <TabItem text="Мой профиль" :selected="selected"></TabItem>
+                            <TabItem text="Редактирование" :selected="selected"></TabItem>
                         </Tab>
                     </TabList>
 

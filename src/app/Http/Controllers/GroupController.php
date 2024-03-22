@@ -6,6 +6,7 @@ use App\Http\Enums\GroupUserRole;
 use App\Http\Enums\GroupUserStatus;
 use App\Http\Requests\InviteUsersRequest;
 use App\Http\Requests\StoreGroupRequest;
+use App\Http\Requests\UpdateGroupRequest;
 use App\Http\Resources\GroupResource;
 use App\Http\Resources\GroupUserResource;
 use App\Http\Resources\UserResource;
@@ -72,6 +73,13 @@ class GroupController extends Controller
         $group->role = $groupUserData['role'];
 
         return response(new GroupResource($group), 201);
+    }
+
+    public function update(UpdateGroupRequest $request, Group $group)
+    {
+        $group->update($request->validated());
+
+        return back()->with('success', 'Группа обновлена');
     }
 
     public function updateImage(Request $request, Group $group)

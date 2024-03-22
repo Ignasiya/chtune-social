@@ -9,6 +9,7 @@ import PrimaryButton from "@/Components/PrimaryButton.vue";
 import InviteUserModal from "@/Pages/Group/InviteUserModal.vue";
 import UserItem from "@/Components/app/UserItem.vue";
 import TextInput from "@/Components/TextInput.vue";
+import GroupForm from "@/Components/app/GroupForm.vue";
 
 const imagesForm = useForm({
     thumbnail: null,
@@ -31,6 +32,14 @@ const props = defineProps({
     requests: Array,
     success: String,
     group: Object,
+});
+
+const group = usePage().props.group;
+
+const editForm = useForm({
+    name: group.name,
+    auto_approval: !!parseInt(group.auto_approval),
+    about: group.about
 });
 
 function onCoverChange(event) {
@@ -116,6 +125,12 @@ function onRoleChange(user, role) {
     form.post(route('group.changeRole', props.group.slug), {
         preserveScroll: true
     })
+}
+
+function updateGroup() {
+    editForm.put(route('group.update', props.group.slug), {
+        preserveScroll: true
+    });
 }
 
 </script>
@@ -235,6 +250,9 @@ function onRoleChange(user, role) {
                         <Tab v-slot="{ selected }" as="template">
                             <TabItem text="Фото" :selected="selected"></TabItem>
                         </Tab>
+                        <Tab v-if="isUserAdmin" v-slot="{ selected }" as="template">
+                            <TabItem text="Редактирование" :selected="selected"></TabItem>
+                        </Tab>
                     </TabList>
 
                     <TabPanels class="mt-2">
@@ -276,6 +294,12 @@ function onRoleChange(user, role) {
                         </TabPanel>
                         <TabPanel class="bg-white p-3 shadow">
                             Фото
+                        </TabPanel>
+                        <TabPanel class="bg-white p-3 shadow">
+                            <GroupForm :form="editForm" />
+                            <PrimaryButton @click="updateGroup">
+                                Сохранить
+                            </PrimaryButton>
                         </TabPanel>
                     </TabPanels>
                 </TabGroup>
