@@ -11,9 +11,6 @@ import {XMarkIcon,} from '@heroicons/vue/24/solid'
 import {useForm, usePage} from "@inertiajs/vue3";
 import IndigoButton from "@/Components/app/IndigoButton.vue";
 import TextInput from "@/Components/TextInput.vue";
-import Checkbox from "@/Components/Checkbox.vue";
-import TextareaInput from "@/Components/TextareaInput.vue";
-import axiosClient from "@/axiosClient.js";
 
 const props = defineProps({
     modelValue: Boolean
@@ -120,7 +117,7 @@ function submit() {
                                 <div class="py-3 px-4 flex justify-end gap-2 ">
                                     <button
                                         @click="show = false"
-                                        class="text-gray-800 flex gap-1 items-center justify-center py-2 bg-gray-100 rounded-md hover:bg-gray-200 px-4"
+                                        class="text-sm font-semibold shadow-sm text-gray-800 flex gap-1 items-center justify-center py-2 bg-gray-100 rounded-md hover:bg-gray-200 px-4"
                                     >
                                         Отмена
                                     </button>

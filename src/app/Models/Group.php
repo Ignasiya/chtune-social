@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Http\Enums\GroupUserRole;
+use App\Http\Enums\GroupUserStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -12,6 +13,11 @@ use Illuminate\Support\Facades\Auth;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
+/**
+ * @property mixed approvedUsers
+ * @property mixed adminUsers
+ * @property mixed pendingUsers
+ */
 class Group extends Model
 {
     use HasFactory;
@@ -39,9 +45,25 @@ class Group extends Model
         return $this->currentUserGroup?->user_id == $userId;
     }
 
+    /*
+     * Определяется отношение "многие ко многим" между моделью (Group) и моделью (User).
+     * Он использует таблицу 'group_users' в качестве промежуточной таблицы.
+    */
     public function adminUsers(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'group_users')
             ->wherePivot('role', GroupUserRole::ADMIN->value);
+    }
+
+    public function pendingUsers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'group_users')
+            ->wherePivot('status', GroupUserStatus::PENDING->value);
+    }
+
+    public function approvedUsers(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'group_users')
+            ->wherePivot('status', GroupUserStatus::APPROVED->value);
     }
 }

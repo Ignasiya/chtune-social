@@ -7,10 +7,12 @@ use App\Http\Enums\GroupUserStatus;
 use App\Http\Requests\InviteUsersRequest;
 use App\Http\Requests\StoreGroupRequest;
 use App\Http\Resources\GroupResource;
+use App\Http\Resources\UserResource;
 use App\Models\Group;
 use App\Models\GroupUser;
 use App\Notifications\InvitationApproved;
 use App\Notifications\InvitationInGroup;
+use App\Notifications\RequestApproved;
 use App\Notifications\RequestToJoinGroup;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -24,13 +26,23 @@ use Inertia\Response;
 
 class GroupController extends Controller
 {
-
     public function profile(Group $group): Response
     {
         $group->load('currentUserGroup');
+
+        $users = $group->approvedUsers()
+            ->orderBy('name')
+            ->get();
+
+        $request = $group->pendingUsers()
+            ->orderBy('name')
+            ->get();
+
         return Inertia::render('Group/View', [
             'success' => session('success'),
-            'group' => new GroupResource($group)
+            'group' => new GroupResource($group),
+            'users' => UserResource::collection($users),
+            'requests' => UserResource::collection($request),
         ]);
     }
 
@@ -164,7 +176,7 @@ class GroupController extends Controller
             $status = GroupUserStatus::PENDING->value;
 
             Notification::send($group->adminUsers, new RequestToJoinGroup($group, $user));
-            $success = 'Запрос на принят. Вас уведомят об одобрении';
+            $success = 'Запрос принят. Вас уведомят об одобрении';
         }
 
         GroupUser::create([
@@ -176,5 +188,42 @@ class GroupController extends Controller
         ]);
 
         return back()->with('success', $success);
+    }
+
+    public function approveRequest(Request $request, Group $group)
+    {
+        if (!$group->isAdmin(Auth::id())) {
+            return response('У Вас нет доступа к группе', 403);
+        }
+
+        $data = $request->validate([
+            'user_id' => ['required'],
+            'action' => ['required']
+        ]);
+
+        $groupUser = GroupUser::where('user_id', $data['user_id'])
+            ->where('group_id', $group->id)
+            ->where('status', GroupUserStatus::PENDING->value)
+            ->first();
+
+        if ($groupUser) {
+            $approved = 'отклонен';
+
+            if ($data['action'] === 'approve') {
+                $approved = 'одобрен';
+                $groupUser->status = GroupUserStatus::APPROVED->value;
+            } else {
+                $groupUser->status = GroupUserStatus::REJECTED->value;
+            }
+            $groupUser->save();
+
+            $user = $groupUser->user;
+
+            $user->notify(new RequestApproved($groupUser->group, $user, $approved));
+
+            return back()->with('success', 'Пользователь "' . $user->name . '" ' . $approved);
+        }
+
+        return back();
     }
 }

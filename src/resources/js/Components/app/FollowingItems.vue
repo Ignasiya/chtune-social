@@ -1,5 +1,5 @@
 <script setup>
-import FollowingItem from "@/Components/app/FollowingItem.vue";
+import UserItem from "@/Components/app/UserItem.vue";
 import TextInput from "@/Components/TextInput.vue";
 import {ref} from "vue";
 
@@ -13,16 +13,7 @@ const searchKeyword = ref('');
             У Вас ещё нет друзей
         </div>
         <div v-else>
-            <FollowingItem image="https://loremflickr.com/100/100" title="John Doe"/>
-            <FollowingItem image="https://loremflickr.com/100/100" title="Elon Musk"/>
-            <FollowingItem image="https://loremflickr.com/100/100" title="John Doe"/>
-            <FollowingItem image="https://loremflickr.com/100/100" title="Elon Musk"/>
-            <FollowingItem image="https://loremflickr.com/100/100" title="John Doe"/>
-            <FollowingItem image="https://loremflickr.com/100/100" title="Elon Musk"/>
-            <FollowingItem image="https://loremflickr.com/100/100" title="John Doe"/>
-            <FollowingItem image="https://loremflickr.com/100/100" title="Elon Musk"/>
-            <FollowingItem image="https://loremflickr.com/100/100" title="John Doe"/>
-            <FollowingItem image="https://loremflickr.com/100/100" title="Elon Musk"/>
+
         </div>
     </div>
 </template>

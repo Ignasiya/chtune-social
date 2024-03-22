@@ -6,6 +6,12 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
+/**
+ * @property mixed adminUser
+ * @property mixed user
+ * @property mixed group
+ */
+
 class GroupUser extends Model
 {
     use HasFactory;

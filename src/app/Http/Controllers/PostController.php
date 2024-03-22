@@ -190,7 +190,7 @@ class PostController extends Controller
     public function deleteComment(Comment $comment)
     {
         if ($comment->user_id !== Auth::id()) {
-            return response('Не доступа для удаления этого комментария', 403);
+            return response('Не доступа для удаления комментария', 403);
         }
         $comment->delete();
         return response('', 204);
