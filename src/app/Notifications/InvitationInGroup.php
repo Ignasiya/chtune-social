@@ -16,7 +16,6 @@ class InvitationInGroup extends Notification
      */
     public function __construct(public Group $group, public int $hours, public string $token)
     {
-        //
     }
 
     /**
@@ -35,6 +34,7 @@ class InvitationInGroup extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
+            ->subject('Приглашение в группу')
             ->line('Вам пришло приглашение вступить в группу. "' . $this->group->name . '"')
             ->action('Вступить в группу', url(route('group.approveInvitation', $this->token)))
             ->line('Приглашение действительно следующие '. $this->hours .' часа');

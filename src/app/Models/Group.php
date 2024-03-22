@@ -40,9 +40,18 @@ class Group extends Model
             ->where('user_id', Auth::id());
     }
 
+    public function isOwner(int $userId): bool
+    {
+        return $this->user_id == $userId;
+    }
+
     public function isAdmin(int $userId): bool
     {
-        return $this->currentUserGroup?->user_id == $userId;
+        return GroupUser::query()
+            ->where('user_id', $userId)
+            ->where('group_id', $this->id)
+            ->where('role', GroupUserRole::ADMIN->value)
+            ->exists();
     }
 
     /*

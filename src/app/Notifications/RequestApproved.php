@@ -18,7 +18,6 @@ class RequestApproved extends Notification
      */
     public function __construct(public Group $group, public User $user, public string $approved)
     {
-        //
     }
 
     /**

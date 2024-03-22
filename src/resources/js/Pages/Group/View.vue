@@ -51,6 +51,7 @@ function resetCoverImage() {
 
 function submitCoverImage() {
     imagesForm.post(route('group.updateImage', props.group.slug), {
+        preserveScroll: true,
         onSuccess: () => {
             showNotification.value = true;
             resetCoverImage();
@@ -79,6 +80,7 @@ function resetThumbnailImage() {
 
 function submitThumbnailImage() {
     imagesForm.post(route('group.updateImage', props.group.slug), {
+        preserveScroll: true,
         onSuccess: () => {
             showNotification.value = true;
             resetThumbnailImage();
@@ -91,7 +93,9 @@ function submitThumbnailImage() {
 
 function joinToGroup() {
     const form = useForm({})
-    form.post(route('group.join', props.group.slug))
+    form.post(route('group.join', props.group.slug), {
+        preserveScroll: true
+    })
 }
 
 function approveUser(user, action) {
@@ -99,7 +103,19 @@ function approveUser(user, action) {
         user_id: user.id,
         action
     })
-    form.post(route('group.approveRequest', props.group.slug))
+    form.post(route('group.approveRequest', props.group.slug), {
+        preserveScroll: true
+    })
+}
+
+function onRoleChange(user, role) {
+    const form = useForm({
+        user_id: user.id,
+        role
+    })
+    form.post(route('group.changeRole', props.group.slug), {
+        preserveScroll: true
+    })
 }
 
 </script>
@@ -237,7 +253,10 @@ function approveUser(user, action) {
                                     class="shadow rounded-lg"
                                     v-for="user of users"
                                     :user="user"
-                                    :key="user.id"/>
+                                    :key="user.id"
+                                    :show-role-dropdown="isUserAdmin"
+                                    :disable-role-dropdown="group.user_id === user.id"
+                                    @roleChange="onRoleChange"/>
                             </div>
                         </TabPanel>
                         <TabPanel v-if="isUserAdmin">
@@ -248,8 +267,8 @@ function approveUser(user, action) {
                                     :user="user"
                                     :key="user.id"
                                     :for-approve="true"
-                                    @approve="approveUser(user, 'approve')"
-                                    @reject="approveUser(user, 'reject')"/>
+                                    @approved="approveUser(user, 'approved')"
+                                    @rejected="approveUser(user, 'rejected')"/>
                             </div>
                             <div v-else class="py-8 text-center">
                                 Отсутствуют запросы на вступление

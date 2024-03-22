@@ -3,19 +3,19 @@
 namespace App\Notifications;
 
 use App\Models\Group;
-use App\Models\User;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class InvitationApproved extends Notification
+class RoleChanged extends Notification
 {
     use Queueable;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(public Group $group, public User $user)
+    public function __construct(public  Group $group, public string $role)
     {
     }
 
@@ -35,9 +35,9 @@ class InvitationApproved extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Пользователь вступил в группу')
-            ->line('User "' . $this->user->name . '" вступил в группу "' . $this->group->name . '"')
-            ->action('Показать группу', url(route('group.profile', $this->group)));
+            ->subject('Роль в группе изменена')
+            ->line('Роль в группе "' . $this->group->name .'" изменена на "' . $this->role .'"')
+            ->action('Перейти в группу', url(route('group.profile', $this->group)));
     }
 
     /**

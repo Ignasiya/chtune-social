@@ -7,13 +7,16 @@ use App\Http\Enums\GroupUserStatus;
 use App\Http\Requests\InviteUsersRequest;
 use App\Http\Requests\StoreGroupRequest;
 use App\Http\Resources\GroupResource;
+use App\Http\Resources\GroupUserResource;
 use App\Http\Resources\UserResource;
 use App\Models\Group;
 use App\Models\GroupUser;
+use App\Models\User;
 use App\Notifications\InvitationApproved;
 use App\Notifications\InvitationInGroup;
 use App\Notifications\RequestApproved;
 use App\Notifications\RequestToJoinGroup;
+use App\Notifications\RoleChanged;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
@@ -21,6 +24,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -30,8 +34,11 @@ class GroupController extends Controller
     {
         $group->load('currentUserGroup');
 
-        $users = $group->approvedUsers()
-            ->orderBy('name')
+        $users = User::query()
+            ->select(['users.*', 'gu.role', 'gu.status', 'gu.group_id'])
+            ->join('group_users AS gu', 'gu.user_id', 'users.id')
+            ->orderBy('users.name')
+            ->where('gu.group_id', $group->id)
             ->get();
 
         $request = $group->pendingUsers()
@@ -41,7 +48,7 @@ class GroupController extends Controller
         return Inertia::render('Group/View', [
             'success' => session('success'),
             'group' => new GroupResource($group),
-            'users' => UserResource::collection($users),
+            'users' => GroupUserResource::collection($users),
             'requests' => UserResource::collection($request),
         ]);
     }
@@ -198,7 +205,7 @@ class GroupController extends Controller
 
         $data = $request->validate([
             'user_id' => ['required'],
-            'action' => ['required']
+            'action' => ['required', Rule::enum(GroupUserStatus::class)]
         ]);
 
         $groupUser = GroupUser::where('user_id', $data['user_id'])
@@ -209,7 +216,7 @@ class GroupController extends Controller
         if ($groupUser) {
             $approved = 'отклонен';
 
-            if ($data['action'] === 'approve') {
+            if ($data['action'] === 'approved') {
                 $approved = 'одобрен';
                 $groupUser->status = GroupUserStatus::APPROVED->value;
             } else {
@@ -222,6 +229,37 @@ class GroupController extends Controller
             $user->notify(new RequestApproved($groupUser->group, $user, $approved));
 
             return back()->with('success', 'Пользователь "' . $user->name . '" ' . $approved);
+        }
+
+        return back();
+    }
+
+    public function changeRole(Request $request, Group $group)
+    {
+        if (!$group->isAdmin(Auth::id())) {
+            return response('У Вас нет доступа к группе', 403);
+        }
+
+        $data = $request->validate([
+            'user_id' => ['required'],
+            'role' => ['required', Rule::enum(GroupUserRole::class)]
+        ]);
+
+        $userId = $data['user_id'];
+        if ($group->isOwner($userId)) {
+            return response('Невозможно изменить роль владельца группы', 403);
+        }
+
+        $groupUser = GroupUser::where('user_id', $userId)
+            ->where('group_id', $group->id)
+            ->first();
+
+        if ($groupUser) {
+
+            $groupUser->role = $data['role'];
+            $groupUser->save();
+
+            $groupUser->user->notify(new RoleChanged($groupUser->group, $data['role']));
         }
 
         return back();
