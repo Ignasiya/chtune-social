@@ -1,7 +1,7 @@
 <script setup>
 import PostItem from "@/Components/app/PostItem.vue";
 import PostModal from "@/Components/app/PostModal.vue";
-import {onMounted, ref} from "vue";
+import {onMounted, ref, watch} from "vue";
 import {usePage} from "@inertiajs/vue3";
 import AttachmentPreview from "@/Components/app/AttachmentPreview.vue";
 import axiosClient from "@/axiosClient.js";
@@ -15,13 +15,30 @@ const loadMoreIntersect = ref(null);
 const page = usePage();
 
 const allPosts = ref({
-    data: page.props.posts.data,
-    next: page.props.posts.links.next
+    data: [],
+    next: null
 })
 
 const props = defineProps({
     posts: Array
 });
+
+watch(() => page.props.posts, () => {
+    if (page.props.posts) {
+        allPosts.value = {
+            data: page.props.posts.data,
+            next: page.props.posts.links.next
+        }
+    }
+}, {deep: true, immediate: true});
+
+onMounted(() => {
+    const observer = new IntersectionObserver(
+        (entries) => entries.forEach(entry => entry.isIntersecting && loadMore()), {
+            rootMargin: '-250px 0px 0px 0px'
+        })
+    observer.observe(loadMoreIntersect.value)
+})
 
 function openEditModal(post) {
     editPost.value = post;
@@ -55,14 +72,6 @@ function loadMore() {
             allPosts.value.next = data.links.next
         })
 }
-
-onMounted(() => {
-    const observer = new IntersectionObserver(
-        (entries) => entries.forEach(entry => entry.isIntersecting && loadMore()), {
-            rootMargin: '-250px 0px 0px 0px'
-        })
-    observer.observe(loadMoreIntersect.value)
-})
 
 </script>
 

@@ -12,6 +12,13 @@ const newPost = ref({
     user: authUser
 });
 
+defineProps({
+    group: {
+        type: Object,
+        default: null
+    }
+})
+
 const showModal = ref(false);
 
 function showCreatePostModal() {
@@ -29,6 +36,7 @@ function showCreatePostModal() {
         </div>
 
         <PostModal
+            :group="group"
             :post="newPost"
             v-model="showModal"
         />

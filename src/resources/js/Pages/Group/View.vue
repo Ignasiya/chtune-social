@@ -10,6 +10,8 @@ import InviteUserModal from "@/Pages/Group/InviteUserModal.vue";
 import UserItem from "@/Components/app/UserItem.vue";
 import TextInput from "@/Components/TextInput.vue";
 import GroupForm from "@/Components/app/GroupForm.vue";
+import PostList from "@/Components/app/PostList.vue";
+import CreatePost from "@/Components/app/CreatePost.vue";
 
 const imagesForm = useForm({
     thumbnail: null,
@@ -28,6 +30,7 @@ const isJoinedToGroup = computed(() => !!props.group.role && props.group.status 
 
 const props = defineProps({
     errors: Object,
+    posts: Object,
     users: Array,
     requests: Array,
     success: String,
@@ -256,8 +259,14 @@ function updateGroup() {
                     </TabList>
 
                     <TabPanels class="mt-2">
-                        <TabPanel class="bg-white p-3 shadow">
-                            Мои записи
+                        <TabPanel>
+                            <template v-if="posts">
+                                <CreatePost :group="group"/>
+                                <PostList :posts="posts.data" class="flex-1"/>
+                            </template>
+                            <div v-else class="py-8 text-center">
+                                Вступите, чтобы видеть записи группы
+                            </div>
                         </TabPanel>
                         <TabPanel v-if="isJoinedToGroup">
                             <div class="mb-3">
@@ -296,7 +305,7 @@ function updateGroup() {
                             Фото
                         </TabPanel>
                         <TabPanel class="bg-white p-3 shadow">
-                            <GroupForm :form="editForm" />
+                            <GroupForm :form="editForm"/>
                             <PrimaryButton @click="updateGroup">
                                 Сохранить
                             </PrimaryButton>

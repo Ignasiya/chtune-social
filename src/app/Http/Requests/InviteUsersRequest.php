@@ -35,24 +35,26 @@ class InviteUsersRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => ['required', function ($attribute, $value, Closure $fail) {
-                $this->user = User::query()
-                    ->where('email', $value)
-                    ->orWhere('username', $value)
-                    ->first();
+            'email' => [
+                'required',
+                function ($attribute, $value, Closure $fail) {
+                    $this->user = User::query()
+                        ->where('email', $value)
+                        ->orWhere('username', $value)
+                        ->first();
 
-                if (!$this->user) {
-                    $fail('Пользователь не найден');
-                }
+                    if (!$this->user) {
+                        $fail('Пользователь не найден');
+                    }
 
-                $this->groupUser = GroupUser::where('user_id', $this->user->id)
-                    ->where('group_id', $this->group->id)
-                    ->first();
+                    $this->groupUser = GroupUser::where('user_id', $this->user->id)
+                        ->where('group_id', $this->group->id)
+                        ->first();
 
-                if ($this->groupUser && $this->groupUser->status === GroupUserStatus::APPROVED->value) {
-                    $fail('Пользователь уже вступил в группу');
-                }
-            }]
+                    if ($this->groupUser && $this->groupUser->status === GroupUserStatus::APPROVED->value) {
+                        $fail('Пользователь уже вступил в группу');
+                    }
+                }]
         ];
     }
 }

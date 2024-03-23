@@ -14,34 +14,38 @@ import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import {isImage} from "@/helpers.js";
 import IndigoButton from "@/Components/app/IndigoButton.vue";
 
+const editor = ClassicEditor;
+const editorConfig = {
+    toolbar: ['bold', 'italic', '|', 'bulletedList', 'numberedList', '|', 'heading', '|', 'link', '|', 'blockQuote',]
+};
+
 const props = defineProps({
     post: {
         type: Object,
         required: true
+    },
+    group: {
+        type: Object,
+        default: null
     },
     modelValue: Boolean
 });
 
 const attachmentExtensions = usePage().props.attachmentExtensions;
 
-const editor = ClassicEditor;
-const editorConfig = {
-    toolbar: ['bold', 'italic', '|', 'bulletedList', 'numberedList', '|', 'heading', '|', 'link', '|', 'blockQuote',]
-};
-
 /**
  * {
  *     file: File,
- *     url: ''
+ *     url: '',
  * }
  * @type {Ref<UnwrapRef<*[]>>}
  */
 const attachmentFiles = ref([]);
 const attachmentErrors = ref([]);
 const formErrors = ref({});
-
 const form = useForm({
     body: '',
+    group_id: null,
     attachments: [],
     deleted_file_ids: [],
     _method: 'POST'
@@ -59,9 +63,7 @@ const show = computed({
 });
 
 const computedAttachments = computed(() => {
-
     return [...attachmentFiles.value, ...(props.post.attachments || [])];
-
 })
 
 const showExtensionsText = computed(() => {
@@ -73,7 +75,6 @@ const showExtensionsText = computed(() => {
             return true;
         }
     }
-
     return false;
 })
 
@@ -94,8 +95,10 @@ function resetModal() {
 }
 
 function submit() {
+    if (props.group) {
+        form.group_id = props.group.id;
+    }
     form.attachments = attachmentFiles.value.map(myFile => myFile.file)
-
     if (props.post.id) {
         form._method = 'PUT';
         form.post(route('post.update', props.post.id), {
@@ -131,15 +134,15 @@ function processErrors(errors) {
     }
 }
 
-async function onAttachmentChoose(event) {
-    for (const file of event.target.files) {
+async function onAttachmentChoose($event) {
+    for (const file of $event.target.files) {
         const myFile = {
             file,
             url: await readFile(file)
         }
         attachmentFiles.value.push(myFile)
     }
-    event.target.value = null;
+    $event.target.value = null;
 }
 
 async function readFile(file) {
@@ -150,7 +153,6 @@ async function readFile(file) {
                 res(reader.result);
             }
             reader.onerror = rej;
-
             reader.readAsDataURL(file);
         } else {
             res(null);
@@ -219,6 +221,11 @@ function undoDelete(myFile) {
                                 </DialogTitle>
                                 <div class="p-4">
                                     <PostUserHeader class="mb-4" :post="post" :show-time="false"/>
+                                    <div
+                                        v-if="formErrors.group_id"
+                                        class="bg-red-400 text-white py-2 px-3 rounded mb-3">
+                                        {{formErrors.group_id}}
+                                    </div>
                                     <ckeditor
                                         :editor="editor"
                                         v-model="form.body"
@@ -239,7 +246,7 @@ function undoDelete(myFile) {
                                         {{ formErrors.attachments }}
                                     </div>
 
-                                    <div class="grid grid-cols-2 gap-3 my-3" :class="[
+                                    <div class="grid gap-3 my-3" :class="[
                                         computedAttachments.length === 1 ? 'grid-cols-1' : 'grid-cols-2'
                                     ]">
                                         <div v-for="(myFile, ind) of computedAttachments">

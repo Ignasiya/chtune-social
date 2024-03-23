@@ -2,9 +2,13 @@
 
 namespace App\Http\Requests;
 
+use App\Http\Enums\GroupUserStatus;
+use App\Models\GroupUser;
+use Closure;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\Rules\File;
 
 class StorePostRequest extends FormRequest
@@ -36,7 +40,7 @@ class StorePostRequest extends FormRequest
             'attachments' => [
                 'array',
                 'max:50',
-                function ($value, $fail) {
+                function ($attribute, $value, Closure $fail) {
                     $totalSize = collect($value)->sum(function ($file) {
                         if ($file instanceof UploadedFile) {
                             return $file->getSize();
@@ -53,7 +57,21 @@ class StorePostRequest extends FormRequest
                 'file',
                 File::types(StorePostRequest::$extensions),
             ],
-            'user_id' => ['numeric']
+            'user_id' => ['numeric'],
+            'group_id' => [
+                'nullable',
+                'exists:groups,id',
+                function ($attribute, $value, Closure $fail) {
+
+                    $groupUser = GroupUser::where('user_id', Auth::id())
+                        ->where('group_id', $value)
+                        ->where('status', GroupUserStatus::APPROVED->value)
+                        ->exists();
+
+                    if (!$groupUser) {
+                        $fail('У Вас нет доступа на создание записей в группе');
+                    }
+                }]
         ];
     }
 

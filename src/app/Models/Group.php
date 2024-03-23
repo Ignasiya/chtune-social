@@ -54,6 +54,15 @@ class Group extends Model
             ->exists();
     }
 
+    public function hasApprovedUser(?int $userId): bool
+    {
+        return GroupUser::query()
+            ->where('user_id', $userId)
+            ->where('group_id', $this->id)
+            ->where('status', GroupUserStatus::APPROVED->value)
+            ->exists();
+    }
+
     /*
      * Определяется отношение "многие ко многим" между моделью (Group) и моделью (User).
      * Он использует таблицу 'group_users' в качестве промежуточной таблицы.

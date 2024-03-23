@@ -4,7 +4,7 @@ import ReadMoreReadLess from "@/Components/app/ReadMoreReadLess.vue";
 import IndigoButton from "@/Components/app/IndigoButton.vue";
 import TextareaInput from "@/Components/TextareaInput.vue";
 import Dropdown from "@/Components/app/Dropdown.vue";
-import {usePage} from "@inertiajs/vue3";
+import {usePage, Link} from "@inertiajs/vue3";
 import {ref} from "vue";
 import axiosClient from "@/axiosClient.js";
 import {Disclosure, DisclosureButton, DisclosurePanel} from "@headlessui/vue";
@@ -88,14 +88,14 @@ function sendCommentReaction(comment) {
 }
 
 function onCommentCreate(comment) {
-    if ( props.parentComment) {
+    if (props.parentComment) {
         props.parentComment.num_of_comments++
     }
     emit('commentCreate', comment)
 }
 
 function onCommentDelete(comment) {
-    if ( props.parentComment) {
+    if (props.parentComment) {
         props.parentComment.num_of_comments--
     }
     emit('commentDelete', comment)
@@ -105,12 +105,12 @@ function onCommentDelete(comment) {
 
 <template>
     <div class="flex gap-2 mb-3">
-        <a href="javascript:void(0)">
+        <Link :href="route('profile', authUser.username)">
             <img
-                :src="authUser.avatar_url || '/image/no-avatar.png'"
+                :src="authUser.avatar_url"
                 alt="avatar"
                 class="w-[40px] rounded-full border-2 transition-all hover:border-blue-500"/>
-        </a>
+        </Link>
         <div class="flex flex-1">
             <TextareaInput
                 v-model="newCommentText"
@@ -129,15 +129,17 @@ function onCommentDelete(comment) {
             :key="comment.id">
             <div class="flex justify-between gap-2">
                 <div class="flex gap-2">
-                    <a href="javascript:void(0)">
+                    <Link :href="route('profile', comment.user.username)">
                         <img
-                            :src="comment.user.avatar_url || '/image/no-avatar.png'"
+                            :src="comment.user.avatar_url"
                             alt="avatar"
                             class="w-[40px] rounded-full border-2 transition-all hover:border-blue-500"/>
-                    </a>
+                    </Link>
                     <div>
                         <h4 class="font-bold">
-                            <a href="javascript:void(0)" class="hover:underline">{{ comment.user.name }}</a>
+                            <Link :href="route('profile', comment.user.username)" class="hover:underline">
+                                {{ comment.user.name }}
+                            </Link>
                         </h4>
                         <small class="text-xs text-gray-400">{{ comment.updated_at }}</small>
                     </div>
@@ -197,7 +199,7 @@ function onCommentDelete(comment) {
                             :data="{comments: comment.comments}"
                             :parent-comment="comment"
                             @comment-create="onCommentCreate"
-                            @comment-delete="onCommentDelete" />
+                            @comment-delete="onCommentDelete"/>
                     </DisclosurePanel>
                 </Disclosure>
             </div>

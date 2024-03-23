@@ -7,6 +7,7 @@ use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdateCommentRequest;
 use App\Http\Requests\UpdatePostRequest;
 use App\Http\Resources\CommentResource;
+use App\Http\Resources\PostResource;
 use App\Models\Comment;
 use App\Models\Post;
 use App\Models\PostAttachment;
@@ -38,24 +39,12 @@ class PostController extends Controller
             /** @var UploadedFile[] $files */
             $files = $data['attachments'] ?? [];
 
-            foreach ($files as $file) {
-                $path = $file->store('attachments/' . $post->id, 'public');
-                $allFilePaths[] = $path;
+            $allFilePaths = $this->processAttachments($post, $files, $user);
 
-                PostAttachment::create([
-                    'post_id' => $post->id,
-                    'name' => $file->getClientOriginalName(),
-                    'path' => $path,
-                    'mime' => $file->getMimeType(),
-                    'size' => $file->getSize(),
-                    'created_by' => $user->id
-                ]);
-            }
             DB::commit();
         } catch (Exception $e) {
-            foreach ($allFilePaths as $path) {
-                Storage::disk('public')->delete($path);
-            }
+
+            $this->deleteFailedAttachments($allFilePaths);
             DB::rollBack();
             throw $e;
         }
@@ -72,6 +61,7 @@ class PostController extends Controller
 
         DB::beginTransaction();
         $allFilePaths = [];
+
         try {
             $data = $request->validated();
             $post->update($data);
@@ -90,24 +80,12 @@ class PostController extends Controller
             /** @var UploadedFile[] $files */
             $files = $data['attachments'] ?? [];
 
-            foreach ($files as $file) {
-                $path = $file->store('attachments/' . $post->id, 'public');
-                $allFilePaths[] = $path;
+            $allFilePaths = $this->processAttachments($post, $files, $user);
 
-                PostAttachment::create([
-                    'post_id' => $post->id,
-                    'name' => $file->getClientOriginalName(),
-                    'path' => $path,
-                    'mime' => $file->getMimeType(),
-                    'size' => $file->getSize(),
-                    'created_by' => $user->id
-                ]);
-            }
             DB::commit();
         } catch (Exception $e) {
-            foreach ($allFilePaths as $path) {
-                Storage::disk('public')->delete($path);
-            }
+
+            $this->deleteFailedAttachments($allFilePaths);
             DB::rollBack();
             throw $e;
         }
@@ -238,5 +216,32 @@ class PostController extends Controller
             'num_of_reactions' => $reactions,
             'current_user_has_reaction' => $hasReaction,
         ]);
+    }
+
+    private function processAttachments(Post $post, $files, $user)
+    {
+        $allFilePaths = [];
+
+        foreach ($files as $file) {
+            $path = $file->store('attachments/' . $post->id, 'public');
+            $allFilePaths[] = $path;
+
+            PostAttachment::create([
+                'post_id' => $post->id,
+                'name' => $file->getClientOriginalName(),
+                'path' => $path,
+                'mime' => $file->getMimeType(),
+                'size' => $file->getSize(),
+                'created_by' => $user->id
+            ]);
+        }
+        return $allFilePaths;
+    }
+
+    private function deleteFailedAttachments($allFilePaths)
+    {
+        foreach ($allFilePaths as $path) {
+            Storage::disk('public')->delete($path);
+        }
     }
 }
