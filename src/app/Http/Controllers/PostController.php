@@ -7,11 +7,12 @@ use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdateCommentRequest;
 use App\Http\Requests\UpdatePostRequest;
 use App\Http\Resources\CommentResource;
-use App\Http\Resources\PostResource;
 use App\Models\Comment;
 use App\Models\Post;
 use App\Models\PostAttachment;
 use App\Models\Reaction;
+use App\Notifications\CommentDeleted;
+use App\Notifications\PostDeleted;
 use DB;
 use Exception;
 use Illuminate\Http\Request;
@@ -103,16 +104,17 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        // Todo для админа доступ к удалению
         $id = Auth::id();
 
-        if ($post->user_id !== $id) {
-            return response('Отсутствует доступ для удаления записи', 403);
+        if ($post->isOwner($id) || $post->group && $post->group->isAdmin($id)) {
+            $post->delete();
+
+            if (!$post->isOwner($id)) {
+                $post->user->notify(new PostDeleted($post->group));
+            }
+            return back();
         }
-
-        $post->delete();
-
-        return back();
+        return response('Отсутствует доступ для удаления записи', 403);
     }
 
     public function postReaction(Request $request, Post $post)
@@ -122,7 +124,8 @@ class PostController extends Controller
         ]);
 
         $userId = Auth::id();
-        $reaction = Reaction::where('user_id', $userId)
+        $reaction = Reaction::query()
+            ->where('user_id', $userId)
             ->where('object_id', $post->id)
             ->where('object_type', Post::class)
             ->first();
@@ -140,7 +143,10 @@ class PostController extends Controller
             ]);
         }
 
-        $reactions = Reaction::where('object_id', $post->id)->where('object_type', Post::class)->count();
+        $reactions = Reaction::query()
+            ->where('object_id', $post->id)
+            ->where('object_type', Post::class)
+            ->count();
 
         return response([
             'num_of_reactions' => $reactions,
@@ -152,7 +158,7 @@ class PostController extends Controller
     {
         $data = $request->validate([
             'comment' => ['required'],
-            'parent_id' => ['nullable','exists:comments,id']
+            'parent_id' => ['nullable', 'exists:comments,id']
         ]);
 
         $comment = Comment::create([
@@ -167,11 +173,19 @@ class PostController extends Controller
 
     public function deleteComment(Comment $comment)
     {
-        if ($comment->user_id !== Auth::id()) {
-            return response('Не доступа для удаления комментария', 403);
+        $id = Auth::id();
+        $post = $comment->post;
+
+        if ($comment->isOwner($id) || $post->isOwner($id)) {
+            $comment->delete();
+
+            if (!$comment->isOwner($id)) {
+                $comment->user->notify(new CommentDeleted($comment, $post));
+            }
+
+            return response('', 204);
         }
-        $comment->delete();
-        return response('', 204);
+        return response('Не доступа для удаления комментария', 403);
     }
 
     public function updateComment(UpdateCommentRequest $request, Comment $comment)
@@ -192,7 +206,8 @@ class PostController extends Controller
         ]);
 
         $userId = Auth::id();
-        $reaction = Reaction::where('user_id', $userId)
+        $reaction = Reaction::query()
+            ->where('user_id', $userId)
             ->where('object_id', $comment->id)
             ->where('object_type', Comment::class)
             ->first();
@@ -210,7 +225,10 @@ class PostController extends Controller
             ]);
         }
 
-        $reactions = Reaction::where('object_id', $comment->id)->where('object_type', Comment::class)->count();
+        $reactions = Reaction::query()
+            ->where('object_id', $comment->id)
+            ->where('object_type', Comment::class)
+            ->count();
 
         return response([
             'num_of_reactions' => $reactions,

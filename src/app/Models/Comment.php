@@ -8,6 +8,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
+/**
+ * @property mixed $post
+ * @property mixed $user
+ */
 class Comment extends Model
 {
     use HasFactory;
@@ -36,5 +40,10 @@ class Comment extends Model
     public function comments(): HasMany
     {
         return $this->hasMany(Comment::class, 'parent_id');
+    }
+
+    public function isOwner($userId): bool
+    {
+        return $this->user_id == $userId;
     }
 }

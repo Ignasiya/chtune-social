@@ -64,6 +64,7 @@ class GroupController extends Controller
             ->select(['users.*', 'gu.role', 'gu.status', 'gu.group_id'])
             ->join('group_users AS gu', 'gu.user_id', 'users.id')
             ->orderBy('users.name')
+            ->where('status', GroupUserStatus::APPROVED->value)
             ->where('gu.group_id', $group->id)
             ->get();
 

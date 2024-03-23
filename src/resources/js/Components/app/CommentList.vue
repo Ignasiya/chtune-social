@@ -3,7 +3,7 @@ import {ChatBubbleLeftRightIcon, HandThumbUpIcon} from '@heroicons/vue/24/solid'
 import ReadMoreReadLess from "@/Components/app/ReadMoreReadLess.vue";
 import IndigoButton from "@/Components/app/IndigoButton.vue";
 import TextareaInput from "@/Components/TextareaInput.vue";
-import Dropdown from "@/Components/app/Dropdown.vue";
+import Dropdown from "@/Components/app/PostDropdown.vue";
 import {usePage, Link} from "@inertiajs/vue3";
 import {ref} from "vue";
 import axiosClient from "@/axiosClient.js";
@@ -12,7 +12,7 @@ import {Disclosure, DisclosureButton, DisclosurePanel} from "@headlessui/vue";
 const authUser = usePage().props.auth.user;
 
 const newCommentText = ref('');
-const editingComment = ref(null);
+const editingComment = ref({});
 
 const props = defineProps({
     post: Object,
@@ -145,7 +145,8 @@ function onCommentDelete(comment) {
                     </div>
                 </div>
                 <Dropdown
-                    :user="comment.user"
+                    :comment="comment"
+                    :post="post"
                     @edit="editComment(comment)"
                     @delete="deleteComment(comment)"/>
             </div>

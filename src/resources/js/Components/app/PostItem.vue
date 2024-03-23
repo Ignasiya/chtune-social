@@ -5,7 +5,7 @@ import PostUserHeader from "@/Components/app/PostUserHeader.vue";
 import {router} from "@inertiajs/vue3";
 import axiosClient from "@/axiosClient.js";
 import ReadMoreReadLess from "@/Components/app/ReadMoreReadLess.vue";
-import Dropdown from "@/Components/app/Dropdown.vue";
+import Dropdown from "@/Components/app/PostDropdown.vue";
 import PostAttachments from "@/Components/app/PostAttachments.vue";
 import CommentList from "@/Components/app/CommentList.vue";
 
@@ -47,7 +47,7 @@ function sendReaction() {
     <div class="bg-white border rounded p-4 mb-3">
         <div class="flex justify-between items-center mb-3">
             <PostUserHeader :post="post"/>
-            <Dropdown :user="post.user" @edit="openEditModal" @delete="deletePost"/>
+            <Dropdown :post="post" @edit="openEditModal" @delete="deletePost"/>
         </div>
         <div class="mb-3">
             <ReadMoreReadLess :content="post.body"/>
