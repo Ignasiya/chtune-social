@@ -264,8 +264,8 @@ function deleteUser(user) {
                         <Tab v-slot="{ selected }" as="template">
                             <TabItem text="Фото" :selected="selected"></TabItem>
                         </Tab>
-                        <Tab v-if="isUserAdmin" v-slot="{ selected }" as="template">
-                            <TabItem text="Редактирование" :selected="selected"></TabItem>
+                        <Tab v-slot="{ selected }" as="template">
+                            <TabItem text="О группе" :selected="selected"></TabItem>
                         </Tab>
                     </TabList>
 
@@ -317,10 +317,16 @@ function deleteUser(user) {
                             Фото
                         </TabPanel>
                         <TabPanel class="bg-white p-3 shadow">
-                            <GroupForm :form="editForm"/>
-                            <PrimaryButton @click="updateGroup">
-                                Сохранить
-                            </PrimaryButton>
+                            <template v-if="isUserAdmin">
+                                <GroupForm :form="editForm"/>
+                                <PrimaryButton @click="updateGroup">
+                                    Сохранить
+                                </PrimaryButton>
+                            </template>
+                            <div v-else-if="group.about" v-html="group.about" />
+                            <div v-else class="text-center">
+                                Описание группы отсутствует
+                            </div>
                         </TabPanel>
                     </TabPanels>
                 </TabGroup>

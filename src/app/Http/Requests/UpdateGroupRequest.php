@@ -7,6 +7,9 @@ use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
 
+/**
+ * @property mixed $about
+ */
 class UpdateGroupRequest extends FormRequest
 {
     /**
@@ -14,7 +17,7 @@ class UpdateGroupRequest extends FormRequest
      */
     public function authorize(): bool
     {
-        /* @var Group $group*/
+        /* @var Group $group */
         $group = $this->route('group');
 
         return $group->isAdmin(Auth::id());
@@ -32,5 +35,12 @@ class UpdateGroupRequest extends FormRequest
             'auto_approval' => ['required', 'boolean'],
             'about' => ['nullable']
         ];
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'about' => nl2br($this->about)
+        ]);
     }
 }
