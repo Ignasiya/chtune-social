@@ -2,19 +2,20 @@
 
 namespace App\Notifications;
 
-use App\Models\Group;
+use App\Models\Post;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class PostDeleted extends Notification
+class ReactionOnPost extends Notification
 {
     use Queueable;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct(public Group $group)
+    public function __construct(public Post $post, public User $user)
     {
         //
     }
@@ -35,9 +36,9 @@ class PostDeleted extends Notification
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Запись удалена')
-            ->line('Ваша запись удалена в группе "' . $this->group->name . '".')
-            ->action('Перейти к группе', url(route('group.profile', $this->group)));
+            ->subject('Новая реакция на запись')
+            ->line('Пользователь "' . $this->user->username . '" отреагировал на Вашу запись.')
+            ->action('Перейти к записи', url('/'));
     }
 
     /**

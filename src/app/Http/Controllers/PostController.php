@@ -11,13 +11,19 @@ use App\Models\Comment;
 use App\Models\Post;
 use App\Models\PostAttachment;
 use App\Models\Reaction;
+use App\Models\User;
+use App\Notifications\CommentCreated;
 use App\Notifications\CommentDeleted;
+use App\Notifications\PostCreated;
 use App\Notifications\PostDeleted;
+use App\Notifications\ReactionOnComment;
+use App\Notifications\ReactionOnPost;
 use DB;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 
@@ -43,6 +49,17 @@ class PostController extends Controller
             $allFilePaths = $this->processAttachments($post, $files, $user);
 
             DB::commit();
+
+            $group = $post->group;
+
+            if ($group) {
+                $users = $group->approvedUsers()
+                    ->where('users.id', '!=', $user->id)
+                    ->get();
+
+                Notification::send($users, new PostCreated($post, $group));
+            }
+
         } catch (Exception $e) {
 
             $this->deleteFailedAttachments($allFilePaths);
@@ -141,6 +158,11 @@ class PostController extends Controller
                 'user_id' => $userId,
                 'type' => $data['reaction']
             ]);
+
+            if (!$post->isOwner($userId)) {
+                $user = User::where('id', $userId)->first();
+                $post->user->notify(new ReactionOnPost($post, $user));
+            }
         }
 
         $reactions = Reaction::query()
@@ -167,6 +189,10 @@ class PostController extends Controller
             'user_id' => Auth::id(),
             'parent_id' => $data['parent_id'] ?: null
         ]);
+
+        $post = $comment->post;
+
+        $post->user->notify(new CommentCreated($comment));
 
         return response(new CommentResource($comment), 201);
     }
@@ -223,6 +249,11 @@ class PostController extends Controller
                 'user_id' => $userId,
                 'type' => $data['reaction']
             ]);
+
+            if (!$comment->isOwner($userId)) {
+                $user = User::where('id', $userId)->first();
+                $comment->user->notify(new ReactionOnComment($comment->post, $comment, $user));
+            }
         }
 
         $reactions = Reaction::query()
