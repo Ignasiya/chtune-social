@@ -63,11 +63,11 @@ const deleteAllowed = computed(() => {
                         @click="$emit('edit')"
                         :class="[
                               active ? 'bg-indigo-600 text-white' : 'text-gray-900',
-                              'group flex w-full items-center rounded-md px-2 py-2 text-sm',
+                              'group flex w-full items-center rounded-md px-1 py-1 text-sm',
                             ]"
                     >
                         <PencilIcon
-                            class="mr-2 h-5 w-5"
+                            class="mr-2 h-4 w-4"
                             aria-hidden="true"
                         />
                         Редактировать
@@ -81,11 +81,11 @@ const deleteAllowed = computed(() => {
                         @click="$emit('delete')"
                         :class="[
                               active ? 'bg-indigo-600 text-white' : 'text-gray-900',
-                              'group flex w-full items-center rounded-md px-2 py-2 text-sm',
+                              'group flex w-full items-center rounded-md px-1 py-1 text-sm',
                             ]"
                     >
                         <TrashIcon
-                            class="mr-2 h-5 w-5"
+                            class="mr-2 h-4 w-4"
                             aria-hidden="true"
                         />
                         Удалить

@@ -1,5 +1,6 @@
 <script setup>
 import {Link} from '@inertiajs/vue3';
+import {XMarkIcon} from "@heroicons/vue/24/solid/index.js";
 
 defineProps({
     user: Object,
@@ -17,7 +18,7 @@ defineProps({
     }
 })
 
-defineEmits(['approved', 'rejected', 'roleChange'])
+defineEmits(['approved', 'rejected', 'roleChange', 'deleted'])
 
 </script>
 
@@ -34,17 +35,17 @@ defineEmits(['approved', 'rejected', 'roleChange'])
                 </Link>
                 <div v-if="forApprove" class="flex gap-1">
                     <button
-                        class="text-xs py-1 px-3 rounded bg-red-500 hover:bg-red-600 text-white"
+                        class="text-xs py-1 px-2 rounded bg-red-500 hover:bg-red-600 text-white"
                         @click.prevent="$emit('rejected', user)">
-                        Отклонить
+                        отклонить
                     </button>
                     <button
-                        class="text-xs py-1 px-3 rounded bg-emerald-500 hover:bg-emerald-600 text-white"
+                        class="text-xs py-1 px-2 rounded bg-emerald-500 hover:bg-emerald-600 text-white"
                         @click.prevent="$emit('approved', user)">
-                        Одобрить
+                        одобрить
                     </button>
                 </div>
-                <div v-if="showRoleDropdown">
+                <div class="flex gap-1" v-if="showRoleDropdown">
                     <select
                         :disabled="disableRoleDropdown"
                         @change="$emit('roleChange', user, $event.target.value)"
@@ -52,6 +53,12 @@ defineEmits(['approved', 'rejected', 'roleChange'])
                         <option :selected="user.role === 'admin'">admin</option>
                         <option :selected="user.role === 'user'">user</option>
                     </select>
+                    <button
+                        @click="$emit('deleted', user)"
+                        :disabled="disableRoleDropdown"
+                        class="h-8 w-8 rounded-full hover:bg-black/5 transition flex items-center justify-center disabled:opacity-25">
+                        <XMarkIcon class="w-4 h-4"/>
+                    </button>
                 </div>
             </div>
         </div>

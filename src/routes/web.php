@@ -80,6 +80,9 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/group/change-role/{group:slug}', [GroupController::class, 'changeRole'])
         ->name('group.changeRole');
+
+    Route::delete('/group/remove-user/{group:slug}', [GroupController::class, 'removeUser'])
+        ->name('group.removeUser');
 });
 
 require __DIR__ . '/auth.php';

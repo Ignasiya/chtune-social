@@ -136,6 +136,17 @@ function updateGroup() {
     });
 }
 
+function deleteUser(user) {
+    if (window.confirm(`Вы уверены что хотите удалить пользователя "${user.name}"?`)) {
+        const form = useForm({
+            user_id: user.id,
+        })
+        form.delete(route('group.removeUser', props.group.slug), {
+            preserveScroll: true
+        })
+    }
+}
+
 </script>
 
 <template>
@@ -281,6 +292,7 @@ function updateGroup() {
                                     v-for="user of users"
                                     :user="user"
                                     :key="user.id"
+                                    @deleted="deleteUser"
                                     :show-role-dropdown="isUserAdmin"
                                     :disable-role-dropdown="group.user_id === user.id"
                                     @roleChange="onRoleChange"/>
