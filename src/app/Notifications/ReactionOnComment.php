@@ -39,7 +39,7 @@ class ReactionOnComment extends Notification
             ->subject('Новая реакция на комментарий')
             ->line('Пользователь "'. $this->user->name .'" отреагировал на Ваш комментарий.')
             ->line('"' . $this->comment->comment . '"')
-            ->action('Перейти к записи', url('/'));
+            ->action('Перейти к записи', url(route('post.view', $this->post->id)));
     }
 
     /**

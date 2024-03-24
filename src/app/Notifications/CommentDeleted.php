@@ -40,7 +40,7 @@ class CommentDeleted extends Notification
         return (new MailMessage)
             ->subject('Комментарий удален')
             ->line('Ваш комментарий "' . Str::words($this->comment->comment, 5) . '" удален.')
-            ->action('Перейти к записи', url('/'));
+            ->action('Перейти к записи', url(route('post.view', $this->post->id)));
     }
 
     /**

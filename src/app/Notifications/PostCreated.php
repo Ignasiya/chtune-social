@@ -38,7 +38,7 @@ class PostCreated extends Notification
         return (new MailMessage)
             ->subject('Новая запись')
             ->line('Новая запись опубликована в группе "' . $this->group->name . '".')
-            ->action('Перейти к группе', url(route('group.profile', $this->group)));
+            ->action('Перейти к записи', url(route('post.view', $this->post->id)));
     }
 
     /**

@@ -37,7 +37,7 @@ class RoleChanged extends Notification
         return (new MailMessage)
             ->subject('Роль в группе изменена')
             ->line('Роль в группе "' . $this->group->name .'" изменена на "' . $this->role .'"')
-            ->action('Перейти в группу', url(route('group.profile', $this->group)));
+            ->action('Перейти в группу', url(route('group.profile', $this->group->slug)));
     }
 
     /**

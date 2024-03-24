@@ -37,7 +37,7 @@ class InvitationApproved extends Notification
         return (new MailMessage)
             ->subject('Пользователь вступил в группу')
             ->line('User "' . $this->user->name . '" вступил в группу "' . $this->group->name . '"')
-            ->action('Показать группу', url(route('group.profile', $this->group)));
+            ->action('Показать группу', url(route('group.profile', $this->group->slug)));
     }
 
     /**

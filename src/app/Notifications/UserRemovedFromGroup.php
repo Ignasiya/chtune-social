@@ -37,7 +37,7 @@ class UserRemovedFromGroup extends Notification
         return (new MailMessage)
             ->subject('Вас удалили из группы')
             ->line('Вас удалили из группы "' . $this->group->name .'".')
-            ->action('Перейти в группу', url(route('group.profile', $this->group)));
+            ->action('Перейти в группу', url(route('group.profile', $this->group->slug)));
     }
 
     /**

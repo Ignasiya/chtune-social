@@ -3,10 +3,11 @@
 namespace App\Notifications;
 
 use App\Models\Comment;
+use App\Models\Post;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
-use Illuminate\Support\Str;
 
 class CommentCreated extends Notification
 {
@@ -15,7 +16,7 @@ class CommentCreated extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct(public Comment $comment)
+    public function __construct(public Post $post, public Comment $comment)
     {
     }
 
@@ -36,9 +37,9 @@ class CommentCreated extends Notification
     {
         return (new MailMessage)
             ->subject('Новый комментарий записи')
-            ->line('Новый комментарий опубликован под Вашей записью.')
+            ->line('Пользователь "' . $this->comment->user->username . '" оставил новый комментарий под Вашей записью.')
             ->line('"' . $this->comment->comment . '"')
-            ->action('Перейти к записи', url('/'));
+            ->action('Перейти к записи', url(route('post.view', $this->post->id)));
     }
 
     /**

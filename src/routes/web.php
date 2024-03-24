@@ -31,6 +31,9 @@ Route::middleware('auth')->group(function () {
         ->name('profile.destroy');
 
     // Записи
+    Route::get('/post/{post}', [PostController::class, 'view'])
+        ->name('post.view');
+
     Route::post('/post', [PostController::class, 'store'])
         ->name('post.create');
 

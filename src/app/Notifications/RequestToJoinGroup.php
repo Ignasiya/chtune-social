@@ -39,7 +39,7 @@ class RequestToJoinGroup extends Notification
         return (new MailMessage)
             ->subject('Запрос на вступление в группу')
             ->line('Пользователь "' . $this->user->name . '" хочет вступить в группу "' . $this->group->name . '"')
-            ->action('Запрос на вступление', url(route('group.profile', $this->group)));
+            ->action('Запрос на вступление', url(route('group.profile', $this->group->slug)));
     }
 
     /**

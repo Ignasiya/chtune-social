@@ -1,8 +1,8 @@
 <script setup>
 
 import {Menu, MenuButton, MenuItem, MenuItems} from "@headlessui/vue";
-import {EllipsisVerticalIcon, PencilIcon, TrashIcon} from "@heroicons/vue/20/solid/index.js";
-import {usePage} from "@inertiajs/vue3";
+import {EllipsisVerticalIcon, PencilIcon, TrashIcon, EyeIcon, ClipboardIcon} from "@heroicons/vue/20/solid/index.js";
+import {usePage, Link} from "@inertiajs/vue3";
 import {computed} from "vue";
 
 const props = defineProps({
@@ -31,6 +31,19 @@ const deleteAllowed = computed(() => {
     return !props.comment && props.post.group?.role === 'admin';
 })
 
+function copyToClipboard() {
+    const textToCopy = route('post.view', props.post.id);
+
+    const tempInput = document.createElement('input');
+    tempInput.value = textToCopy;
+    document.body.appendChild(tempInput);
+
+    tempInput.select();
+    document.execCommand('copy');
+
+    document.body.removeChild(tempInput);
+}
+
 </script>
 
 <template>
@@ -55,6 +68,42 @@ const deleteAllowed = computed(() => {
             <MenuItems
                 class="absolute z-30 right-0 mt-2 w-40 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg focus:outline-none"
             >
+                <MenuItem
+                    v-if="!comment"
+                    class="px-1 py-1"
+                    v-slot="{ active }">
+                    <Link
+                        :href="route('post.view', post.id)"
+                        :class="[
+                              active ? 'bg-indigo-600 text-white' : 'text-gray-900',
+                              'group flex w-full items-center rounded-md px-1 py-1 text-sm',
+                            ]"
+                    >
+                        <EyeIcon
+                            class="mr-2 h-4 w-4"
+                            aria-hidden="true"
+                        />
+                        Открыть запись
+                    </Link>
+                </MenuItem>
+                <MenuItem
+                    v-if="!comment"
+                    class="px-1 py-1"
+                    v-slot="{ active }">
+                    <button
+                        @click="copyToClipboard"
+                        :class="[
+                              active ? 'bg-indigo-600 text-white' : 'text-gray-900',
+                              'group flex w-full items-center rounded-md px-1 py-1 text-sm',
+                            ]"
+                    >
+                        <ClipboardIcon
+                            class="mr-2 h-4 w-4"
+                            aria-hidden="true"
+                        />
+                        Скопировать URL
+                    </button>
+                </MenuItem>
                 <MenuItem
                     class="px-1 py-1"
                     v-if="editAllowed"

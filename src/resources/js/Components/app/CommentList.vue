@@ -3,7 +3,7 @@ import {ChatBubbleLeftRightIcon, HandThumbUpIcon} from '@heroicons/vue/24/solid'
 import ReadMoreReadLess from "@/Components/app/ReadMoreReadLess.vue";
 import IndigoButton from "@/Components/app/IndigoButton.vue";
 import TextareaInput from "@/Components/TextareaInput.vue";
-import Dropdown from "@/Components/app/PostDropdown.vue";
+import PostDropdown from "@/Components/app/PostDropdown.vue";
 import {usePage, Link} from "@inertiajs/vue3";
 import {ref} from "vue";
 import axiosClient from "@/axiosClient.js";
@@ -144,7 +144,7 @@ function onCommentDelete(comment) {
                         <small class="text-xs text-gray-400">{{ comment.updated_at }}</small>
                     </div>
                 </div>
-                <Dropdown
+                <PostDropdown
                     :comment="comment"
                     :post="post"
                     @edit="editComment(comment)"

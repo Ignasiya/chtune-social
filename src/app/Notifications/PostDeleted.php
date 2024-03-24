@@ -37,7 +37,7 @@ class PostDeleted extends Notification
         return (new MailMessage)
             ->subject('Запись удалена')
             ->line('Ваша запись удалена в группе "' . $this->group->name . '".')
-            ->action('Перейти к группе', url(route('group.profile', $this->group)));
+            ->action('Перейти к группе', url(route('group.profile', $this->group->slug)));
     }
 
     /**

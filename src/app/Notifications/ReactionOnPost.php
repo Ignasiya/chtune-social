@@ -38,7 +38,7 @@ class ReactionOnPost extends Notification
         return (new MailMessage)
             ->subject('Новая реакция на запись')
             ->line('Пользователь "' . $this->user->username . '" отреагировал на Вашу запись.')
-            ->action('Перейти к записи', url('/'));
+            ->action('Перейти к записи', url(route('post.view', $this->post->id)));
     }
 
     /**

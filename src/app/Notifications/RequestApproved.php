@@ -38,7 +38,7 @@ class RequestApproved extends Notification
         return (new MailMessage)
             ->subject('Запрос ' . $this->approved)
             ->line('Ваш запрос на вступление в группу "' . $this->group->name . '" ' . $this->approved)
-            ->action('Перейти в группу', url(route('group.profile', $this->group)));
+            ->action('Перейти в группу', url(route('group.profile', $this->group->slug)));
     }
 
     /**
