@@ -26,10 +26,21 @@ class GroupResource extends JsonResource
             'cover_url' => $this->cover_path ? Storage::url($this->cover_path) : '/image/cover_default.jpg',
             'auto_approval' => $this->auto_approval,
             'about' => $this->about,
-            'description' => Str::words(strip_tags($this->about), 5),
+            'description' => $this->removeTags($this->about),
             'user_id' => $this->user_id,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];
+    }
+
+    private function removeTags($string): string
+    {
+        $plainText = Str::take($string, 150);
+
+        $plainText = preg_replace('/(>|<\/li>)/', '$1 ', $plainText);
+        $plainText = preg_replace('/<\/p>(?!\s*<\/ul>|<p>)/', '</p> ', $plainText);
+        $plainText = preg_replace('/<\/ul>(?!\s*<p>)/', '</ul> ', $plainText);
+
+        return strip_tags($plainText);
     }
 }

@@ -42,7 +42,7 @@ const group = usePage().props.group;
 const editForm = useForm({
     name: group.name,
     auto_approval: !!parseInt(group.auto_approval),
-    about: group.about.replace(/<br\s*\/?>/gi, '\n')
+    about: group.about
 });
 
 function onCoverChange(event) {
@@ -326,8 +326,8 @@ function deleteUser(user) {
                                     Сохранить
                                 </PrimaryButton>
                             </template>
-                            <div v-else-if="group.about" v-html="group.about" />
-                            <div v-else class="ck-content-output text-center">
+                            <div v-else-if="group.about" class="ck-content-output" v-html="group.about" />
+                            <div v-else class="text-center">
                                 Описание группы отсутствует
                             </div>
                         </TabPanel>
