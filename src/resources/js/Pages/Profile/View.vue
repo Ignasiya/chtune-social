@@ -6,6 +6,8 @@ import TabItem from "@/Pages/Profile/Partials/TabItem.vue";
 import Edit from "@/Pages/Profile/Edit.vue";
 import {computed, ref} from "vue";
 import {XMarkIcon, CameraIcon, CheckIcon} from '@heroicons/vue/24/solid'
+import PrimaryButton from "@/Components/PrimaryButton.vue";
+import DangerButton from "@/Components/DangerButton.vue";
 
 const imagesForm = useForm({
     avatar: null,
@@ -21,18 +23,12 @@ const isMyProfile = computed(() => authUser && authUser.id === props.user.id);
 
 const props = defineProps({
     errors: Object,
-    mustVerifyEmail: {
-        type: Boolean,
-    },
-    status: {
-        type: String,
-    },
-    success: {
-        type: String,
-    },
-    user: {
-        type: Object,
-    }
+    mustVerifyEmail: Boolean,
+    status: String,
+    success: String,
+    isUserFollower : Boolean,
+    followerCount: Number,
+    user: Object
 });
 
 function onCoverChange(event) {
@@ -91,6 +87,29 @@ function submitAvatarImage() {
             }, 3000);
         }
     });
+}
+
+function followUser() {
+    const form = useForm({
+        follow: !props.isUserFollower
+    })
+
+    form.post(route('user.follow', props.user.id), {
+        preserveScroll: true,
+    });
+}
+
+function parseFollowers(count) {
+    let end;
+    if (count % 10 === 1 && count % 100 !== 11) {
+        end = 'к';
+    } else if ([2, 3, 4].includes(count % 10) && ![12, 13, 14].includes(count % 100)) {
+        end = 'ка';
+    } else {
+        end = 'ков';
+    }
+    const formatCount = count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    return formatCount + ' подписчи' + end;
 }
 
 </script>
@@ -170,9 +189,19 @@ function submitAvatarImage() {
                             </div>
                         </div>
                         <div class="flex flex-1 justify-between items-center p-4">
-                            <h2 class="font-bold text-lg">{{ user.name }}</h2>
+                            <div>
+                                <h2 class="font-bold text-lg">{{ user.name }}</h2>
+                                <p class="text-xs text-gray-500">{{ parseFollowers(followerCount) }}</p>
+                            </div>
+                            <PrimaryButton v-if="!isUserFollower" @click="followUser">
+                                Подписаться
+                            </PrimaryButton>
+                            <DangerButton v-else @click="followUser">
+                                Отписаться
+                            </DangerButton>
                         </div>
                     </div>
+
                 </div>
             </div>
             <div class="p-4 pt-0">
@@ -185,7 +214,7 @@ function submitAvatarImage() {
                             <TabItem text="Подписчики" :selected="selected"></TabItem>
                         </Tab>
                         <Tab v-slot="{ selected }" as="template">
-                            <TabItem text="Последователи" :selected="selected"></TabItem>
+                            <TabItem text="Подписан" :selected="selected"></TabItem>
                         </Tab>
                         <Tab v-slot="{ selected }" as="template">
                             <TabItem text="Фото" :selected="selected"></TabItem>
@@ -203,7 +232,7 @@ function submitAvatarImage() {
                             Подписчики
                         </TabPanel>
                         <TabPanel class="bg-white p-3 shadow">
-                            Последователи
+                            Подписан
                         </TabPanel>
                         <TabPanel class="bg-white p-3 shadow">
                             Фото

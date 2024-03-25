@@ -5,6 +5,9 @@ namespace App\Http\Requests;
 use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
+/**
+ * @property mixed $about
+ */
 class StoreGroupRequest extends FormRequest
 {
     /**
@@ -27,5 +30,12 @@ class StoreGroupRequest extends FormRequest
             'auto_approval' => ['required', 'boolean'],
             'about' => ['nullable']
         ];
+    }
+
+    protected function prepareForValidation(): void
+    {
+        $this->merge([
+            'about' => nl2br($this->about)
+        ]);
     }
 }
