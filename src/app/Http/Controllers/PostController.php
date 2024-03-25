@@ -71,8 +71,11 @@ class PostController extends Controller
                     ->where('users.id', '!=', $user->id)
                     ->get();
 
-                Notification::send($users, new PostCreated($post, $group));
+                Notification::send($users, new PostCreated($post, $user, $group));
             }
+
+            $followers = $user->followers;
+            Notification::send($followers, new PostCreated($post, $user));
 
         } catch (Exception $e) {
 

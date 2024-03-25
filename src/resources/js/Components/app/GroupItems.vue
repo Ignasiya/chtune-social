@@ -28,11 +28,11 @@ function onGroupCreate(group) {
         </IndigoButton>
     </div>
     <div class="mt-3 h-[200px] lg:flex-1 overflow-auto">
-        <div v-if="false" class="text-gray-400 text-center p-3">
-            Вы не вступили ни в одну группу
+        <div v-if="groups.length">
+            <GroupItem v-for="group of groups" :key="group.id" :group="group" />
         </div>
-        <div v-else>
-            <GroupItem v-for="group of groups" :group="group" />
+        <div v-else class="text-gray-400 text-center p-3">
+            Вы не вступили ни в одну группу
         </div>
     </div>
     <GroupModal v-model="showNewGroupModal" @create="onGroupCreate"/>

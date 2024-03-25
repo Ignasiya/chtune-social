@@ -4,6 +4,7 @@ namespace App\Notifications;
 
 use App\Models\Group;
 use App\Models\Post;
+use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -16,7 +17,7 @@ class PostCreated extends Notification
     /**
      * Create a new notification instance.
      */
-    public function __construct(public Post $post, public Group $group)
+    public function __construct(public Post $post, public User $user, public ?Group $group = null)
     {
     }
 
@@ -37,7 +38,8 @@ class PostCreated extends Notification
     {
         return (new MailMessage)
             ->subject('Новая запись')
-            ->line('Новая запись опубликована в группе "' . $this->group->name . '".')
+            ->lineIf(!!$this->group,'Новая запись опубликована в группе "' . $this->group?->name . '".')
+            ->lineIf(!$this->group, 'Новая запись опубликована пользователем "' . $this->user->name . '".')
             ->action('Перейти к записи', url(route('post.view', $this->post->id)));
     }
 
