@@ -44,7 +44,7 @@ class GroupController extends Controller
         if ($group->hasApprovedUser($userId)) {
             $posts = Post::postsForTimeline($userId)
                 ->where('group_id', $group->id)
-                ->paginate(10);
+                ->paginate(5);
 
             $posts = PostResource::collection($posts);
         } else {

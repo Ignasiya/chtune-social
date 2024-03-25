@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Http\Resources\PostResource;
 use App\Http\Resources\UserResource;
 use App\Models\Follower;
+use App\Models\Post;
 use App\Models\User;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Http\RedirectResponse;
@@ -21,7 +23,7 @@ class ProfileController extends Controller
     /**
      * Display the user's profile.
      */
-    public function index(User $user): Response
+    public function index(Request $request, User $user)
     {
         $isUserFollower = false;
         if (!Auth::guest()) {
@@ -33,13 +35,37 @@ class ProfileController extends Controller
 
         $followerCount = Follower::where('user_id', $user->id)->count();
 
+        $posts = Post::postsForTimeline(Auth::id())
+            ->where('user_id', $user->id)
+            ->paginate(5);
+
+        $posts = PostResource::collection($posts);
+        if ($request->wantsJson()) {
+            return $posts;
+        }
+
+        $followers = User::query()
+            ->select('users.*')
+            ->join('followers AS f', 'f.follower_id', 'users.id')
+            ->where('f.user_id', $user->id)
+            ->get();
+
+        $followings = User::query()
+            ->select('users.*')
+            ->join('followers AS f', 'f.user_id', 'users.id')
+            ->where('f.follower_id', $user->id)
+            ->get();
+
         return Inertia::render('Profile/View', [
             'mustVerifyEmail' => $user instanceof MustVerifyEmail,
             'status' => session('status'),
             'success' => session('success'),
             'isUserFollower' => $isUserFollower,
             'followerCount' => $followerCount,
-            'user' => new UserResource($user)
+            'user' => new UserResource($user),
+            'followers' => UserResource::collection($followers),
+            'followings' => UserResource::collection($followings),
+            'posts' => $posts
         ]);
     }
 

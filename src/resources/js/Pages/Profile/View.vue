@@ -8,6 +8,10 @@ import {computed, ref} from "vue";
 import {XMarkIcon, CameraIcon, CheckIcon} from '@heroicons/vue/24/solid'
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import DangerButton from "@/Components/DangerButton.vue";
+import PostList from "@/Components/app/PostList.vue";
+import CreatePost from "@/Components/app/CreatePost.vue";
+import UserItem from "@/Components/app/UserItem.vue";
+import TextInput from "@/Components/TextInput.vue";
 
 const imagesForm = useForm({
     avatar: null,
@@ -18,6 +22,8 @@ const showNotification = ref(true);
 const coverImageSrc = ref('');
 const avatarImageSrc = ref('');
 const authUser = usePage().props.auth.user;
+const searchFollowersKeyword = ref('');
+const searchFollowingsKeyword = ref('');
 
 const isMyProfile = computed(() => authUser && authUser.id === props.user.id);
 
@@ -28,7 +34,10 @@ const props = defineProps({
     success: String,
     isUserFollower : Boolean,
     followerCount: Number,
-    user: Object
+    user: Object,
+    followers: Array,
+    followings: Array,
+    posts: Object
 });
 
 function onCoverChange(event) {
@@ -193,12 +202,14 @@ function parseFollowers(count) {
                                 <h2 class="font-bold text-lg">{{ user.name }}</h2>
                                 <p class="text-xs text-gray-500">{{ parseFollowers(followerCount) }}</p>
                             </div>
-                            <PrimaryButton v-if="!isUserFollower" @click="followUser">
-                                Подписаться
-                            </PrimaryButton>
-                            <DangerButton v-else @click="followUser">
-                                Отписаться
-                            </DangerButton>
+                            <div v-if="!isMyProfile">
+                                <PrimaryButton v-if="!isUserFollower" @click="followUser">
+                                    Подписаться
+                                </PrimaryButton>
+                                <DangerButton v-else @click="followUser">
+                                    Отписаться
+                                </DangerButton>
+                            </div>
                         </div>
                     </div>
 
@@ -225,14 +236,57 @@ function parseFollowers(count) {
                     </TabList>
 
                     <TabPanels class="mt-2">
-                        <TabPanel class="bg-white p-3 shadow">
-                            Мои записи
+                        <TabPanel>
+                            <template v-if="posts">
+                                <CreatePost />
+                                <PostList v-if="posts.data.length" :posts="posts.data" class="flex-1"/>
+                                <div v-else class="py-8 text-center">
+                                    Пользователь пока не опубликовал записи
+                                </div>
+                            </template>
+                            <div v-else class="py-8 text-center">
+                                Чтобы видеть записи войдите на сайт
+                            </div>
                         </TabPanel>
-                        <TabPanel class="bg-white p-3 shadow">
-                            Подписчики
+                        <TabPanel>
+                            <div v-if="followers.length">
+                                <div class="mb-3">
+                                    <TextInput
+                                        :model-value="searchFollowersKeyword"
+                                        placeholder="Введите для поиска"
+                                        class="w-full"/>
+                                </div>
+                                <div class="grid grid-cols-3 gap-3">
+                                    <UserItem
+                                        class="shadow rounded-lg"
+                                        v-for="follower of followers"
+                                        :user="follower"
+                                        :key="follower.id"/>
+                                </div>
+                            </div>
+                            <div v-else class="py-8 text-center">
+                                У Вас нет подписчиков
+                            </div>
                         </TabPanel>
-                        <TabPanel class="bg-white p-3 shadow">
-                            Подписан
+                        <TabPanel>
+                            <div v-if="followings.length">
+                                <div class="mb-3">
+                                    <TextInput
+                                        :model-value="searchFollowingsKeyword"
+                                        placeholder="Введите для поиска"
+                                        class="w-full"/>
+                                </div>
+                                <div class="grid grid-cols-3 gap-3">
+                                    <UserItem
+                                        class="shadow rounded-lg"
+                                        v-for="following of followings"
+                                        :user="following"
+                                        :key="following.id"/>
+                                </div>
+                            </div>
+                            <div v-else class="py-8 text-center">
+                                Вы ни на кого не подписаны
+                            </div>
                         </TabPanel>
                         <TabPanel class="bg-white p-3 shadow">
                             Фото

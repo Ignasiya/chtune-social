@@ -42,7 +42,7 @@ const group = usePage().props.group;
 const editForm = useForm({
     name: group.name,
     auto_approval: !!parseInt(group.auto_approval),
-    about: group.about
+    about: group.about.replace(/<br\s*\/?>/gi, '\n')
 });
 
 function onCoverChange(event) {
@@ -273,7 +273,10 @@ function deleteUser(user) {
                         <TabPanel>
                             <template v-if="posts">
                                 <CreatePost :group="group"/>
-                                <PostList :posts="posts.data" class="flex-1"/>
+                                <PostList v-if="posts.data.length" :posts="posts.data" class="flex-1"/>
+                                <div v-else class="py-8 text-center">
+                                    На стене группы пока нет записей
+                                </div>
                             </template>
                             <div v-else class="py-8 text-center">
                                 Вступите, чтобы видеть записи группы
@@ -324,7 +327,7 @@ function deleteUser(user) {
                                 </PrimaryButton>
                             </template>
                             <div v-else-if="group.about" v-html="group.about" />
-                            <div v-else class="text-center">
+                            <div v-else class="ck-content-output text-center">
                                 Описание группы отсутствует
                             </div>
                         </TabPanel>

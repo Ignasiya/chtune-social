@@ -14,7 +14,7 @@ import {Link} from '@inertiajs/vue3'
                     <h3 class="font-black text-lg">{{ group.name }}</h3>
                     {{ group.status === 'approved' ? (group.role === 'admin' ? group.role : '') : 'не одобрен' }}
                 </div>
-                <div class="text-xs text-gray-500">{{ group.description }}</div>
+                <div class="text-xs text-gray-500" v-html="group.description"></div>
             </div>
         </Link>
     </div>
