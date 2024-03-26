@@ -240,8 +240,10 @@ function parseFollowers(count) {
                     <TabPanels class="mt-2">
                         <TabPanel>
                             <template v-if="posts">
-                                <CreatePost />
-                                <PostList v-if="posts.data.length" :posts="posts.data" class="flex-1"/>
+                                <div v-if="posts.data.length">
+                                    <CreatePost />
+                                    <PostList  :posts="posts.data" class="flex-1"/>
+                                </div>
                                 <div v-else class="py-8 text-center">
                                     Пользователь пока не опубликовал записи
                                 </div>
