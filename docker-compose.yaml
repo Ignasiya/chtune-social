@@ -8,6 +8,9 @@ services:
       - ./src:${PATH_ROOT}
     ports:
       - '80:80'
+    expose:
+      - 80
+      - 5173
     networks:
       - app
     depends_on:
@@ -22,7 +25,10 @@ services:
       - ./src:${PATH_ROOT}
       - ./docker/php.ini:/usr/local/etc/php/conf.d/php-custom.ini
     ports:
-      - '5173:5173'
+      - '3000:3000'
+    environment:
+      - HOST=0.0.0.0
+      - PORT=5173
     networks:
       - app
     depends_on:

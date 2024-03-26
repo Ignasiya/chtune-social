@@ -29,5 +29,4 @@ RUN docker-php-ext-install pdo_mysql
 RUN curl -sL https://deb.nodesource.com/setup_20.x | bash -
 RUN apt-get install -y nodejs
 
-EXPOSE 5173
 CMD ["php-fpm"]
