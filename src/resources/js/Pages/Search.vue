@@ -6,6 +6,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import {Head} from "@inertiajs/vue3";
 
 const props = defineProps({
+    search: String,
     users: Array,
     groups: Array,
     posts: Object
@@ -18,7 +19,7 @@ const props = defineProps({
 
     <AuthenticatedLayout>
         <div class="container py-4 px-2 max-w-[768px] mx-auto h-full overflow-auto">
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
+            <div v-if="!search.startsWith('#')" class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-3">
                 <div class="shadow bg-white p-3 rounded max-h-[300px] overflow-auto">
                     <h2 class="text-lg font-bold">
                         Пользователи

@@ -8,12 +8,20 @@ import ReadMoreReadLess from "@/Pages/Post/ReadMoreReadLess.vue";
 import PostDropdown from "@/Pages/Post/PostDropdown.vue";
 import PostAttachments from "@/Pages/Post/PostAttachments.vue";
 import CommentList from "@/Pages/Post/CommentList.vue";
+import {computed} from "vue";
 
 const props = defineProps({
     post: Object
 });
 
 const emit = defineEmits(['editClick', 'attachmentClick'])
+
+const postBody = computed(() => props.post.body.replace(
+    /(#\w+)(?![^<]*<\/a>)/g,
+    (match, group) => {
+        const encode = encodeURIComponent(group);
+        return `<a class="hashtag" href="/search/${encode}">${group}</a>`;
+    }));
 
 function openEditModal() {
     emit('editClick', props.post);
@@ -50,15 +58,15 @@ function sendReaction() {
             <PostDropdown :post="post" @edit="openEditModal" @delete="deletePost"/>
         </div>
         <div class="mb-3">
-            <ReadMoreReadLess :content="post.body"/>
+            <ReadMoreReadLess :content="postBody"/>
         </div>
         <div class="grid gap-3 mb-3" :class="[
             post.attachments.length === 1 ? 'grid-cols-1' : 'grid-cols-2'
         ]">
-            <PostAttachments :attachments="post.attachments" @attachmentClick="openAttachment" />
+            <PostAttachments :attachments="post.attachments" @attachmentClick="openAttachment"/>
         </div>
         <Disclosure v-slot="{ open }">
-        <!-- Секция Лайков и Комментов -->
+            <!-- Секция Лайков и Комментов -->
             <div class="flex gap-2">
                 <button
                     @click="sendReaction"
