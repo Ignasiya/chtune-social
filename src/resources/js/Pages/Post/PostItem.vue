@@ -1,13 +1,13 @@
 <script setup>
 import {Disclosure, DisclosureButton, DisclosurePanel} from '@headlessui/vue'
 import {ChatBubbleLeftEllipsisIcon, HandThumbUpIcon} from '@heroicons/vue/24/solid'
-import PostUserHeader from "@/Components/app/PostUserHeader.vue";
+import PostUserHeader from "@/Pages/Post/PostUserHeader.vue";
 import {router} from "@inertiajs/vue3";
 import axiosClient from "@/axiosClient.js";
-import ReadMoreReadLess from "@/Components/app/ReadMoreReadLess.vue";
-import PostDropdown from "@/Components/app/PostDropdown.vue";
-import PostAttachments from "@/Components/app/PostAttachments.vue";
-import CommentList from "@/Components/app/CommentList.vue";
+import ReadMoreReadLess from "@/Pages/Post/ReadMoreReadLess.vue";
+import PostDropdown from "@/Pages/Post/PostDropdown.vue";
+import PostAttachments from "@/Pages/Post/PostAttachments.vue";
+import CommentList from "@/Pages/Post/CommentList.vue";
 
 const props = defineProps({
     post: Object

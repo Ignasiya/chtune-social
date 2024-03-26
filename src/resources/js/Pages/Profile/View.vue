@@ -8,10 +8,11 @@ import {computed, ref} from "vue";
 import {XMarkIcon, CameraIcon, CheckIcon} from '@heroicons/vue/24/solid'
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import DangerButton from "@/Components/DangerButton.vue";
-import PostList from "@/Components/app/PostList.vue";
-import CreatePost from "@/Components/app/CreatePost.vue";
-import UserItem from "@/Components/app/UserItem.vue";
+import PostList from "@/Pages/Post/PostList.vue";
+import CreatePost from "@/Pages/Post/CreatePost.vue";
+import UserItem from "@/Components/UserItem.vue";
 import TextInput from "@/Components/TextInput.vue";
+import TabPhotos from "@/Pages/Profile/TabPhotos.vue";
 
 const imagesForm = useForm({
     avatar: null,
@@ -37,7 +38,8 @@ const props = defineProps({
     user: Object,
     followers: Array,
     followings: Array,
-    posts: Object
+    posts: Object,
+    photos: Array
 });
 
 function onCoverChange(event) {
@@ -288,8 +290,11 @@ function parseFollowers(count) {
                                 Вы ни на кого не подписаны
                             </div>
                         </TabPanel>
-                        <TabPanel class="bg-white p-3 shadow">
-                            Фото
+                        <TabPanel>
+                            <TabPhotos v-if="photos.length" :photos="photos" />
+                            <div v-else class="py-8 text-center">
+                                Пользователь пока не опубликовал фотографии
+                            </div>
                         </TabPanel>
                         <TabPanel v-if="isMyProfile">
                             <Edit :must-verify-email="mustVerifyEmail" :status="status"/>

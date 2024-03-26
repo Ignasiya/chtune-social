@@ -1,5 +1,5 @@
 <script setup>
-import FollowingItems from "@/Components/app/FollowingItems.vue";
+import FollowingItems from "@/Components/FollowingItems.vue";
 import {Disclosure, DisclosureButton, DisclosurePanel} from "@headlessui/vue";
 import {ChevronRightIcon} from "@heroicons/vue/24/solid/index.js";
 

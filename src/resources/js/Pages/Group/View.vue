@@ -7,11 +7,12 @@ import {computed, ref} from "vue";
 import {XMarkIcon, CameraIcon, CheckIcon} from '@heroicons/vue/24/solid'
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import InviteUserModal from "@/Pages/Group/InviteUserModal.vue";
-import UserItem from "@/Components/app/UserItem.vue";
+import UserItem from "@/Components/UserItem.vue";
 import TextInput from "@/Components/TextInput.vue";
-import GroupForm from "@/Components/app/GroupForm.vue";
-import PostList from "@/Components/app/PostList.vue";
-import CreatePost from "@/Components/app/CreatePost.vue";
+import GroupForm from "@/Pages/Group/GroupForm.vue";
+import PostList from "@/Pages/Post/PostList.vue";
+import CreatePost from "@/Pages/Post/CreatePost.vue";
+import TabPhotos from "@/Pages/Profile/TabPhotos.vue";
 
 const imagesForm = useForm({
     thumbnail: null,
@@ -35,6 +36,7 @@ const props = defineProps({
     requests: Array,
     success: String,
     group: Object,
+    photos: Array
 });
 
 const group = usePage().props.group;
@@ -316,8 +318,11 @@ function deleteUser(user) {
                                 Отсутствуют запросы на вступление
                             </div>
                         </TabPanel>
-                        <TabPanel class="bg-white p-3 shadow">
-                            Фото
+                        <TabPanel>
+                            <TabPhotos v-if="photos.length" :photos="photos" />
+                            <div v-else class="py-8 text-center">
+                                В группе пока не опубликованы фотографии
+                            </div>
                         </TabPanel>
                         <TabPanel class="bg-white p-3 shadow">
                             <template v-if="isUserAdmin">

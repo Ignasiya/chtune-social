@@ -9,7 +9,7 @@ import {
 } from '@headlessui/vue'
 import {XMarkIcon,} from '@heroicons/vue/24/solid'
 import {useForm, usePage} from "@inertiajs/vue3";
-import IndigoButton from "@/Components/app/IndigoButton.vue";
+import IndigoButton from "@/Components/IndigoButton.vue";
 import TextInput from "@/Components/TextInput.vue";
 
 const props = defineProps({

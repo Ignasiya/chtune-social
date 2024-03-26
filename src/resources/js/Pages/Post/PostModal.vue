@@ -7,12 +7,12 @@ import {
     DialogPanel,
     DialogTitle,
 } from '@headlessui/vue'
-import PostUserHeader from "@/Components/app/PostUserHeader.vue";
+import PostUserHeader from "@/Pages/Post/PostUserHeader.vue";
 import {XMarkIcon, PaperClipIcon, BookmarkIcon, ArrowUturnLeftIcon} from '@heroicons/vue/24/solid'
 import {useForm, usePage} from "@inertiajs/vue3";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import {isImage} from "@/helpers.js";
-import IndigoButton from "@/Components/app/IndigoButton.vue";
+import IndigoButton from "@/Components/IndigoButton.vue";
 
 const editor = ClassicEditor;
 const editorConfig = {

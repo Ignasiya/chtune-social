@@ -9,11 +9,13 @@ use App\Http\Requests\StoreGroupRequest;
 use App\Http\Requests\UpdateGroupRequest;
 use App\Http\Resources\GroupResource;
 use App\Http\Resources\GroupUserResource;
+use App\Http\Resources\PostAttachmentResource;
 use App\Http\Resources\PostResource;
 use App\Http\Resources\UserResource;
 use App\Models\Group;
 use App\Models\GroupUser;
 use App\Models\Post;
+use App\Models\PostAttachment;
 use App\Models\User;
 use App\Notifications\InvitationApproved;
 use App\Notifications\InvitationInGroup;
@@ -54,6 +56,7 @@ class GroupController extends Controller
                 'posts' => null,
                 'users' => [],
                 'requests' => [],
+                'photos'=> []
             ]);
         }
 
@@ -69,6 +72,14 @@ class GroupController extends Controller
             ->where('gu.group_id', $group->id)
             ->get();
 
+        $photos = PostAttachment::query()
+            ->select('post_attachments.*')
+            ->join('posts AS p', 'p.id', 'post_attachments.post_id')
+            ->where('p.group_id', $group->id)
+            ->where('mime', 'like', 'image/%')
+            ->latest()
+            ->get();
+
         $request = $group->pendingUsers()
             ->orderBy('name')
             ->get();
@@ -79,6 +90,7 @@ class GroupController extends Controller
             'posts' => $posts,
             'users' => GroupUserResource::collection($users),
             'requests' => UserResource::collection($request),
+            'photos' => PostAttachmentResource::collection($photos),
         ]);
     }
 

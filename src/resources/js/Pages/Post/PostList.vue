@@ -1,9 +1,9 @@
 <script setup>
-import PostItem from "@/Components/app/PostItem.vue";
-import PostModal from "@/Components/app/PostModal.vue";
+import PostItem from "@/Pages/Post/PostItem.vue";
+import PostModal from "@/Pages/Post/PostModal.vue";
 import {onMounted, ref, watch} from "vue";
 import {usePage} from "@inertiajs/vue3";
-import AttachmentPreview from "@/Components/app/AttachmentPreview.vue";
+import AttachmentPreview from "@/Components/AttachmentPreview.vue";
 import axiosClient from "@/axiosClient.js";
 
 const showEditModal = ref(false);

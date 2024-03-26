@@ -1,9 +1,9 @@
 <script setup>
-import GroupItem from "@/Components/app/GroupItem.vue";
+import GroupItem from "@/Pages/Group/GroupItem.vue";
 import TextInput from "@/Components/TextInput.vue";
-import GroupModal from "@/Components/app/GroupModal.vue";
+import GroupModal from "@/Pages/Group/GroupModal.vue";
 import {ref} from "vue";
-import IndigoButton from "@/Components/app/IndigoButton.vue";
+import IndigoButton from "@/Components/IndigoButton.vue";
 
 const searchKeyword = ref('');
 const showNewGroupModal = ref(false);

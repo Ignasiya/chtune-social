@@ -1,7 +1,7 @@
 <script setup>
 
 import {ref} from "vue";
-import PostModal from "@/Components/app/PostModal.vue";
+import PostModal from "@/Pages/Post/PostModal.vue";
 import {usePage} from "@inertiajs/vue3";
 
 const authUser = usePage().props.auth.user;

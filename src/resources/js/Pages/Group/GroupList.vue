@@ -1,7 +1,7 @@
 <script setup>
 import {ChevronRightIcon} from '@heroicons/vue/24/solid'
 import {Disclosure, DisclosureButton, DisclosurePanel} from "@headlessui/vue";
-import GroupItems from "@/Components/app/GroupItems.vue";
+import GroupItems from "@/Pages/Group/GroupItems.vue";
 
 defineProps({
     groups: Array
