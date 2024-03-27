@@ -6,6 +6,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
+/**
+ * @property mixed $path
+ * @property mixed $name
+ */
 class PostAttachment extends Model
 {
     use HasFactory;

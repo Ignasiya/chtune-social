@@ -9,6 +9,7 @@ import PostDropdown from "@/Pages/Post/PostDropdown.vue";
 import PostAttachments from "@/Pages/Post/PostAttachments.vue";
 import CommentList from "@/Pages/Post/CommentList.vue";
 import {computed} from "vue";
+import UrlPreview from "@/Pages/Post/UrlPreview.vue";
 
 const props = defineProps({
     post: Object
@@ -16,12 +17,14 @@ const props = defineProps({
 
 const emit = defineEmits(['editClick', 'attachmentClick'])
 
-const postBody = computed(() => props.post.body.replace(
-    /(#\w+)(?![^<]*<\/a>)/g,
-    (match, group) => {
-        const encode = encodeURIComponent(group);
-        return `<a class="hashtag" href="/search/${encode}">${group}</a>`;
-    }));
+const postBody = computed(() => {
+    return props.post.body.replace(
+        /(?:(\s+)|(<p>))((#\w+)(?![^<]*<\/a>))/g,
+        (match, space, word) => {
+            const encode = encodeURIComponent(word);
+            return `${space || ''}<a class="hashtag" href="/search/${encode}">${word}</a>`;
+        });
+});
 
 function openEditModal() {
     emit('editClick', props.post);
@@ -59,6 +62,7 @@ function sendReaction() {
         </div>
         <div class="mb-3">
             <ReadMoreReadLess :content="postBody"/>
+            <UrlPreview :preview="post.preview" :url="post.preview_url"/>
         </div>
         <div class="grid gap-3 mb-3" :class="[
             post.attachments.length === 1 ? 'grid-cols-1' : 'grid-cols-2'

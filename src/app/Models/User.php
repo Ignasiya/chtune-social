@@ -14,6 +14,7 @@ use Spatie\Sluggable\SlugOptions;
 /**
  * @property mixed $followers
  * @property mixed $followings
+ * @property mixed $id
  */
 class User extends Authenticatable implements MustVerifyEmail
 {

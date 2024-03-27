@@ -13,6 +13,7 @@ import CreatePost from "@/Pages/Post/CreatePost.vue";
 import UserItem from "@/Components/UserItem.vue";
 import TextInput from "@/Components/TextInput.vue";
 import TabPhotos from "@/Pages/Profile/TabPhotos.vue";
+import {wordEndingsParser} from "@/helpers.js";
 
 const imagesForm = useForm({
     avatar: null,
@@ -110,19 +111,6 @@ function followUser() {
     });
 }
 
-function parseFollowers(count) {
-    let end;
-    if (count % 10 === 1 && count % 100 !== 11) {
-        end = 'к';
-    } else if ([2, 3, 4].includes(count % 10) && ![12, 13, 14].includes(count % 100)) {
-        end = 'ка';
-    } else {
-        end = 'ков';
-    }
-    const formatCount = count.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    return formatCount + ' подписчи' + end;
-}
-
 </script>
 
 <template>
@@ -202,7 +190,10 @@ function parseFollowers(count) {
                         <div class="flex flex-1 justify-between items-center p-4">
                             <div>
                                 <h2 class="font-bold text-lg">{{ user.name }}</h2>
-                                <p class="text-xs text-gray-500">{{ parseFollowers(followerCount) }}</p>
+                                <p class="text-xs text-gray-500">{{ wordEndingsParser(followerCount, 'подписчи', 'к',
+                                    'ка',
+                                    'ков')
+                                    }}</p>
                             </div>
                             <div v-if="!isMyProfile">
                                 <PrimaryButton v-if="!isUserFollower" @click="followUser">

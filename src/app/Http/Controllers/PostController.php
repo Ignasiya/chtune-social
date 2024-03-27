@@ -19,11 +19,12 @@ use App\Notifications\PostCreated;
 use App\Notifications\PostDeleted;
 use App\Notifications\ReactionOnComment;
 use App\Notifications\ReactionOnPost;
-use DB;
+use DOMDocument;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
@@ -309,5 +310,32 @@ class PostController extends Controller
         foreach ($allFilePaths as $path) {
             Storage::disk('public')->delete($path);
         }
+    }
+
+    public function fetchUrlPreview(Request $request)
+    {
+        $data = $request->validate([
+            'url' => 'url'
+        ]);
+
+        $url = $data['url'];
+        $content = file_get_contents($url);
+        $document = new DOMDocument();
+
+        libxml_use_internal_errors(true);
+        $document->loadHTML($content);
+        libxml_use_internal_errors(false);
+
+        $ogTags = [];
+        $metas = $document->getElementsByTagName('meta');
+
+        foreach ($metas as $meta) {
+            $property = $meta->getAttribute('property');
+
+            if (str_starts_with($property, 'og:')) {
+                $ogTags[$property] = $meta->getAttribute('content');
+            }
+        }
+        return $ogTags;
     }
 }

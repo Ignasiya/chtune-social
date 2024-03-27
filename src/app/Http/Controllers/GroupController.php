@@ -43,6 +43,8 @@ class GroupController extends Controller
 
         $userId = Auth::id();
 
+        $groupMembers = GroupUser::where('group_id', $group->id)->count();
+
         if ($group->hasApprovedUser($userId)) {
             $posts = Post::postsForTimeline($userId)
                 ->where('group_id', $group->id)
@@ -53,6 +55,7 @@ class GroupController extends Controller
             return Inertia::render('Group/View', [
                 'success' => session('success'),
                 'group' => new GroupResource($group),
+                'groupMembers' => $groupMembers,
                 'posts' => null,
                 'users' => [],
                 'requests' => [],
@@ -88,6 +91,7 @@ class GroupController extends Controller
             'success' => session('success'),
             'group' => new GroupResource($group),
             'posts' => $posts,
+            'groupMembers' => $groupMembers,
             'users' => GroupUserResource::collection($users),
             'requests' => UserResource::collection($request),
             'photos' => PostAttachmentResource::collection($photos),

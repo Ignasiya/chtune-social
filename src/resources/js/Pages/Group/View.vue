@@ -13,6 +13,7 @@ import GroupForm from "@/Pages/Group/GroupForm.vue";
 import PostList from "@/Pages/Post/PostList.vue";
 import CreatePost from "@/Pages/Post/CreatePost.vue";
 import TabPhotos from "@/Pages/Profile/TabPhotos.vue";
+import {wordEndingsParser} from "@/helpers.js";
 
 const imagesForm = useForm({
     thumbnail: null,
@@ -36,7 +37,8 @@ const props = defineProps({
     requests: Array,
     success: String,
     group: Object,
-    photos: Array
+    photos: Array,
+    groupMembers: Number
 });
 
 const group = usePage().props.group;
@@ -226,7 +228,12 @@ function deleteUser(user) {
                             </div>
                         </div>
                         <div class="flex flex-1 justify-between items-center p-4">
-                            <h2 class="font-bold text-lg">{{ group.name }}</h2>
+                            <div>
+                                <h2 class="font-bold text-lg">{{ group.name }}</h2>
+                                <p class="text-xs text-gray-500">{{ wordEndingsParser(groupMembers,
+                                    'пользовател','ь','я','ей')
+                                    }}</p>
+                            </div>
                             <PrimaryButton
                                 v-if="!authUser"
                                 :href="route('login')">
