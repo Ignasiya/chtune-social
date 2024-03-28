@@ -8,7 +8,7 @@ import {
     DialogTitle,
 } from '@headlessui/vue'
 import PostUserHeader from "@/Pages/Post/PostUserHeader.vue";
-import {XMarkIcon, PaperClipIcon, BookmarkIcon, ArrowUturnLeftIcon} from '@heroicons/vue/24/solid'
+import {XMarkIcon, PaperClipIcon, ArrowUturnLeftIcon} from '@heroicons/vue/24/solid'
 import {useForm, usePage} from "@inertiajs/vue3";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import {isImage, matchHref, matchLink} from "@/helpers.js";
@@ -332,7 +332,6 @@ function onInputPaste() {
                                             class="absolute left-0 top-0 right-0 bottom-0 opacity-0">
                                     </IndigoButton>
                                     <IndigoButton class="w-full" @click="submit">
-                                        <BookmarkIcon class="w-4 h-4 mr-2"/>
                                         Сохранить
                                     </IndigoButton>
                                 </div>

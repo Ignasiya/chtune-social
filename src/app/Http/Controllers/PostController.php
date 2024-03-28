@@ -338,4 +338,42 @@ class PostController extends Controller
         }
         return $ogTags;
     }
+
+    public function pinUnpin(Request $request, Post $post)
+    {
+        $forGroup = $request->get('forGroup', false);
+        $group = $post->group;
+        $user = $request->user();
+
+        if ($forGroup && !$group) {
+            return response('Неверный запрос', 400);
+        }
+
+        if ($forGroup && !$group->isAdmin(Auth::id())) {
+            return response('Не доступа для закрепления записей', 403);
+        }
+
+        $pinned = false;
+
+        if ($forGroup && $group->isAdmin(Auth::id())) {
+            if ($group->pinned_post_id === $post->id) {
+                $group->pinned_post_id = null;
+            } else {
+                $pinned = true;
+                $group->pinned_post_id = $post->id;
+            }
+            $group->save();
+        }
+
+        if (!$forGroup) {
+            if ($user->pinned_post_id === $post->id) {
+                $user->pinned_post_id = null;
+            } else {
+                $pinned = true;
+                $user->pinned_post_id = $post->id;
+            }
+            $user->save();
+        }
+        return back()->with('success', 'Запись успешно ' . ($pinned ? 'закреплена' : 'откреплена'));
+    }
 }

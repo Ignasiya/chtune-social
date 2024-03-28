@@ -15,6 +15,7 @@ use Spatie\Sluggable\SlugOptions;
  * @property mixed $followers
  * @property mixed $followings
  * @property mixed $id
+ * @property int|null $pinned_post_id
  */
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -32,7 +33,8 @@ class User extends Authenticatable implements MustVerifyEmail
         'email',
         'password',
         'cover_path',
-        'avatar_path'
+        'avatar_path',
+        'pinned_post_id'
     ];
 
     /**

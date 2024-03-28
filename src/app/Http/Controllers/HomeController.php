@@ -20,7 +20,6 @@ class HomeController extends Controller
         $userId = Auth::id();
         $user = $request->user();
         $posts = Post::postsForTimeline($userId)
-            ->select('posts.*')
             ->leftJoin('followers AS f', function ($join) use ($userId) {
                 $join->on('f.user_id', '=', 'posts.user_id')
                     ->where('f.follower_id', '=', $userId);
@@ -30,13 +29,10 @@ class HomeController extends Controller
                     ->where('gu.user_id', '=', $userId)
                     ->where('gu.status', GroupUserStatus::APPROVED->value);
             })
-            ->where(function (Builder $query) use ($userId) {
-                $query->whereNotNull('f.follower_id')
-                    ->orWhereNotNull('gu.group_id')
-                    ->orWhere('posts.user_id', '=', $userId)
-                ;
-            })
-//            ->whereNot('posts.user_id', '=', $userId)
+            ->whereNotNull('f.follower_id')
+            ->orWhereNotNull('gu.group_id')
+            ->orWhere('posts.user_id', $userId)
+//             ->whereNot('posts.user_id', '=', $userId)
             ->paginate(10);
 
         $posts = PostResource::collection($posts);

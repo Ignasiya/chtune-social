@@ -17,6 +17,9 @@ use Spatie\Sluggable\SlugOptions;
  * @property mixed approvedUsers
  * @property mixed adminUsers
  * @property mixed pendingUsers
+ * @property bool isAdmin
+ * @property int $id
+ * @property int|null $pinned_post_id
  */
 class Group extends Model
 {
@@ -24,7 +27,7 @@ class Group extends Model
     use SoftDeletes;
     use HasSlug;
 
-    protected $fillable = ['name', 'user_id', 'auto_approval', 'about', 'cover_path', 'thumbnail_path'];
+    protected $fillable = ['name', 'user_id', 'auto_approval', 'about', 'cover_path', 'thumbnail_path', 'pinned_post_id'];
 
     public function getSlugOptions(): SlugOptions
     {
@@ -63,10 +66,6 @@ class Group extends Model
             ->exists();
     }
 
-    /*
-     * Определяется отношение "многие ко многим" между моделью (Group) и моделью (User).
-     * Он использует таблицу 'group_users' в качестве промежуточной таблицы.
-    */
     public function adminUsers(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'group_users')

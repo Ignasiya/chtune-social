@@ -2,7 +2,7 @@
 import {Disclosure, DisclosureButton, DisclosurePanel} from '@headlessui/vue'
 import {ChatBubbleLeftEllipsisIcon, HandThumbUpIcon} from '@heroicons/vue/24/solid'
 import PostUserHeader from "@/Pages/Post/PostUserHeader.vue";
-import {router} from "@inertiajs/vue3";
+import {router, useForm, usePage} from "@inertiajs/vue3";
 import axiosClient from "@/axiosClient.js";
 import ReadMoreReadLess from "@/Pages/Post/ReadMoreReadLess.vue";
 import PostDropdown from "@/Pages/Post/PostDropdown.vue";
@@ -10,21 +10,32 @@ import PostAttachments from "@/Pages/Post/PostAttachments.vue";
 import CommentList from "@/Pages/Post/CommentList.vue";
 import {computed} from "vue";
 import UrlPreview from "@/Pages/Post/UrlPreview.vue";
+import {BookmarkIcon} from "@heroicons/vue/20/solid/index.js";
 
 const props = defineProps({
     post: Object
 });
 
+const group = usePage().props.group;
+const authUser = usePage().props.auth.user;
+
 const emit = defineEmits(['editClick', 'attachmentClick'])
 
 const postBody = computed(() => {
     return props.post.body.replace(
-        /(?:(\s+)|(<p>))((#\w+)(?![^<]*<\/a>))/g,
+        /(?:(\s+)|<p>)((#\w+)(?![^<]*<\/a>))/g,
         (match, space, word) => {
             const encode = encodeURIComponent(word);
             return `${space || ''}<a class="hashtag" href="/search/${encode}">${word}</a>`;
         });
 });
+
+const isPinned = computed(() => {
+    if (group?.id) {
+        return group?.pinned_post_id === props.post.id;
+    }
+    return authUser?.pinned_post_id === props.post.id;
+})
 
 function openEditModal() {
     emit('editClick', props.post);
@@ -52,13 +63,43 @@ function sendReaction() {
         })
 }
 
+function pinUnpinPost() {
+    const form = useForm({
+        forGroup: group?.id
+    });
+    let isPinned = false;
+    if (group?.id) {
+        isPinned = group?.pinned_post_id === props.post.id
+    } else {
+        isPinned = authUser?.pinned_post_id === props.post.id
+    }
+
+    form.post(route('post.pinUnpin', props.post.id), {
+        onSuccess: () => {
+            if (group?.id) {
+                group.pinned_post_id = isPinned ? null : props.post.id
+            } else {
+                authUser.pinned_post_id = isPinned ? null : props.post.id
+            }
+        }
+    })
+}
+
 </script>
 
 <template>
     <div class="bg-white border rounded p-4 mb-3">
         <div class="flex justify-between items-center mb-3">
             <PostUserHeader :post="post"/>
-            <PostDropdown :post="post" @edit="openEditModal" @delete="deletePost"/>
+            <div class="flex items-center gap-2">
+                <div v-if="isPinned" class="flex items-center text-xs">
+                    <BookmarkIcon
+                        class="mr-1 h-3 w-3"
+                        aria-hidden="true" />
+                    закреплена
+                </div>
+                <PostDropdown :post="post" @edit="openEditModal" @pin="pinUnpinPost" @delete="deletePost"/>
+            </div>
         </div>
         <div class="mb-3">
             <ReadMoreReadLess :content="postBody"/>

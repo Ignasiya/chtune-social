@@ -10,6 +10,11 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
+/**
+ * @property Group group
+ * @property boolean pinned
+ * @property int id
+ */
 class Post extends Model
 {
     use HasFactory;
@@ -51,19 +56,30 @@ class Post extends Model
         return $this->hasMany(Comment::class)->latest()->limit(5);
     }
 
-    public static function postsForTimeline($userId): Builder
+    public static function postsForTimeline($userId, $getLatest = true): Builder
     {
-        return Post::query() // SELECT * FROM posts
-            ->withCount('reactions') // SELECT COUNT(*) FROM reactions
-            ->with([
-                'comments' => function ($query) {
-                    $query->withCount('reactions'); // SELECT * FROM comments WHERE post_id IN (1, 2, 3...)
-                    // SELECT COUNT(*) FROM reactions
-                },
-                'reactions' => function ($query) use ($userId) {
-                    $query->where('user_id', $userId); // SELECT * FROM reactions WHERE user_id = ?
-                }])
-            ->latest();
+        $query = Post::query() // SELECT * FROM posts
+        ->withCount('reactions') // SELECT COUNT(*) FROM reactions
+        ->with([
+            'user',
+            'group',
+            'group.currentUserGroup',
+            'attachments',
+            'comments' => function ($query) {
+                $query->withCount('reactions'); // SELECT * FROM comments WHERE post_id IN (1, 2, 3...)
+                // SELECT COUNT(*) FROM reactions
+            },
+            'comments.user',
+            'comments.reactions' => function ($query) use ($userId) {
+                $query->where('user_id', $userId); // SELECT * from reactions WHERE user_id = ?
+            },
+            'reactions' => function ($query) use ($userId) {
+                $query->where('user_id', $userId); // SELECT * FROM reactions WHERE user_id = ?
+            }]);
+        if ($getLatest) {
+            $query->latest();
+        }
+        return $query;
     }
 
     public function isOwner($userId): bool
