@@ -5,7 +5,15 @@ import { createApp, h } from 'vue';
 import CKEditor from '@ckeditor/ckeditor5-vue';
 import { createInertiaApp } from '@inertiajs/vue3';
 import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
-import { ZiggyVue } from '../../vendor/tightenco/ziggy';
+import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist';
+
+const html = window.document.documentElement;
+const darkMode = parseInt(localStorage.getItem('darkMode') || 1);
+if (darkMode) {
+    html.classList.add('dark')
+} else {
+    html.classList.remove('dark')
+}
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
