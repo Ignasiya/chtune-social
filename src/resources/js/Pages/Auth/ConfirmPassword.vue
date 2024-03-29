@@ -21,7 +21,7 @@ const submit = () => {
     <GuestLayout>
         <Head title="Подтвердите пароль" />
 
-        <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">
+        <div class="mb-4 text-sm text-gray-700 dark:text-gray-300">
             Это защищенная область приложения. Пожалуйста, подтвердите свой пароль, прежде чем продолжить.
         </div>
 
