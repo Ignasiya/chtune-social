@@ -10,7 +10,7 @@ defineProps({
     <a :href="url"
        target="_blank"
        v-if="preview && preview.title"
-       class="block mt-4 border border-indigo-200 bg-indigo-50">
+       class="block mt-4 border border-sky-200 dark:border-neutral-700 text-gray-800 bg-sky-50 dark:bg-neutral-50">
         <img class="max-w-full"
              :src="preview.image"
              :alt="preview.title">

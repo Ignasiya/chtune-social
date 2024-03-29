@@ -25,7 +25,7 @@ defineEmits(['approved', 'rejected', 'roleChange', 'deleted'])
 
 <template>
     <div
-        class="transition-all bg-white dark:text-gray-300 dark:bg-neutral-800 border-2 border-transparent hover:border-sky-500">
+        class="transition-all bg-white dark:text-gray-300 dark:bg-neutral-800 border-2 border-transparent rounded-lg hover:border-sky-500">
         <div class="flex items-center gap-2 py-2 px-2">
             <UserHeader :user="user" />
             <div class="flex justify-between items-center flex-1">

@@ -7,7 +7,7 @@ import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import {Link, router, usePage} from '@inertiajs/vue3';
 import TextInput from "@/Components/TextInput.vue";
 import UserHeader from "@/Components/UserHeader.vue";
-import {MagnifyingGlassIcon} from '@heroicons/vue/24/solid'
+import {MagnifyingGlassIcon, MoonIcon} from '@heroicons/vue/24/solid'
 import Modal from "@/Components/Modal.vue";
 
 const showingNavigationDropdown = ref(false);
@@ -29,6 +29,17 @@ function onSearchHide() {
     showSearch.value = false;
 }
 
+function toggleDarkMode(){
+    const html = window.document.documentElement
+    if (html.classList.contains('dark')) {
+        html.classList.remove('dark')
+        localStorage.setItem('darkMode', '0')
+    } else {
+        html.classList.add('dark')
+        localStorage.setItem('darkMode', '1')
+    }
+}
+
 </script>
 
 <template>
@@ -47,11 +58,11 @@ function onSearchHide() {
                             </Link>
                         </div>
                     </div>
-                    <div class="ms-3 relative inline-flex items-center">
+                    <div v-if="authUser" class="ms-3 relative inline-flex items-center">
                         <button
                             type="button"
                             @click="openSearch"
-                            class="flex items-center rounded-full p-1.5 bg-white dark:bg-neutral-700">
+                            class="flex items-center rounded-full p-1.5 bg-black/5 dark:bg-neutral-700">
                             <MagnifyingGlassIcon class="w-5 h-5 text-sky-600" />
                         </button>
                         <Modal :show="showSearch" @close="onSearchHide">
@@ -62,6 +73,9 @@ function onSearchHide() {
                                 placeholder="Поиск по сайту"/>
                         </Modal>
                     </div>
+                    <button @click="toggleDarkMode" class="flex items-center rounded-full p-1.5 bg-black/5 dark:bg-neutral-700">
+                        <MoonIcon class="w-5 h-5 text-sky-600"/>
+                    </button>
                     <div class="hidden sm:flex sm:items-center">
                         <!-- Settings Dropdown -->
                         <div class="ms-3 relative inline-flex items-center">

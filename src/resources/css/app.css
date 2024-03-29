@@ -91,6 +91,11 @@
     color: #4156e2;
 }
 
+html.dark .ck-content-output a.hashtag {
+    background-color: #3d3e3f;
+    color: #4156e2;
+}
+
 .ck-content-output blockquote {
     border-left: 5px solid #ccc;
     font-style: italic;
@@ -120,12 +125,12 @@ html.dark ::-webkit-scrollbar {
 }
 
 html.dark ::-webkit-scrollbar-thumb {
-    background-color: #1e1313; /* Thumb color */
+    background-color: #2d2828; /* Thumb color */
     border-radius: 6px;
 }
 
 html.dark ::-webkit-scrollbar-track {
-    background-color: #4d3e3e; /* Track color */
+    background-color: #5b5555; /* Track color */
 }
 
 html.dark .ck-reset_all :not(.ck-reset_all-excluded *),
@@ -134,7 +139,7 @@ html.dark .ck.ck-reset_all {
 }
 
 html.dark .ck.ck-toolbar {
-    background-color: rgb(16, 10, 10);
+    background-color: rgb(26, 24, 24);
 }
 
 html.dark .ck.ck-button:not(.ck-disabled):hover,
@@ -143,14 +148,14 @@ html.dark .ck.ck-button:not(.ck-disabled):active,
 html.dark a.ck.ck-button:not(.ck-disabled):active,
 html.dark .ck.ck-button.ck-on,
 html.dark a.ck.ck-button.ck-on{
-    background-color: rgb(30, 19, 19);
+    background-color: rgb(44, 39, 39);
 }
 
 html.dark .ck.ck-editor__main>.ck-editor__editable {
-    background-color: rgb(30, 19, 19);
+    background-color: rgb(56, 54, 54);
     color: white;
 }
 
 html.dark .ck.ck-list {
-    background-color: rgb(77, 62, 62);
+    background-color: rgb(56, 54, 54);
 }

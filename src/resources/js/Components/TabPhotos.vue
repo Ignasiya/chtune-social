@@ -21,13 +21,13 @@ function openPhoto(index) {
         <template v-for="(photo, ind) of photos">
             <div
                 @click="openPhoto(ind)"
-                class="group aspect-square bg-blue-100 flex flex-col items-center justify-center text-gray-500 relative cursor-pointer">
+                class="group aspect-square bg-sky-100 dark:bg-neutral-700 flex flex-col items-center justify-center text-gray-500 relative cursor-pointer">
 
                 <!--Download-->
                 <a
                     @click.stop
                     :href="route('post.download', photo)"
-                    class="opacity-0 z-20 group-hover:opacity-100 transition-all w-8 h-8 flex items-center justify-center text-gray-100 bg-gray-700 rounded absolute right-2 top-2 cursor-pointer hover:bg-gray-800">
+                    class="opacity-0 z-20 group-hover:opacity-100 transition-all w-8 h-8 flex items-center justify-center text-gray-300 bg-gray-700 rounded absolute right-2 top-2 cursor-pointer hover:bg-gray-800">
                     <ArrowDownTrayIcon class="w-4 h-4"/>
                 </a>
                 <!--/ Download-->

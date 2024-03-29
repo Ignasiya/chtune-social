@@ -82,23 +82,23 @@ function next() {
                             leave-to="opacity-0 scale-95"
                         >
                             <DialogPanel
-                                class="flex flex-col w-full transform overflow-hidden bg-slate-800 text-left align-middle shadow-xl transition-all"
+                                class="flex flex-col w-full transform overflow-hidden bg-slate-300 dark:bg-neutral-800 text-left align-middle shadow-xl transition-all"
                             >
                                 <button
                                     @click="closeModal"
-                                    class="absolute right-10 top-3 z-30 h-10 w-10 rounded-full hover:bg-black/10 transition flex items-center justify-center text-gray-100">
+                                    class="absolute right-10 top-3 z-30 h-10 w-10 rounded-full hover:bg-black/10 dark:hover:bg-white/5 transition flex items-center justify-center text-gray-800 dark:text-gray-300">
                                     <XMarkIcon class="w-6 h-6"/>
                                 </button>
 
                                 <div class="relative group h-full">
                                     <div
                                         @click="prev"
-                                        class="z-20 absolute flex items-center opacity-0 group-hover:opacity-100 text-gray-100 cursor-pointer w-12 h-full left-0 bg-black/5">
+                                        class="z-20 absolute flex items-center opacity-0 group-hover:opacity-100 text-gray-800 dark:text-gray-300 cursor-pointer w-12 h-full left-0 dark:bg-white/5 bg-black/5">
                                         <ChevronLeftIcon class="w-12"/>
                                     </div>
                                     <div
                                         @click="next"
-                                        class="z-20 absolute flex items-center opacity-0 group-hover:opacity-100 text-gray-100 cursor-pointer w-12 h-full right-0 bg-black/5">
+                                        class="z-20 absolute flex items-center opacity-0 group-hover:opacity-100 text-gray-800 dark:text-gray-300 cursor-pointer w-12 h-full right-0 dark:bg-white/5 bg-black/5">
                                         <ChevronRightIcon class="w-12"/>
                                     </div>
                                     <div class="flex items-center justify-center w-full h-full p-3">
@@ -111,7 +111,7 @@ function next() {
                                         </div>
                                         <div
                                             v-else
-                                            class="p-32 flex flex-col justify-center items-center text-gray-100">
+                                            class="p-32 flex flex-col justify-center items-center text-gray-300">
                                             <DocumentIcon class="w-12 h-12"/>
 
                                             <small>{{ attachment.name }}</small>

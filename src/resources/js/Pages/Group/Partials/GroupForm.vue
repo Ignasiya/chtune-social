@@ -16,7 +16,7 @@ defineProps({
 
 <template>
     <div class="mb-3">
-        <label>
+        <label class="text-gray-700 dark:text-gray-300">
             Название группы
         </label>
         <TextInput
@@ -28,7 +28,7 @@ defineProps({
         />
     </div>
     <div class="mb-3">
-        <label>
+        <label class="text-gray-700 dark:text-gray-300">
             <Checkbox
                 name="approval"
                 v-model:checked="form.auto_approval"
@@ -37,7 +37,7 @@ defineProps({
         </label>
     </div>
     <div class="mb-3">
-        <label>
+        <label class="text-gray-700 dark:text-gray-300">
             Описание группы
         </label>
         <ckeditor

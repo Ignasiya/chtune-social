@@ -2,7 +2,7 @@
 import {Head, useForm, usePage} from "@inertiajs/vue3";
 import {TabGroup, TabList, Tab, TabPanels, TabPanel} from '@headlessui/vue'
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import TabItem from "@/Pages/Profile/Partials/TabItem.vue";
+import TabItem from "@/Components/TabItem.vue";
 import {computed, ref} from "vue";
 import {XMarkIcon, CameraIcon, CheckIcon} from '@heroicons/vue/24/solid'
 import PrimaryButton from "@/Components/PrimaryButton.vue";
@@ -12,7 +12,7 @@ import TextInput from "@/Components/TextInput.vue";
 import GroupForm from "@/Pages/Group/Partials/GroupForm.vue";
 import PostList from "@/Components/PostList.vue";
 import CreatePost from "@/Components/CreatePost.vue";
-import TabPhotos from "@/Pages/Profile/Partials/TabPhotos.vue";
+import TabPhotos from "@/Components/TabPhotos.vue";
 import {wordEndingsParser} from "@/helpers.js";
 
 const imagesForm = useForm({
@@ -171,7 +171,7 @@ function deleteUser(user) {
                 >
                     {{ errors.cover }}
                 </div>
-                <div class="group relative bg-white">
+                <div class="group relative bg-white border-b border-gray-300 dark:border-neutral-300  dark:bg-neutral-800">
                     <img class="h-[200px] object-cover w-full"
                          :src="coverImageSrc || group.cover_url"
                          alt="cover">
@@ -229,8 +229,8 @@ function deleteUser(user) {
                         </div>
                         <div class="flex flex-1 justify-between items-center p-4">
                             <div>
-                                <h2 class="font-bold text-lg">{{ group.name }}</h2>
-                                <p class="text-xs text-gray-500">{{ wordEndingsParser(groupMembers,
+                                <h2 class="font-bold text-gray-700 dark:text-gray-300 text-lg">{{ group.name }}</h2>
+                                <p class="text-xs text-gray-500 dark:text-gray-400">{{ wordEndingsParser(groupMembers,
                                     'пользовател','ь','я','ей')
                                     }}</p>
                             </div>
@@ -260,7 +260,7 @@ function deleteUser(user) {
             </div>
             <div class="p-4 pt-0">
                 <TabGroup>
-                    <TabList class="flex bg-white">
+                    <TabList class="flex bg-white dark:bg-neutral-800">
                         <Tab v-slot="{ selected }" as="template">
                             <TabItem text="Записи" :selected="selected"></TabItem>
                         </Tab>
@@ -283,11 +283,11 @@ function deleteUser(user) {
                             <template v-if="posts">
                                 <CreatePost :group="group"/>
                                 <PostList v-if="posts.data.length" :posts="posts.data" class="flex-1"/>
-                                <div v-else class="py-8 text-center">
+                                <div v-else class="py-8 text-gray-600 dark:text-gray-300 text-center">
                                     На стене группы пока нет записей
                                 </div>
                             </template>
-                            <div v-else class="py-8 text-center">
+                            <div v-else class="py-8 text-gray-600 dark:text-gray-300 text-center">
                                 Вступите, чтобы видеть записи группы
                             </div>
                         </TabPanel>
@@ -300,7 +300,7 @@ function deleteUser(user) {
                             </div>
                             <div class="grid grid-cols-2 gap-3">
                                 <UserItem
-                                    class="shadow rounded-lg"
+                                    class="shadow"
                                     v-for="user of users"
                                     :user="user"
                                     :key="user.id"
@@ -313,7 +313,7 @@ function deleteUser(user) {
                         <TabPanel v-if="isUserAdmin">
                             <div v-if="requests.length" class="grid grid-cols-2 gap-3">
                                 <UserItem
-                                    class="shadow rounded-lg"
+                                    class="shadow"
                                     v-for="user of requests"
                                     :user="user"
                                     :key="user.id"
@@ -321,25 +321,25 @@ function deleteUser(user) {
                                     @approved="approveUser(user, 'approved')"
                                     @rejected="approveUser(user, 'rejected')"/>
                             </div>
-                            <div v-else class="py-8 text-center">
+                            <div v-else class="py-8 text-gray-600 dark:text-gray-300 text-center">
                                 Отсутствуют запросы на вступление
                             </div>
                         </TabPanel>
                         <TabPanel>
                             <TabPhotos v-if="photos.length" :photos="photos" />
-                            <div v-else class="py-8 text-center">
+                            <div v-else class="py-8 text-gray-600 dark:text-gray-300 text-center">
                                 В группе пока не опубликованы фотографии
                             </div>
                         </TabPanel>
-                        <TabPanel class="bg-white p-3 shadow">
+                        <TabPanel class="bg-white dark:bg-neutral-800 p-3 shadow">
                             <template v-if="isUserAdmin">
                                 <GroupForm :form="editForm"/>
                                 <PrimaryButton @click="updateGroup">
                                     Сохранить
                                 </PrimaryButton>
                             </template>
-                            <div v-else-if="group.about" class="ck-content-output" v-html="group.about" />
-                            <div v-else class="text-center">
+                            <div v-else-if="group.about" class="ck-content-output text-gray-600 dark:text-gray-300" v-html="group.about" />
+                            <div v-else class="text-center text-gray-600 dark:text-gray-300">
                                 Описание группы отсутствует
                             </div>
                         </TabPanel>

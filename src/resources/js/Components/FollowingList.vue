@@ -44,7 +44,6 @@ defineProps({
             <div class="mt-3 h-[200px] lg:flex-1 overflow-auto">
                 <div v-if="users.length">
                     <UserItem
-                        class="rounded-lg"
                         v-for="user of users"
                         :key="user.id"
                         :user="user"/>

@@ -79,7 +79,7 @@ function copyToClipboard() {
             leave-to-class="transform scale-95 opacity-0"
         >
             <MenuItems
-                class="absolute z-30 right-0 mt-2 w-40 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg focus:outline-none"
+                class="absolute z-30 right-0 mt-2 w-40 origin-top-right divide-y divide-gray-100 dark:divide-neutral-900 rounded-md bg-white dark:bg-neutral-900 shadow-lg focus:outline-none"
             >
                 <MenuItem
                     v-if="!comment"
@@ -88,7 +88,7 @@ function copyToClipboard() {
                     <Link
                         :href="route('post.view', post.id)"
                         :class="[
-                              active ? 'bg-indigo-600 text-white' : 'text-gray-900',
+                              active ? 'bg-sky-600 text-white' : 'text-gray-600 dark:text-gray-300',
                               'group flex w-full items-center rounded-md px-1 py-1 text-sm',
                             ]"
                     >
@@ -106,7 +106,7 @@ function copyToClipboard() {
                     <button
                         @click="copyToClipboard"
                         :class="[
-                              active ? 'bg-indigo-600 text-white' : 'text-gray-900',
+                              active ? 'bg-sky-600 text-white' : 'text-gray-600 dark:text-gray-300',
                               'group flex w-full items-center rounded-md px-1 py-1 text-sm',
                             ]"
                     >
@@ -124,7 +124,7 @@ function copyToClipboard() {
                     <button
                         @click="$emit('pin')"
                         :class="[
-                              active ? 'bg-indigo-600 text-white' : 'text-gray-900',
+                              active ? 'bg-sky-600 text-white' : 'text-gray-600 dark:text-gray-300',
                               'group flex w-full items-center rounded-md px-1 py-1 text-sm',
                             ]"
                     >
@@ -142,7 +142,7 @@ function copyToClipboard() {
                     <button
                         @click="$emit('edit')"
                         :class="[
-                              active ? 'bg-indigo-600 text-white' : 'text-gray-900',
+                              active ? 'bg-sky-600 text-white' : 'text-gray-600 dark:text-gray-300',
                               'group flex w-full items-center rounded-md px-1 py-1 text-sm',
                             ]"
                     >
@@ -160,7 +160,7 @@ function copyToClipboard() {
                     <button
                         @click="$emit('delete')"
                         :class="[
-                              active ? 'bg-indigo-600 text-white' : 'text-gray-900',
+                              active ? 'bg-sky-600 text-white' : 'text-gray-600 dark:text-gray-300',
                               'group flex w-full items-center rounded-md px-1 py-1 text-sm',
                             ]"
                     >
