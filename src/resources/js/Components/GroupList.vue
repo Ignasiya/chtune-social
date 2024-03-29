@@ -1,6 +1,5 @@
 <script setup>
 import GroupModal from "@/Pages/Group/Partials/GroupModal.vue";
-import SkyButton from "@/Components/SkyButton.vue";
 import GroupItem from "@/Components/GroupItem.vue";
 import {ref} from "vue";
 import {UserGroupIcon} from '@heroicons/vue/24/solid'
@@ -23,10 +22,12 @@ function onGroupCreate(group) {
         <div class="lg:flex h-full flex-col overflow-hidden">
             <div class="flex justify-between">
                 <h2 class="text-xl font-bold">Мои группы</h2>
-                <SkyButton
+                <button
+                    class="flex items-center rounded-full p-2 bg-sky-700 hover:bg-sky-600 text-white hover:text-gray-100"
                     @click="showNewGroupModal = true">
-                    <UserGroupIcon class="w-5 h-5" />
-                </SkyButton>
+                    <UserGroupIcon class="w-6 h-6"/>
+                    +
+                </button>
             </div>
             <div class="mt-3 max-h-[400px] lg:flex-1 overflow-auto">
                 <div v-if="groups.length">

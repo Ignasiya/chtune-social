@@ -1,6 +1,7 @@
 <script setup>
 import {Disclosure, DisclosureButton, DisclosurePanel} from '@headlessui/vue'
-import {ChatBubbleLeftEllipsisIcon, HandThumbUpIcon} from '@heroicons/vue/24/solid'
+import {ChatBubbleLeftEllipsisIcon, HandThumbUpIcon, BookmarkIcon as PinBook} from '@heroicons/vue/24/solid'
+import {BookmarkIcon as UnpinBook} from "@heroicons/vue/24/outline";
 import PostUserHeader from "@/Pages/Post/Partials/PostUserHeader.vue";
 import {router, useForm, usePage} from "@inertiajs/vue3";
 import axiosClient from "@/axiosClient.js";
@@ -10,7 +11,6 @@ import PostAttachments from "@/Pages/Post/Partials/PostAttachments.vue";
 import CommentList from "@/Pages/Post/Partials/CommentList.vue";
 import {computed} from "vue";
 import UrlPreview from "@/Pages/Post/Partials/UrlPreview.vue";
-import {BookmarkIcon} from "@heroicons/vue/20/solid/index.js";
 
 const props = defineProps({
     post: Object
@@ -92,15 +92,7 @@ function pinUnpinPost() {
         class="bg-white border dark:bg-neutral-800 dark:border-neutral-700 dark:text-gray-300 rounded-[20px] p-4 mb-3 shadow-md">
         <div class="flex justify-between items-center mb-3">
             <PostUserHeader :post="post"/>
-            <div class="flex items-center gap-2">
-                <div v-if="isPinned" class="flex items-center text-xs">
-                    <BookmarkIcon
-                        class="mr-1 h-3 w-3"
-                        aria-hidden="true" />
-                    закреплена
-                </div>
-                <PostDropdown :post="post" @edit="openEditModal" @pin="pinUnpinPost" @delete="deletePost"/>
-            </div>
+            <PostDropdown :post="post" @edit="openEditModal" @pin="pinUnpinPost" @delete="deletePost"/>
         </div>
         <div class="mb-3">
             <ReadMoreReadLess :content="postBody"/>
@@ -113,7 +105,10 @@ function pinUnpinPost() {
         </div>
         <Disclosure v-slot="{ open }">
             <!-- Секция Лайков и Комментов -->
-            <div class="flex gap-2">
+            <div class="flex gap-2 py-2 border-t-2 border-gray-300 dark:border-neutral-700">
+
+            </div>
+            <div class="flex gap-2 py-2 border-t-2 border-gray-300 dark:border-neutral-700">
                 <button
                     @click="sendReaction"
                     class="text-gray-800 dark:text-gray-300 flex gap-1 items-center justify-center py-2 rounded-lg px-4 flex-1"
@@ -134,6 +129,16 @@ function pinUnpinPost() {
                     <span class="mr-2">{{ post.num_of_comments }}</span>
                     Комментарии
                 </DisclosureButton>
+                <button
+                    v-if="isPinned"
+                    class="flex items-center rounded-full p-1.5 bg-gray-100 dark:bg-neutral-700 dark:hover:bg-neutral-800 hover:bg-gray-200 text-sky-600 hover:text-sky-500">
+                    <PinBook class="h-5 w-5" />
+                </button>
+                <button
+                    v-else
+                    class="flex items-center rounded-full p-1.5 bg-gray-100 dark:bg-neutral-700 dark:hover:bg-neutral-800 hover:bg-gray-200 text-gray-600 hover:text-gray-500">
+                    <UnpinBook class="h-5 w-5" />
+                </button>
             </div>
             <DisclosurePanel class="mt-3 max-h-[400px] overflow-auto">
                 <CommentList :post="post" :data="{comments: post.comments}"/>

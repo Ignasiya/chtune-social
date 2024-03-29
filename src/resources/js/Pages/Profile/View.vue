@@ -5,9 +5,7 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import TabItem from "@/Components/TabItem.vue";
 import Edit from "@/Pages/Profile/Partials/Edit.vue";
 import {computed, ref} from "vue";
-import {XMarkIcon, CameraIcon, CheckIcon} from '@heroicons/vue/24/solid'
-import PrimaryButton from "@/Components/PrimaryButton.vue";
-import DangerButton from "@/Components/DangerButton.vue";
+import {XMarkIcon, CameraIcon, CheckIcon, BellIcon, BellSlashIcon, Cog8ToothIcon} from '@heroicons/vue/24/solid'
 import PostList from "@/Components/PostList.vue";
 import CreatePost from "@/Components/CreatePost.vue";
 import UserItem from "@/Components/UserItem.vue";
@@ -198,12 +196,16 @@ function followUser() {
                                     }}</p>
                             </div>
                             <div v-if="!isMyProfile">
-                                <PrimaryButton v-if="!isUserFollower" @click="followUser">
-                                    Подписаться
-                                </PrimaryButton>
-                                <DangerButton v-else @click="followUser">
-                                    Отписаться
-                                </DangerButton>
+                                <button
+                                    v-if="!isUserFollower" @click="followUser"
+                                    class="flex items-center rounded-full p-2 bg-sky-700 hover:bg-sky-600 text-white hover:text-gray-100">
+                                    <BellIcon class="w-6 h-6"/>
+                                </button>
+                                <button
+                                    v-else @click="followUser"
+                                    class="flex items-center rounded-full p-2 bg-sky-700 hover:bg-sky-600 text-white hover:text-gray-100">
+                                    <BellSlashIcon class="w-6 h-6"/>
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -212,7 +214,7 @@ function followUser() {
             </div>
             <div class="p-4 pt-0">
                 <TabGroup>
-                    <TabList class="flex bg-white dark:bg-neutral-800">
+                    <TabList class="flex bg-white font-semibold dark:bg-neutral-800">
                         <Tab v-slot="{ selected }" as="template">
                             <TabItem text="Записи" :selected="selected"></TabItem>
                         </Tab>
@@ -226,7 +228,9 @@ function followUser() {
                             <TabItem text="Фото" :selected="selected"></TabItem>
                         </Tab>
                         <Tab v-if="isMyProfile" v-slot="{ selected }" as="template">
-                            <TabItem text="Редактирование" :selected="selected"></TabItem>
+                            <TabItem :selected="selected">
+                                <Cog8ToothIcon class="w-5 h-5" />
+                            </TabItem>
                         </Tab>
                     </TabList>
 

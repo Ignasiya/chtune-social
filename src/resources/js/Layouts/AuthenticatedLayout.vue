@@ -86,20 +86,20 @@ function toggleDarkMode() {
                     <TabGroup :defaultIndex="menu" class="flex flex-1 justify-center" v-if="authUser">
                         <TabList class="flex">
                             <Tab v-slot="{ selected }" as="template">
+                                <Link :href="route('home')">
                                 <TabItem :selected="selected">
-                                    <Link :href="route('home')">
                                         <HomeSol v-if="selected" class="w-8 h-8"/>
                                         <HomeOut v-else class="w-8 h-8"/>
-                                    </Link>
                                 </TabItem>
+                                </Link>
                             </Tab>
                             <Tab v-slot="{ selected }" as="template">
-                                <TabItem :selected="selected">
-                                    <Link :href="route('activity')">
+                                <Link :href="route('activity')">
+                                    <TabItem :selected="selected">
                                         <UsersSol v-if="selected" class="w-8 h-8"/>
                                         <UsersOut v-else class="w-8 h-8"/>
-                                    </Link>
-                                </TabItem>
+                                    </TabItem>
+                                </Link>
                             </Tab>
                             <Tab v-slot="{ selected }"/>
                         </TabList>

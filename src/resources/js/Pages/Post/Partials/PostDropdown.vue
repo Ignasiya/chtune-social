@@ -1,7 +1,7 @@
 <script setup>
 
 import {Menu, MenuButton, MenuItem, MenuItems} from "@headlessui/vue";
-import {EllipsisVerticalIcon, PencilIcon, TrashIcon, EyeIcon, ClipboardIcon, BookmarkIcon} from
+import {EllipsisHorizontalIcon, PencilIcon, TrashIcon, EyeIcon, ClipboardIcon, BookmarkIcon} from
         "@heroicons/vue/20/solid/index.js";
 import {usePage, Link} from "@inertiajs/vue3";
 import {computed} from "vue";
@@ -64,7 +64,7 @@ function copyToClipboard() {
         <div>
             <MenuButton
                 class="z-20 h-8 w-8 rounded-full hover:bg-black/5 transition flex items-center justify-center">
-                <EllipsisVerticalIcon
+                <EllipsisHorizontalIcon
                     class="h-5 w-5"
                     aria-hidden="true"/>
             </MenuButton>

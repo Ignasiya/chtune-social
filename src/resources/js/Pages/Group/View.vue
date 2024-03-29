@@ -1,5 +1,5 @@
 <script setup>
-import {Head, useForm, usePage} from "@inertiajs/vue3";
+import {Head, useForm, usePage, Link} from "@inertiajs/vue3";
 import {TabGroup, TabList, Tab, TabPanels, TabPanel} from '@headlessui/vue'
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import TabItem from "@/Components/TabItem.vue";
@@ -14,6 +14,7 @@ import PostList from "@/Components/PostList.vue";
 import CreatePost from "@/Components/CreatePost.vue";
 import TabPhotos from "@/Components/TabPhotos.vue";
 import {wordEndingsParser} from "@/helpers.js";
+import {UserPlusIcon, ArrowRightEndOnRectangleIcon, UserIcon} from "@heroicons/vue/24/solid/index.js";
 
 const imagesForm = useForm({
     thumbnail: null,
@@ -234,33 +235,37 @@ function deleteUser(user) {
                                     'пользовател','ь','я','ей')
                                     }}</p>
                             </div>
-                            <PrimaryButton
+                            <Link
                                 v-if="!authUser"
-                                :href="route('login')">
-                                Войти и вступить
-                            </PrimaryButton>
-                            <PrimaryButton
-                                v-if="isUserAdmin"
-                                @click="showInviteUserModal= true">
-                                Пригласить
-                            </PrimaryButton>
-                            <PrimaryButton
+                                :href="route('login')"
+                                class="flex items-center rounded-full p-2 bg-sky-700 hover:bg-sky-600 text-white hover:text-gray-100">
+                                <ArrowRightEndOnRectangleIcon class="w-6 h-6"/>войти
+                            </Link>
+                            <button
                                 v-if="authUser && !group.role && group.auto_approval"
-                                @click="joinToGroup">
-                                Вступить
-                            </PrimaryButton>
-                            <PrimaryButton
+                                @click="joinToGroup"
+                                class="flex items-center rounded-full p-2 bg-sky-700 hover:bg-sky-600 text-white hover:text-gray-100">
+                                <ArrowRightEndOnRectangleIcon class="w-6 h-6"/>
+                            </button>
+                            <button
+                                v-if="isUserAdmin"
+                                @click="showInviteUserModal= true"
+                                class="flex items-center rounded-full p-2 bg-sky-700 hover:bg-sky-600 text-white hover:text-gray-100">
+                                <UserPlusIcon class="w-6 h-6"/>
+                            </button>
+                            <button
                                 v-if="authUser && !group.role && !group.auto_approval"
-                                @click="joinToGroup">
-                                Запросить
-                            </PrimaryButton>
+                                @click="joinToGroup"
+                                class="flex items-center rounded-full p-2 bg-sky-700 hover:bg-sky-600 text-white hover:text-gray-100">
+                                <UserIcon class="w-6 h-6"/>?
+                            </button>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="p-4 pt-0">
                 <TabGroup>
-                    <TabList class="flex bg-white dark:bg-neutral-800">
+                    <TabList class="flex bg-white font-semibold dark:bg-neutral-800">
                         <Tab v-slot="{ selected }" as="template">
                             <TabItem text="Записи" :selected="selected"></TabItem>
                         </Tab>
