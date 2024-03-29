@@ -19,6 +19,13 @@ const keywords = ref(usePage().props.search || '');
 
 const authUser = usePage().props.auth.user;
 
+defineProps({
+    menu: {
+        type: Number,
+        default: 2
+    }
+})
+
 function search() {
     router.get(route('search', encodeURIComponent(keywords.value)))
 }
@@ -33,7 +40,7 @@ function onSearchHide() {
     showSearch.value = false;
 }
 
-function toggleDarkMode(){
+function toggleDarkMode() {
     const html = window.document.documentElement
     if (html.classList.contains('dark')) {
         html.classList.remove('dark')
@@ -66,7 +73,7 @@ function toggleDarkMode(){
                         <button
                             @click="openSearch"
                             class="flex items-center rounded-full p-1.5 bg-black/5 dark:bg-neutral-700 dark:hover:bg-neutral-800 hover:bg-gray-200 text-sky-600 hover:text-sky-500">
-                            <MagnifyingGlassIcon class="w-5 h-5" />
+                            <MagnifyingGlassIcon class="w-5 h-5"/>
                         </button>
                         <Modal :show="showSearch" @close="onSearchHide">
                             <TextInput
@@ -76,20 +83,25 @@ function toggleDarkMode(){
                                 placeholder="Поиск по сайту"/>
                         </Modal>
                     </div>
-                    <TabGroup class="flex flex-1 justify-center" v-if="authUser">
+                    <TabGroup :defaultIndex="menu" class="flex flex-1 justify-center" v-if="authUser">
                         <TabList class="flex">
                             <Tab v-slot="{ selected }" as="template">
                                 <TabItem :selected="selected">
-                                    <HomeSol v-if="selected" class="w-8 h-8"/>
-                                    <HomeOut v-else class="w-8 h-8"/>
+                                    <Link :href="route('home')">
+                                        <HomeSol v-if="selected" class="w-8 h-8"/>
+                                        <HomeOut v-else class="w-8 h-8"/>
+                                    </Link>
                                 </TabItem>
                             </Tab>
                             <Tab v-slot="{ selected }" as="template">
                                 <TabItem :selected="selected">
-                                    <UsersSol v-if="selected" class="w-8 h-8"/>
-                                    <UsersOut v-else class="w-8 h-8"/>
+                                    <Link :href="route('activity')">
+                                        <UsersSol v-if="selected" class="w-8 h-8"/>
+                                        <UsersOut v-else class="w-8 h-8"/>
+                                    </Link>
                                 </TabItem>
                             </Tab>
+                            <Tab v-slot="{ selected }"/>
                         </TabList>
                     </TabGroup>
                     <button @click="toggleDarkMode"
@@ -100,7 +112,7 @@ function toggleDarkMode(){
                         <button
                             @click=""
                             class="flex items-center rounded-full p-1.5 bg-black/5 dark:bg-neutral-700 dark:hover:bg-neutral-800 hover:bg-gray-200 text-sky-600 hover:text-sky-500">
-                            <BellAlertIcon class="w-5 h-5" />
+                            <BellAlertIcon class="w-5 h-5"/>
                         </button>
                     </div>
                     <div class="hidden sm:flex sm:items-center">

@@ -1,15 +1,10 @@
 <script setup>
 import {Head} from '@inertiajs/vue3';
-import GroupList from "@/Components/GroupList.vue";
-import FollowingList from "@/Components/FollowingList.vue";
-import CreatePost from "@/Components/CreatePost.vue";
 import PostList from "@/Components/PostList.vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 
 defineProps({
-    posts: Object,
-    groups: Array,
-    followings: Array,
+    posts: Object
 });
 
 </script>
@@ -17,16 +12,9 @@ defineProps({
 <template>
     <Head title="Социальная сеть"/>
 
-    <AuthenticatedLayout>
-        <div class="container mx-auto lg:w-3/4 grid lg:grid-cols-12 gap-3 p-4 h-full">
-            <div class="lg:col-span-3 lg:order-1 h-full overflow-hidden">
-                <GroupList :groups="groups"/>
-            </div>
-            <div class="lg:col-span-3 lg:order-3 h-full overflow-hidden">
-                <FollowingList :users="followings"/>
-            </div>
-            <div class="lg:col-span-6 lg:order-2 h-full overflow-hidden flex flex-col">
-                <CreatePost/>
+    <AuthenticatedLayout :menu="0">
+        <div class="container max-w-[768px] mx-auto p-4">
+            <div class="flex flex-col">
                 <PostList :posts="posts.data" class="flex-1"/>
             </div>
         </div>

@@ -89,7 +89,7 @@ function pinUnpinPost() {
 
 <template>
     <div
-        class="bg-white border dark:bg-neutral-800 dark:border-neutral-700 dark:text-gray-300 rounded p-4 mb-3 shadow-md">
+        class="bg-white border dark:bg-neutral-800 dark:border-neutral-700 dark:text-gray-300 rounded-[20px] p-4 mb-3 shadow-md">
         <div class="flex justify-between items-center mb-3">
             <PostUserHeader :post="post"/>
             <div class="flex items-center gap-2">
