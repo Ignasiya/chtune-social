@@ -3,16 +3,16 @@ import {Head, useForm, usePage} from "@inertiajs/vue3";
 import {TabGroup, TabList, Tab, TabPanels, TabPanel} from '@headlessui/vue'
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import TabItem from "@/Pages/Profile/Partials/TabItem.vue";
-import Edit from "@/Pages/Profile/Edit.vue";
+import Edit from "@/Pages/Profile/Partials/Edit.vue";
 import {computed, ref} from "vue";
 import {XMarkIcon, CameraIcon, CheckIcon} from '@heroicons/vue/24/solid'
 import PrimaryButton from "@/Components/PrimaryButton.vue";
 import DangerButton from "@/Components/DangerButton.vue";
-import PostList from "@/Pages/Post/PostList.vue";
-import CreatePost from "@/Pages/Post/CreatePost.vue";
+import PostList from "@/Components/PostList.vue";
+import CreatePost from "@/Components/CreatePost.vue";
 import UserItem from "@/Components/UserItem.vue";
 import TextInput from "@/Components/TextInput.vue";
-import TabPhotos from "@/Pages/Profile/TabPhotos.vue";
+import TabPhotos from "@/Pages/Profile/Partials/TabPhotos.vue";
 import {wordEndingsParser} from "@/helpers.js";
 
 const imagesForm = useForm({

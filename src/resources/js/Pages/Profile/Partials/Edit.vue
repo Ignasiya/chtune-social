@@ -1,7 +1,7 @@
 <script setup>
-import DeleteUserForm from './Partials/DeleteUserForm.vue';
-import UpdatePasswordForm from './Partials/UpdatePasswordForm.vue';
-import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm.vue';
+import DeleteUserForm from './DeleteUserForm.vue';
+import UpdatePasswordForm from './UpdatePasswordForm.vue';
+import UpdateProfileInformationForm from './UpdateProfileInformationForm.vue';
 
 defineProps({
     mustVerifyEmail: {

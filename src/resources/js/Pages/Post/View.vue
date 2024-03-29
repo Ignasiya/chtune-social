@@ -1,9 +1,9 @@
 <script setup>
-import PostItem from "@/Pages/Post/PostItem.vue";
+import PostItem from "@/Pages/Post/Partials/PostItem.vue";
 import {ref} from "vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import {Head, usePage} from "@inertiajs/vue3";
-import PostModal from "@/Pages/Post/PostModal.vue";
+import PostModal from "@/Pages/Post/Partials/PostModal.vue";
 import AttachmentPreview from "@/Components/AttachmentPreview.vue";
 
 defineProps({

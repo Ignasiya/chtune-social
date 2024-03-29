@@ -1,6 +1,7 @@
 <script setup>
 import {Link} from '@inertiajs/vue3';
 import {XMarkIcon} from "@heroicons/vue/24/solid/index.js";
+import UserHeader from "@/Components/UserHeader.vue";
 
 defineProps({
     user: Object,
@@ -24,11 +25,9 @@ defineEmits(['approved', 'rejected', 'roleChange', 'deleted'])
 
 <template>
     <div
-        class="transition-all bg-white border-2 border-transparent hover:border-indigo-500">
+        class="transition-all bg-white dark:text-gray-300 dark:bg-stone-800 border-2 border-transparent hover:border-indigo-500">
         <div class="flex items-center gap-2 py-2 px-2">
-            <Link :href="route('profile', user.username)">
-                <img class="w-[32px] h-[32px] object-cover rounded-full" :src="user.avatar_url" alt="avatar">
-            </Link>
+            <UserHeader :user="user" />
             <div class="flex justify-between items-center flex-1">
                 <Link :href="route('profile', user.username)">
                     <h3 class="font-black hover:underline">{{ user.name }}</h3>

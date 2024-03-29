@@ -7,14 +7,14 @@ import {
     DialogPanel,
     DialogTitle,
 } from '@headlessui/vue'
-import PostUserHeader from "@/Pages/Post/PostUserHeader.vue";
+import PostUserHeader from "@/Pages/Post/Partials/PostUserHeader.vue";
 import {XMarkIcon, PaperClipIcon, ArrowUturnLeftIcon} from '@heroicons/vue/24/solid'
 import {useForm, usePage} from "@inertiajs/vue3";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import {isImage, matchHref, matchLink} from "@/helpers.js";
-import IndigoButton from "@/Components/IndigoButton.vue";
+import IndigoButton from "@/Components/SkyButton.vue";
 import axiosClient from "@/axiosClient.js";
-import UrlPreview from "@/Pages/Post/UrlPreview.vue";
+import UrlPreview from "@/Pages/Post/Partials/UrlPreview.vue";
 
 const editor = ClassicEditor;
 const editorConfig = {

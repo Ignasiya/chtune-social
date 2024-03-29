@@ -1,6 +1,6 @@
 <script setup>
-import PostItem from "@/Pages/Post/PostItem.vue";
-import PostModal from "@/Pages/Post/PostModal.vue";
+import PostItem from "@/Pages/Post/Partials/PostItem.vue";
+import PostModal from "@/Pages/Post/Partials/PostModal.vue";
 import {onMounted, ref, watch} from "vue";
 import {usePage} from "@inertiajs/vue3";
 import AttachmentPreview from "@/Components/AttachmentPreview.vue";

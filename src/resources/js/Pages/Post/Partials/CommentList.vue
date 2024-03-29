@@ -1,9 +1,9 @@
 <script setup>
 import {ChatBubbleLeftRightIcon, HandThumbUpIcon} from '@heroicons/vue/24/solid';
-import ReadMoreReadLess from "@/Pages/Post/ReadMoreReadLess.vue";
-import IndigoButton from "@/Components/IndigoButton.vue";
+import ReadMoreReadLess from "@/Pages/Post/Partials/ReadMoreReadLess.vue";
+import IndigoButton from "@/Components/SkyButton.vue";
 import TextareaInput from "@/Components/TextareaInput.vue";
-import PostDropdown from "@/Pages/Post/PostDropdown.vue";
+import PostDropdown from "@/Pages/Post/Partials/PostDropdown.vue";
 import {usePage, Link} from "@inertiajs/vue3";
 import {ref} from "vue";
 import axiosClient from "@/axiosClient.js";

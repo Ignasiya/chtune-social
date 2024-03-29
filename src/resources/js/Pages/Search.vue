@@ -1,7 +1,7 @@
 <script setup>
 import UserItem from "@/Components/UserItem.vue";
-import GroupItem from "@/Pages/Group/GroupItem.vue";
-import PostList from "@/Pages/Post/PostList.vue";
+import GroupItem from "@/Components/GroupItem.vue";
+import PostList from "@/Components/PostList.vue";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import {Head} from "@inertiajs/vue3";
 

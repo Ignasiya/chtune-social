@@ -58,8 +58,8 @@ class Post extends Model
 
     public static function postsForTimeline($userId, $getLatest = true): Builder
     {
-        $query = Post::query() // SELECT * FROM posts
-        ->withCount('reactions') // SELECT COUNT(*) FROM reactions
+        $query = Post::query()
+        ->withCount('reactions')
         ->with([
             'user',
             'group',
@@ -67,14 +67,13 @@ class Post extends Model
             'attachments',
             'comments' => function ($query) {
                 $query->withCount('reactions'); // SELECT * FROM comments WHERE post_id IN (1, 2, 3...)
-                // SELECT COUNT(*) FROM reactions
             },
             'comments.user',
             'comments.reactions' => function ($query) use ($userId) {
-                $query->where('user_id', $userId); // SELECT * from reactions WHERE user_id = ?
+                $query->where('user_id', $userId);
             },
             'reactions' => function ($query) use ($userId) {
-                $query->where('user_id', $userId); // SELECT * FROM reactions WHERE user_id = ?
+                $query->where('user_id', $userId);
             }]);
         if ($getLatest) {
             $query->latest();

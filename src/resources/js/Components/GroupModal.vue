@@ -9,9 +9,9 @@ import {
 } from '@headlessui/vue'
 import {XMarkIcon,} from '@heroicons/vue/24/solid'
 import {useForm} from "@inertiajs/vue3";
-import IndigoButton from "@/Components/IndigoButton.vue";
+import IndigoButton from "@/Components/SkyButton.vue";
 import axiosClient from "@/axiosClient.js";
-import GroupForm from "@/Pages/Group/GroupForm.vue";
+import GroupForm from "@/Components/GroupForm.vue";
 
 const props = defineProps({
     modelValue: Boolean

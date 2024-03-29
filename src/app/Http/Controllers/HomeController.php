@@ -31,8 +31,8 @@ class HomeController extends Controller
             })
             ->whereNotNull('f.follower_id')
             ->orWhereNotNull('gu.group_id')
-            ->orWhere('posts.user_id', $userId)
-//             ->whereNot('posts.user_id', '=', $userId)
+//            ->orWhere('posts.user_id', $userId)
+            ->whereNot('posts.user_id', '=', $userId)
             ->paginate(10);
 
         $posts = PostResource::collection($posts);

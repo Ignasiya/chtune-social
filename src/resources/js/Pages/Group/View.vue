@@ -6,13 +6,13 @@ import TabItem from "@/Pages/Profile/Partials/TabItem.vue";
 import {computed, ref} from "vue";
 import {XMarkIcon, CameraIcon, CheckIcon} from '@heroicons/vue/24/solid'
 import PrimaryButton from "@/Components/PrimaryButton.vue";
-import InviteUserModal from "@/Pages/Group/InviteUserModal.vue";
+import InviteUserModal from "@/Pages/Group/Partials/InviteUserModal.vue";
 import UserItem from "@/Components/UserItem.vue";
 import TextInput from "@/Components/TextInput.vue";
-import GroupForm from "@/Pages/Group/GroupForm.vue";
-import PostList from "@/Pages/Post/PostList.vue";
-import CreatePost from "@/Pages/Post/CreatePost.vue";
-import TabPhotos from "@/Pages/Profile/TabPhotos.vue";
+import GroupForm from "@/Components/GroupForm.vue";
+import PostList from "@/Components/PostList.vue";
+import CreatePost from "@/Components/CreatePost.vue";
+import TabPhotos from "@/Pages/Profile/Partials/TabPhotos.vue";
 import {wordEndingsParser} from "@/helpers.js";
 
 const imagesForm = useForm({

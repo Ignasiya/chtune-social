@@ -1,24 +1,21 @@
 <script setup>
 import {Link} from '@inertiajs/vue3';
 import {ChevronRightIcon} from '@heroicons/vue/24/solid/index.js'
+import UserHeader from "@/Components/UserHeader.vue";
 
 defineProps({
-    post: {
-        type: Object
-    },
+    post: Object,
     showTime: {
         type: Boolean,
         default: true
     }
 })
+
 </script>
 
 <template>
     <div class="flex items-center gap-2">
-        <Link :href="route('profile', post.user.username)">
-            <img :src="post.user.avatar_url || '/image/no-avatar.png'" alt="avatar"
-                 class="w-[40px] rounded-full border-2 transition-all hover:border-blue-500"/>
-        </Link>
+        <UserHeader :user="post.user" />
         <div>
             <h4 class="flex items-center font-bold">
                 <Link :href="route('profile', post.user.username)" class="hover:underline">
