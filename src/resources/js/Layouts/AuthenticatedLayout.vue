@@ -7,8 +7,12 @@ import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import {Link, router, usePage} from '@inertiajs/vue3';
 import TextInput from "@/Components/TextInput.vue";
 import UserHeader from "@/Components/UserHeader.vue";
-import {MagnifyingGlassIcon, MoonIcon} from '@heroicons/vue/24/solid'
+import {MagnifyingGlassIcon, MoonIcon, BellAlertIcon, HomeIcon as HomeSol, UsersIcon as UsersSol} from
+        '@heroicons/vue/24/solid'
+import {HomeIcon as HomeOut, UsersIcon as UsersOut} from '@heroicons/vue/24/outline'
 import Modal from "@/Components/Modal.vue";
+import {Tab, TabGroup, TabList} from "@headlessui/vue";
+import TabItem from "@/Components/TabItem.vue";
 
 const showingNavigationDropdown = ref(false);
 const keywords = ref(usePage().props.search || '');
@@ -47,7 +51,7 @@ function toggleDarkMode(){
         <nav class="bg-white dark:bg-neutral-900 border-b border-gray-100 dark:border-neutral-700">
             <!-- Primary Navigation Menu -->
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-                <div class="flex items-center justify-between gap-4 h-16">
+                <div class="flex flex-1 items-center justify-between gap-4 h-16">
                     <div class="flex">
                         <!-- Logo -->
                         <div class="shrink-0 flex items-center">
@@ -58,12 +62,11 @@ function toggleDarkMode(){
                             </Link>
                         </div>
                     </div>
-                    <div v-if="authUser" class="ms-3 relative inline-flex items-center">
+                    <div v-if="authUser">
                         <button
-                            type="button"
                             @click="openSearch"
-                            class="flex items-center rounded-full p-1.5 bg-black/5 dark:bg-neutral-700">
-                            <MagnifyingGlassIcon class="w-5 h-5 text-sky-600" />
+                            class="flex items-center rounded-full p-1.5 bg-black/5 dark:bg-neutral-700 dark:hover:bg-neutral-800 hover:bg-gray-200 text-sky-600 hover:text-sky-500">
+                            <MagnifyingGlassIcon class="w-5 h-5" />
                         </button>
                         <Modal :show="showSearch" @close="onSearchHide">
                             <TextInput
@@ -73,9 +76,33 @@ function toggleDarkMode(){
                                 placeholder="Поиск по сайту"/>
                         </Modal>
                     </div>
-                    <button @click="toggleDarkMode" class="flex items-center rounded-full p-1.5 bg-black/5 dark:bg-neutral-700">
-                        <MoonIcon class="w-5 h-5 text-sky-600"/>
+                    <TabGroup class="flex flex-1 justify-center" v-if="authUser">
+                        <TabList class="flex">
+                            <Tab v-slot="{ selected }" as="template">
+                                <TabItem :selected="selected">
+                                    <HomeSol v-if="selected" class="w-8 h-8"/>
+                                    <HomeOut v-else class="w-8 h-8"/>
+                                </TabItem>
+                            </Tab>
+                            <Tab v-slot="{ selected }" as="template">
+                                <TabItem :selected="selected">
+                                    <UsersSol v-if="selected" class="w-8 h-8"/>
+                                    <UsersOut v-else class="w-8 h-8"/>
+                                </TabItem>
+                            </Tab>
+                        </TabList>
+                    </TabGroup>
+                    <button @click="toggleDarkMode"
+                            class="flex items-center rounded-full p-1.5 bg-gray-100 dark:bg-neutral-700 dark:hover:bg-neutral-800 hover:bg-gray-200 text-sky-600 hover:text-sky-500">
+                        <MoonIcon class="w-5 h-5"/>
                     </button>
+                    <div v-if="authUser" class="ms-3 relative inline-flex items-center">
+                        <button
+                            @click=""
+                            class="flex items-center rounded-full p-1.5 bg-black/5 dark:bg-neutral-700 dark:hover:bg-neutral-800 hover:bg-gray-200 text-sky-600 hover:text-sky-500">
+                            <BellAlertIcon class="w-5 h-5" />
+                        </button>
+                    </div>
                     <div class="hidden sm:flex sm:items-center">
                         <!-- Settings Dropdown -->
                         <div class="ms-3 relative inline-flex items-center">
@@ -168,13 +195,6 @@ function toggleDarkMode(){
                 </div>
             </div>
         </nav>
-
-        <!-- Page Heading -->
-        <header class="bg-white dark:bg-gray-800 shadow" v-if="$slots.header">
-            <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-                <slot name="header"/>
-            </div>
-        </header>
 
         <!-- Page Content -->
         <main class="flex 1 overflow-hidden">
