@@ -9,7 +9,7 @@ import {
 } from '@headlessui/vue'
 import {XMarkIcon,} from '@heroicons/vue/24/solid'
 import {useForm, usePage} from "@inertiajs/vue3";
-import IndigoButton from "@/Components/SkyButton.vue";
+import SkyButton from "@/Components/SkyButton.vue";
 import TextInput from "@/Components/TextInput.vue";
 
 const props = defineProps({
@@ -122,9 +122,9 @@ function submit() {
                                         Отмена
                                     </button>
 
-                                    <IndigoButton @click="submit">
+                                    <SkyButton @click="submit">
                                         Отправить
-                                    </IndigoButton>
+                                    </SkyButton>
                                 </div>
                             </DialogPanel>
                         </TransitionChild>

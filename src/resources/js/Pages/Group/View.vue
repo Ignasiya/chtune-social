@@ -9,7 +9,7 @@ import PrimaryButton from "@/Components/PrimaryButton.vue";
 import InviteUserModal from "@/Pages/Group/Partials/InviteUserModal.vue";
 import UserItem from "@/Components/UserItem.vue";
 import TextInput from "@/Components/TextInput.vue";
-import GroupForm from "@/Components/GroupForm.vue";
+import GroupForm from "@/Pages/Group/Partials/GroupForm.vue";
 import PostList from "@/Components/PostList.vue";
 import CreatePost from "@/Components/CreatePost.vue";
 import TabPhotos from "@/Pages/Profile/Partials/TabPhotos.vue";

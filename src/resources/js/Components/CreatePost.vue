@@ -28,10 +28,10 @@ function showCreatePostModal() {
 </script>
 
 <template>
-    <div class="p-4 bg-white dark:bg-stone-800 rounded-lg border dark:border-stone-900 mb-3">
+    <div class="p-4 bg-white dark:bg-neutral-800 rounded-lg border dark:border-neutral-900 mb-3">
         <div
             @click="showCreatePostModal"
-            class="py-2 px-3 border-2 dark:bg-stone-900 border-gray-200 dark:border-stone-700 text-gray-500 rounded-md mb-3 w-full">
+            class="py-2 px-3 border-2 dark:bg-neutral-900 border-gray-200 dark:border-neutral-700 text-gray-500 rounded-md mb-3 w-full">
             Новая запись
         </div>
 

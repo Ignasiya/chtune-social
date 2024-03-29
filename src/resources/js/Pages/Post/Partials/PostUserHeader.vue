@@ -14,7 +14,7 @@ defineProps({
 </script>
 
 <template>
-    <div class="flex items-center gap-2">
+    <div class="flex items-center gap-2 dark:text-gray-300">
         <UserHeader :user="post.user" />
         <div>
             <h4 class="flex items-center font-bold">

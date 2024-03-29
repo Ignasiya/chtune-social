@@ -11,7 +11,7 @@ defineProps({
 
 <template>
     <div
-        class="px-3 py-3 bg-white dark:bg-stone-800 rounded border dark:border-stone-900 dark:text-gray-300 h-full overflow-hidden">
+        class="px-3 py-3 bg-white dark:bg-neutral-800 rounded border dark:border-neutral-900 dark:text-gray-300 h-full overflow-hidden">
         <div class="block lg:hidden">
             <Disclosure v-slot="{ open }">
                 <DisclosureButton class="w-full">

@@ -1,20 +1,14 @@
 <script setup>
 import {computed, ref, watch,} from 'vue'
-import {
-    TransitionRoot,
-    TransitionChild,
-    Dialog,
-    DialogPanel,
-    DialogTitle,
-} from '@headlessui/vue'
 import PostUserHeader from "@/Pages/Post/Partials/PostUserHeader.vue";
 import {XMarkIcon, PaperClipIcon, ArrowUturnLeftIcon} from '@heroicons/vue/24/solid'
 import {useForm, usePage} from "@inertiajs/vue3";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import {isImage, matchHref, matchLink} from "@/helpers.js";
-import IndigoButton from "@/Components/SkyButton.vue";
+import SkyButton from "@/Components/SkyButton.vue";
 import axiosClient from "@/axiosClient.js";
 import UrlPreview from "@/Pages/Post/Partials/UrlPreview.vue";
+import BaseModal from "@/Components/BaseModal.vue";
 
 const editor = ClassicEditor;
 const editorConfig = {
@@ -22,7 +16,7 @@ const editorConfig = {
         removeProviders: ['dailymotion', 'spotify', 'youtube', 'vimeo',
             'instagram', 'twitter', 'googleMaps', 'flickr', 'facebook']
     },
-    toolbar: ['bold', 'italic', '|', 'bulletedList', 'numberedList', '|', 'heading', '|', 'link', '|', 'blockQuote',]
+    toolbar: ['bold', 'italic', '|', 'bulletedList', 'numberedList', '|', 'heading', '|', 'outdent', 'indent', '|', 'link', '|', 'blockQuote']
 };
 
 const props = defineProps({
@@ -207,141 +201,95 @@ function onInputPaste() {
 </script>
 
 <template>
-    <teleport to="body">
-        <TransitionRoot appear :show="show" as="template">
-            <Dialog as="div" @close="closeModal" class="relative z-50">
-                <TransitionChild
-                    as="template"
-                    enter="duration-300 ease-out"
-                    enter-from="opacity-0"
-                    enter-to="opacity-100"
-                    leave="duration-200 ease-in"
-                    leave-from="opacity-100"
-                    leave-to="opacity-0"
-                >
-                    <div class="fixed inset-0 bg-black/25"/>
-                </TransitionChild>
+    <BaseModal v-model="show" @hide="closeModal" :title="post.id ? 'Редактирование записи' : 'Создание записи'">
+        <template #body>
+            <PostUserHeader class="mb-4" :post="post" :show-time="false"/>
+            <div
+                v-if="formErrors.group_id"
+                class="bg-red-400 text-white py-2 px-3 rounded mb-3">
+                {{ formErrors.group_id }}
+            </div>
+            <ckeditor
+                :editor="editor"
+                v-model="form.body"
+                @input="onInputPaste"
+                :config="editorConfig">
+            </ckeditor>
+            <UrlPreview :preview="form.preview" :url="form.preview_url"/>
+            <div
+                v-if="showExtensionsText"
+                class="border-l-4 border-amber-500 py-2 px-3 bg-amber-100 mt-3 text-gray-800">
+                Расширения файлов могут быть следующими: <br>
+                <small>{{ attachmentExtensions.join(', ') }}</small>
+            </div>
 
-                <div class="fixed inset-0 overflow-y-auto">
+            <div
+                v-if="formErrors.attachments"
+                class="border-l-4 border-red-500 py-2 px-3 bg-red-100 mt-3 text-gray-800">
+
+                {{ formErrors.attachments }}
+            </div>
+
+            <div
+                class="grid gap-3 my-3"
+                :class="[computedAttachments.length === 1 ? 'grid-cols-1' : 'grid-cols-2']">
+                <div v-for="(myFile, ind) of computedAttachments">
                     <div
-                        class="flex min-h-full items-center justify-center p-4 text-center"
-                    >
-                        <TransitionChild
-                            as="template"
-                            enter="duration-300 ease-out"
-                            enter-from="opacity-0 scale-95"
-                            enter-to="opacity-100 scale-100"
-                            leave="duration-200 ease-in"
-                            leave-from="opacity-100 scale-100"
-                            leave-to="opacity-0 scale-95"
-                        >
-                            <DialogPanel
-                                class="w-full max-w-md transform overflow-hidden rounded bg-white text-left align-middle shadow-xl transition-all"
-                            >
-                                <DialogTitle
-                                    as="h3"
-                                    class="flex items-center justify-between py-3 px-4 font-medium bg-gray-100 text-gray-900"
-                                >
-                                    {{ post.id ? 'Редактирование записи' : 'Создание записи' }}
-                                    <button
-                                        @click="closeModal"
-                                        class="h-8 w-8 rounded-full hover:bg-black/5 transition flex items-center justify-center">
-                                        <XMarkIcon class="w-4 h-4"/>
-                                    </button>
-                                </DialogTitle>
-                                <div class="p-4">
-                                    <PostUserHeader class="mb-4" :post="post" :show-time="false"/>
-                                    <div
-                                        v-if="formErrors.group_id"
-                                        class="bg-red-400 text-white py-2 px-3 rounded mb-3">
-                                        {{ formErrors.group_id }}
-                                    </div>
-                                    <ckeditor
-                                        :editor="editor"
-                                        v-model="form.body"
-                                        @input="onInputPaste"
-                                        :config="editorConfig">
-                                    </ckeditor>
-                                    <UrlPreview :preview="form.preview" :url="form.preview_url"/>
-                                    <div
-                                        v-if="showExtensionsText"
-                                        class="border-l-4 border-amber-500 py-2 px-3 bg-amber-100 mt-3 text-gray-800">
-                                        Расширения файлов могут быть следующими: <br>
-                                        <small>{{ attachmentExtensions.join(', ') }}</small>
-                                    </div>
+                        class="group aspect-square bg-blue-100 flex flex-col items-center justify-center text-gray-500 relative border-2"
+                        :class="attachmentErrors[ind] ? 'border-red-500' : ''">
 
-                                    <div
-                                        v-if="formErrors.attachments"
-                                        class="border-l-4 border-red-500 py-2 px-3 bg-red-100 mt-3 text-gray-800">
+                        <div
+                            v-if="myFile.deleted"
+                            class="absolute z-10 left-0 bottom-0 right-0 py-2 px-3 bg-black text-sm text-white flex justify-between items-center">
+                            будет удалено
+                            <ArrowUturnLeftIcon
+                                @click="undoDelete(myFile)"
+                                class="w-4 h-4 cursor-pointer"/>
+                        </div>
 
-                                        {{ formErrors.attachments }}
-                                    </div>
+                        <button
+                            @click="removeFile(myFile)"
+                            class="absolute z-20 right-2 top-2 h-7 w-7 flex items-center justify-center text-2xl bg-black/30 text-white rounded-full hover:bg-black/40">
+                            <XMarkIcon class="h-5 w-5"/>
+                        </button>
 
-                                    <div class="grid gap-3 my-3" :class="[
-                                        computedAttachments.length === 1 ? 'grid-cols-1' : 'grid-cols-2'
-                                    ]">
-                                        <div v-for="(myFile, ind) of computedAttachments">
-                                            <div
-                                                class="group aspect-square bg-blue-100 flex flex-col items-center justify-center text-gray-500 relative border-2"
-                                                :class="attachmentErrors[ind] ? 'border-red-500' : ''">
+                        <img v-if="isImage(myFile.file || myFile)"
+                             :src="myFile.url"
+                             class="object-contain aspect-square"
+                             :class="myFile.deleted ? 'opacity-50' : ''"
+                             alt="image"/>
+                        <div
+                            v-else
+                            class="flex flex-col justify-center items-center px-3"
+                            :class="myFile.deleted ? 'opacity-50' : ''">
+                            <PaperClipIcon class="w-10 h-10 mb-3"/>
 
-                                                <div
-                                                    v-if="myFile.deleted"
-                                                    class="absolute z-10 left-0 bottom-0 right-0 py-2 px-3 bg-black text-sm text-white flex justify-between items-center">
-                                                    Будет удалено
-                                                    <ArrowUturnLeftIcon @click="undoDelete(myFile)"
-                                                                        class="w-4 h-4 cursor-pointer"/>
-                                                </div>
-
-                                                <button
-                                                    @click="removeFile(myFile)"
-                                                    class="absolute z-20 right-2 top-2 h-7 w-7 flex items-center justify-center text-2xl bg-black/30 text-white rounded-full hover:bg-black/40">
-                                                    <XMarkIcon class="h-5 w-5"/>
-                                                </button>
-
-                                                <img v-if="isImage(myFile.file || myFile)"
-                                                     :src="myFile.url"
-                                                     class="object-contain aspect-square"
-                                                     :class="myFile.deleted ? 'opacity-50' : ''"
-                                                     alt="image"/>
-                                                <div
-                                                    v-else
-                                                    class="flex flex-col justify-center items-center px-3"
-                                                    :class="myFile.deleted ? 'opacity-50' : ''">
-                                                    <PaperClipIcon class="w-10 h-10 mb-3"/>
-
-                                                    <small class="text-center">
-                                                        {{ (myFile.file || myFile).name }}
-                                                    </small>
-                                                </div>
-                                            </div>
-                                            <small class="text-red-500">{{ attachmentErrors[ind] }}</small>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div class="py-3 px-4 flex gap-2 ">
-                                    <IndigoButton class="w-full">
-                                        <PaperClipIcon class="w-4 h-4 mr-2"/>
-                                        Вложить файлы
-                                        <input
-                                            @click.stop
-                                            @change="onAttachmentChoose"
-                                            type="file"
-                                            multiple
-                                            class="absolute left-0 top-0 right-0 bottom-0 opacity-0">
-                                    </IndigoButton>
-                                    <IndigoButton class="w-full" @click="submit">
-                                        Сохранить
-                                    </IndigoButton>
-                                </div>
-                            </DialogPanel>
-                        </TransitionChild>
+                            <small class="text-center">
+                                {{ (myFile.file || myFile).name }}
+                            </small>
+                        </div>
                     </div>
+                    <small class="text-red-500">{{ attachmentErrors[ind] }}</small>
                 </div>
-            </Dialog>
-        </TransitionRoot>
-    </teleport>
+            </div>
+        </template>
+
+        <template #button>
+            <SkyButton>
+                <PaperClipIcon class="w-4 h-4 mr-2"/>
+                Вложить
+                <input
+                    @click.stop
+                    @change="onAttachmentChoose"
+                    type="file"
+                    multiple
+                    class="absolute left-0 top-0 right-0 bottom-0 opacity-0">
+            </SkyButton>
+            <SkyButton @click="submit">
+                Сохранить
+            </SkyButton>
+        </template>
+    </BaseModal>
 </template>
 
 <style scoped>

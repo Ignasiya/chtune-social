@@ -88,7 +88,8 @@ function pinUnpinPost() {
 </script>
 
 <template>
-    <div class="bg-white border dark:bg-stone-800 dark:border-stone-900 dark:text-gray-300 rounded p-4 mb-3">
+    <div
+        class="bg-white border dark:bg-neutral-800 dark:border-neutral-700 dark:text-gray-300 rounded p-4 mb-3 shadow-md">
         <div class="flex justify-between items-center mb-3">
             <PostUserHeader :post="post"/>
             <div class="flex items-center gap-2">
@@ -119,7 +120,7 @@ function pinUnpinPost() {
                     :class="[
                     post.current_user_has_reaction ?
                     'bg-sky-100 hover:bg-sky-200 dark:bg-sky-900 dark:hover:bg-sky-950' :
-                    'bg-gray-100 dark:bg-stone-900 hover:bg-gray-200 dark:hover:bg-stone-950'
+                    'bg-gray-100 dark:bg-neutral-900 hover:bg-gray-200 dark:hover:bg-neutral-950'
                 ]"
                 >
                     <HandThumbUpIcon class="w-6 h-6"/>
@@ -127,7 +128,7 @@ function pinUnpinPost() {
                     {{ post.current_user_has_reaction ? 'Не нравится' : 'Нравится' }}
                 </button>
                 <DisclosureButton
-                    class="text-gray-800 dark:text-gray-300 flex gap-1 items-center justify-center py-2 bg-gray-100 rounded-lg hover:bg-gray-200 px-4 flex-1 dark:bg-stone-900 dark:hover:bg-stone-950"
+                    class="text-gray-800 dark:text-gray-300 flex gap-1 items-center justify-center py-2 bg-gray-100 rounded-lg hover:bg-gray-200 px-4 flex-1 dark:bg-neutral-900 dark:hover:bg-neutral-950"
                 >
                     <ChatBubbleLeftEllipsisIcon class="w-6 h-6"/>
                     <span class="mr-2">{{ post.num_of_comments }}</span>

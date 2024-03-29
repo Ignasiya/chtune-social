@@ -32,8 +32,8 @@ function onSearchHide() {
 </script>
 
 <template>
-    <div class="h-full overflow-hidden flex flex-col bg-gray-100 dark:bg-stone-900">
-        <nav class="bg-white dark:bg-stone-900 border-b border-gray-100 dark:border-stone-700">
+    <div class="h-full overflow-hidden flex flex-col bg-gray-100 dark:bg-neutral-900">
+        <nav class="bg-white dark:bg-neutral-900 border-b border-gray-100 dark:border-neutral-700">
             <!-- Primary Navigation Menu -->
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex items-center justify-between gap-4 h-16">
@@ -51,7 +51,7 @@ function onSearchHide() {
                         <button
                             type="button"
                             @click="openSearch"
-                            class="flex items-center rounded-full p-1.5 bg-white dark:bg-stone-700">
+                            class="flex items-center rounded-full p-1.5 bg-white dark:bg-neutral-700">
                             <MagnifyingGlassIcon class="w-5 h-5 text-sky-600" />
                         </button>
                         <Modal :show="showSearch" @close="onSearchHide">

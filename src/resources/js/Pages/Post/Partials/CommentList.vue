@@ -1,13 +1,14 @@
 <script setup>
 import {ChatBubbleLeftRightIcon, HandThumbUpIcon} from '@heroicons/vue/24/solid';
 import ReadMoreReadLess from "@/Pages/Post/Partials/ReadMoreReadLess.vue";
-import IndigoButton from "@/Components/SkyButton.vue";
+import skyButton from "@/Components/SkyButton.vue";
 import TextareaInput from "@/Components/TextareaInput.vue";
 import PostDropdown from "@/Pages/Post/Partials/PostDropdown.vue";
 import {usePage, Link} from "@inertiajs/vue3";
 import {ref} from "vue";
 import axiosClient from "@/axiosClient.js";
 import {Disclosure, DisclosureButton, DisclosurePanel} from "@headlessui/vue";
+import UserHeader from "@/Components/UserHeader.vue";
 
 const authUser = usePage().props.auth.user;
 
@@ -104,22 +105,17 @@ function onCommentDelete(comment) {
 </script>
 
 <template>
-    <div class="flex gap-2 mb-3">
-        <Link :href="route('profile', authUser.username)">
-            <img
-                :src="authUser.avatar_url"
-                alt="avatar"
-                class="w-[40px] rounded-full border-2 transition-all hover:border-blue-500"/>
-        </Link>
+    <div class="flex items-center gap-2 mb-3">
+        <UserHeader :user="authUser" :link="true"/>
         <div class="flex flex-1">
             <TextareaInput
                 v-model="newCommentText"
                 placeholder="Введите ваш комментарий"
-                class="w-full max-h-[160px] rounded-r-none resize-none"
+                class="w-full max-h-[150px] rounded-r-none resize-none"
                 rows="1"/>
-            <IndigoButton @click="createComment"
+            <skyButton @click="createComment"
                           class="w-[100px] rounded-l-none">Отправить
-            </IndigoButton>
+            </skyButton>
         </div>
     </div>
     <div>
@@ -159,14 +155,14 @@ function onCommentDelete(comment) {
                     <div class="flex gap-2 justify-end">
                         <button
                             @click="editingComment = null"
-                            class="rounded-r-none text-indigo-500">
+                            class="rounded-r-none text-sky-500">
                             отмена
                         </button>
-                        <IndigoButton
+                        <skyButton
                             @click="updateComment"
                             class="w-[100px]">
                             изменить
-                        </IndigoButton>
+                        </skyButton>
                     </div>
                 </div>
                 <ReadMoreReadLess
@@ -179,16 +175,16 @@ function onCommentDelete(comment) {
                             @click="sendCommentReaction(comment)"
                             :class="[
                                 comment.current_user_has_reaction ?
-                                'bg-indigo-50 hover:bg-indigo-100' :
-                                'hover:bg-indigo-50'
+                                'bg-sky-50 hover:bg-sky-100' :
+                                'hover:bg-sky-50'
                             ]"
-                            class="flex items-center text-xs text-indigo-500 py-0.5 px-1 rounded-lg">
+                            class="flex items-center text-xs text-sky-500 py-0.5 px-1 rounded-lg">
                             <HandThumbUpIcon class="w-3 h-3 mr-1"/>
                             <span class="mr-2">{{ comment.num_of_reactions }}</span>
                             {{ comment.current_user_has_reaction ? 'не нравится' : 'нравится' }}
                         </button>
                         <DisclosureButton
-                            class="flex items-center text-xs text-indigo-500 py-0.5 px-1 hover:bg-indigo-100 rounded-lg">
+                            class="flex items-center text-xs text-sky-500 py-0.5 px-1 hover:bg-sky-100 rounded-lg">
                             <ChatBubbleLeftRightIcon class="w-3 h-3 mr-1"/>
                             <span class="mr-2">{{ comment.num_of_comments }}</span>
                             комментарии

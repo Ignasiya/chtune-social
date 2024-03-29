@@ -12,7 +12,7 @@ const props = defineProps({
     },
     contentClasses: {
         type: String,
-        default: 'py-1 bg-white dark:bg-stone-700',
+        default: 'py-1 bg-white dark:bg-neutral-700',
     },
 });
 
