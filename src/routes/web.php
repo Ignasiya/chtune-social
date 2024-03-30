@@ -110,8 +110,20 @@ Route::middleware('auth')->group(function () {
             ->name('group.removeUser');
     });
 
-    Route::get('/search/{search?}', [SearchController::class, 'search'])
-        ->name('search');
+    // Поиск
+    Route::prefix('/search')->group(function () {
+        Route::get('/global/{search?}', [SearchController::class, 'search'])
+            ->name('search');
+
+        Route::get('/followers/{search?}', [SearchController::class, 'searchFollowers'])
+            ->name('search.followers');
+
+        Route::get('/followings/{search?}', [SearchController::class, 'searchFollowings'])
+            ->name('search.followings');
+
+        Route::get('/{group:slug}/{search?}', [SearchController::class, 'searchUsersInGroup'])
+            ->name('search.usersGroup');
+    });
 });
 
 require __DIR__ . '/auth.php';

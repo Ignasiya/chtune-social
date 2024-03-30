@@ -65,7 +65,6 @@ function loadMore() {
     if (!allPosts.value.next) {
         return;
     }
-
     axiosClient.get(allPosts.value.next)
         .then(({data}) => {
             allPosts.value.data = [...allPosts.value.data, ...data.data]

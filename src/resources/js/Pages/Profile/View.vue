@@ -12,6 +12,7 @@ import UserItem from "@/Components/UserItem.vue";
 import TextInput from "@/Components/TextInput.vue";
 import TabPhotos from "@/Components/TabPhotos.vue";
 import {wordEndingsParser} from "@/helpers.js";
+import axiosClient from "@/axiosClient.js";
 
 const imagesForm = useForm({
     avatar: null,
@@ -35,8 +36,14 @@ const props = defineProps({
     isUserFollower: Boolean,
     followerCount: Number,
     user: Object,
-    followers: Array,
-    followings: Array,
+    followers: {
+        type: Array,
+        defaults: []
+    },
+    followings: {
+        type: Array,
+        defaults: []
+    },
     posts: Object,
     photos: Array
 });
@@ -103,10 +110,23 @@ function followUser() {
     const form = useForm({
         follow: !props.isUserFollower
     })
-
     form.post(route('user.follow', props.user.id), {
         preserveScroll: true,
     });
+}
+
+function searchFollowers() {
+    axiosClient.get(route('search.followers', encodeURIComponent(searchFollowersKeyword.value)))
+        .then(({data}) => {
+            usePage().props.followers = data.followers;
+        })
+}
+
+function searchFollowings() {
+    axiosClient.get(route('search.followings', encodeURIComponent(searchFollowingsKeyword.value)))
+        .then(({data}) => {
+            usePage().props.followings = data.followings;
+        })
 }
 
 </script>
@@ -229,7 +249,7 @@ function followUser() {
                         </Tab>
                         <Tab v-if="isMyProfile" v-slot="{ selected }" as="template">
                             <TabItem :selected="selected">
-                                <Cog8ToothIcon class="w-5 h-5" />
+                                <Cog8ToothIcon class="w-5 h-5"/>
                             </TabItem>
                         </Tab>
                     </TabList>
@@ -250,20 +270,19 @@ function followUser() {
                             </div>
                         </TabPanel>
                         <TabPanel>
-                            <div v-if="followers.length">
-                                <div class="mb-3">
-                                    <TextInput
-                                        :model-value="searchFollowersKeyword"
-                                        placeholder="Введите для поиска"
-                                        class="w-full"/>
-                                </div>
-                                <div class="grid grid-cols-3 gap-3">
-                                    <UserItem
-                                        class="shadow"
-                                        v-for="follower of followers"
-                                        :user="follower"
-                                        :key="follower.id"/>
-                                </div>
+                            <div class="mb-3">
+                                <TextInput
+                                    v-model="searchFollowersKeyword"
+                                    placeholder="Введите для поиска"
+                                    @input="searchFollowers"
+                                    class="w-full"/>
+                            </div>
+                            <div v-if="followers.length" class="grid grid-cols-3 gap-3">
+                                <UserItem
+                                    class="shadow"
+                                    v-for="follower of followers"
+                                    :user="follower"
+                                    :key="follower.id"/>
                             </div>
                             <div v-else class="py-8 text-gray-600 dark:text-gray-300 text-center">
                                 У Вас нет подписчиков
@@ -273,8 +292,9 @@ function followUser() {
                             <div v-if="followings.length">
                                 <div class="mb-3">
                                     <TextInput
-                                        :model-value="searchFollowingsKeyword"
+                                        v-model="searchFollowingsKeyword"
                                         placeholder="Введите для поиска"
+                                        @input="searchFollowings"
                                         class="w-full"/>
                                 </div>
                                 <div class="grid grid-cols-3 gap-3">

@@ -15,6 +15,7 @@ import CreatePost from "@/Components/CreatePost.vue";
 import TabPhotos from "@/Components/TabPhotos.vue";
 import {wordEndingsParser} from "@/helpers.js";
 import {UserPlusIcon, ArrowRightEndOnRectangleIcon, UserIcon} from "@heroicons/vue/24/solid/index.js";
+import axiosClient from "@/axiosClient.js";
 
 const imagesForm = useForm({
     thumbnail: null,
@@ -150,6 +151,16 @@ function deleteUser(user) {
             preserveScroll: true
         })
     }
+}
+
+function searchUsers() {
+    axiosClient.get(route('search.usersGroup', {
+        group: props.group.slug,
+        search: encodeURIComponent(searchKeyword.value)
+    }))
+        .then(({data}) => {
+            usePage().props.users = data.users;
+        })
 }
 
 </script>
@@ -299,7 +310,8 @@ function deleteUser(user) {
                         <TabPanel v-if="isJoinedToGroup">
                             <div class="mb-3">
                                 <TextInput
-                                    :model-value="searchKeyword"
+                                    v-model="searchKeyword"
+                                    @input="searchUsers"
                                     placeholder="Введите для поиска"
                                     class="w-full"/>
                             </div>
