@@ -1,7 +1,7 @@
 <script setup>
 import {ChatBubbleLeftRightIcon, HandThumbUpIcon} from '@heroicons/vue/24/solid';
+import {PaperAirplaneIcon, XMarkIcon} from '@heroicons/vue/24/solid';
 import ReadMoreReadLess from "@/Pages/Post/Partials/ReadMoreReadLess.vue";
-import skyButton from "@/Components/SkyButton.vue";
 import TextareaInput from "@/Components/TextareaInput.vue";
 import PostDropdown from "@/Pages/Post/Partials/PostDropdown.vue";
 import {usePage, Link} from "@inertiajs/vue3";
@@ -105,19 +105,6 @@ function onCommentDelete(comment) {
 </script>
 
 <template>
-    <div class="flex items-center gap-2 mb-3">
-        <UserHeader :user="authUser" :link="true"/>
-        <div class="flex flex-1">
-            <TextareaInput
-                v-model="newCommentText"
-                placeholder="Введите ваш комментарий"
-                class="w-full max-h-[150px] rounded-r-none resize-none"
-                rows="1"/>
-            <skyButton @click="createComment"
-                          class="w-[100px] rounded-l-none">Отправить
-            </skyButton>
-        </div>
-    </div>
     <div>
         <div
             class="mb-4"
@@ -147,23 +134,21 @@ function onCommentDelete(comment) {
                     @delete="deleteComment(comment)"/>
             </div>
             <div class="pl-4">
-                <div v-if="editingComment && editingComment.id === comment.id">
+                <div class="flex items-center mb-3" v-if="editingComment && editingComment.id === comment.id">
                     <TextareaInput
                         v-model="editingComment.comment"
-                        class="w-full max-h-[160px] resize-none"
+                        class="w-full max-h-[150px] rounded-r-none resize-none"
                         rows="1"/>
-                    <div class="flex gap-2 justify-end">
-                        <button
-                            @click="editingComment = null"
-                            class="rounded-r-none text-sky-500">
-                            отмена
-                        </button>
-                        <skyButton
-                            @click="updateComment"
-                            class="w-[100px]">
-                            изменить
-                        </skyButton>
-                    </div>
+                    <button
+                        @click="editingComment = null"
+                        class="flex items-center p-2 bg-gray-300 hover:bg-gray-200 dark:bg-neutral-600 dark:hover:bg-neutral-500 text-sky-600 hover:text-sky-700">
+                        <XMarkIcon class="w-6 h-6" />
+                    </button>
+                    <button
+                        class="flex items-center rounded-full p-2 bg-sky-700 hover:bg-sky-600 text-white hover:text-gray-100 mr-3 rounded-l-none"
+                        @click="updateComment">
+                        <PaperAirplaneIcon class="w-6 h-6" />
+                    </button>
                 </div>
                 <ReadMoreReadLess
                     v-else
@@ -175,19 +160,17 @@ function onCommentDelete(comment) {
                             @click="sendCommentReaction(comment)"
                             :class="[
                                 comment.current_user_has_reaction ?
-                                'bg-sky-50 hover:bg-sky-100' :
-                                'hover:bg-sky-50'
+                                'bg-sky-50 hover:bg-sky-100 dark:bg-neutral-600 dark:hover:bg-neutral-700' :
+                                'hover:bg-sky-50 dark:hover:bg-neutral-700'
                             ]"
-                            class="flex items-center text-xs text-sky-500 py-0.5 px-1 rounded-lg">
-                            <HandThumbUpIcon class="w-3 h-3 mr-1"/>
-                            <span class="mr-2">{{ comment.num_of_reactions }}</span>
-                            {{ comment.current_user_has_reaction ? 'не нравится' : 'нравится' }}
+                            class="flex items-center text-xs text-sky-500 py-0.5 p-2 rounded-full">
+                            <HandThumbUpIcon class="w-4 h-4"/>
+                            <span v-if="comment.num_of_reactions > 0" class="mx-1">{{ comment.num_of_reactions }}</span>
                         </button>
                         <DisclosureButton
-                            class="flex items-center text-xs text-sky-500 py-0.5 px-1 hover:bg-sky-100 rounded-lg">
-                            <ChatBubbleLeftRightIcon class="w-3 h-3 mr-1"/>
-                            <span class="mr-2">{{ comment.num_of_comments }}</span>
-                            комментарии
+                            class="flex items-center text-xs text-sky-500 py-0.5 p-2 hover:bg-sky-100 dark:hover:bg-neutral-700 rounded-full">
+                            <ChatBubbleLeftRightIcon class="w-4 h-4"/>
+                            <span v-if="comment.num_of_comments > 0" class="mx-1">{{ comment.num_of_comments }}</span>
                         </DisclosureButton>
                     </div>
                     <DisclosurePanel class="mt-3">
@@ -200,6 +183,21 @@ function onCommentDelete(comment) {
                     </DisclosurePanel>
                 </Disclosure>
             </div>
+        </div>
+    </div>
+    <div class="flex items-center gap-2 mb-3">
+        <UserHeader :user="authUser" :link="true"/>
+        <div class="flex flex-1">
+            <TextareaInput
+                v-model="newCommentText"
+                placeholder="Введите ваш комментарий"
+                class="w-full max-h-[150px] rounded-r-none resize-none"
+                rows="1"/>
+            <button
+                class="flex items-center rounded-full p-2 bg-sky-700 hover:bg-sky-600 text-white hover:text-gray-100 mr-3 rounded-l-none"
+                @click="createComment">
+                <PaperAirplaneIcon class="w-6 h-6" />
+            </button>
         </div>
     </div>
 </template>

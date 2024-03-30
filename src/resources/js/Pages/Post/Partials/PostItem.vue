@@ -1,7 +1,8 @@
 <script setup>
 import {Disclosure, DisclosureButton, DisclosurePanel} from '@headlessui/vue'
-import {ChatBubbleLeftEllipsisIcon, HandThumbUpIcon, BookmarkIcon as PinBook} from '@heroicons/vue/24/solid'
-import {BookmarkIcon as UnpinBook} from "@heroicons/vue/24/outline";
+import {HandThumbUpIcon as HandLike, BookmarkIcon as PinBook} from '@heroicons/vue/24/solid'
+import {ChatBubbleOvalLeftIcon, BookmarkIcon as UnpinBook, HandThumbUpIcon as HandUnlike} from
+        "@heroicons/vue/24/outline";
 import PostUserHeader from "@/Pages/Post/Partials/PostUserHeader.vue";
 import {router, useForm, usePage} from "@inertiajs/vue3";
 import axiosClient from "@/axiosClient.js";
@@ -13,7 +14,10 @@ import {computed} from "vue";
 import UrlPreview from "@/Pages/Post/Partials/UrlPreview.vue";
 
 const props = defineProps({
-    post: Object
+    post: {
+        type: Object,
+        default: null
+    }
 });
 
 const group = usePage().props.group;
@@ -36,6 +40,11 @@ const isPinned = computed(() => {
     }
     return authUser?.pinned_post_id === props.post.id;
 })
+
+const pinAllowed = computed(() => {
+    return props.post.user.id === authUser.id ||
+        props.post.group && props.post.group.role === 'admin'
+});
 
 function openEditModal() {
     emit('editClick', props.post);
@@ -92,7 +101,7 @@ function pinUnpinPost() {
         class="bg-white border dark:bg-neutral-800 dark:border-neutral-700 dark:text-gray-300 rounded-[20px] p-4 mb-3 shadow-md">
         <div class="flex justify-between items-center mb-3">
             <PostUserHeader :post="post"/>
-            <PostDropdown :post="post" @edit="openEditModal" @pin="pinUnpinPost" @delete="deletePost"/>
+            <PostDropdown :post="post" @edit="openEditModal" @delete="deletePost"/>
         </div>
         <div class="mb-3">
             <ReadMoreReadLess :content="postBody"/>
@@ -105,42 +114,43 @@ function pinUnpinPost() {
         </div>
         <Disclosure v-slot="{ open }">
             <!-- Секция Лайков и Комментов -->
-            <div class="flex gap-2 py-2 border-t-2 border-gray-300 dark:border-neutral-700">
+            <div class="flex gap-2 items-center justify-between py-2 border-t border-gray-300 dark:border-neutral-700">
+
+                <div class="flex gap-3 items-center">
+
+                    <button
+                        @click="sendReaction"
+                        class="flex items-center rounded-full p-2 bg-gray-100 hover:bg-gray-200 dark:bg-neutral-700 dark:hover:bg-neutral-600"
+                        :class="[
+                            post.current_user_has_reaction ? 'text-sky-600 hover:text-sky-500' :
+                            'text-gray-600 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-200'
+                        ]">
+                        <HandLike v-if="post.current_user_has_reaction" class="h-6 w-6" />
+                        <HandUnlike v-else class="h-6 w-6" />
+                        <span v-if="post.num_of_reactions > 0" class="mx-1">{{ post.num_of_reactions }}</span>
+                    </button>
+
+                    <DisclosureButton
+                        class="flex items-center rounded-full p-2 bg-gray-100 hover:bg-gray-200 dark:bg-neutral-700 dark:hover:bg-neutral-600 text-gray-600 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-200">
+                        <ChatBubbleOvalLeftIcon class="w-6 h-6"/>
+                        <span v-if="post.num_of_comments > 0" class="mx-1">{{ post.num_of_comments }}</span>
+                    </DisclosureButton>
+
+                </div>
+
+                <button
+                    v-if="pinAllowed"
+                    @click="pinUnpinPost"
+                    class="flex items-center rounded-full p-2 bg-gray-100 hover:bg-gray-200 dark:bg-neutral-700 dark:hover:bg-neutral-600"
+                    :class="[
+                        isPinned ? 'text-sky-600 hover:text-sky-500' : 'text-gray-600 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-200'
+                    ]">
+                    <PinBook v-if="isPinned" class="h-6 w-6" />
+                    <UnpinBook v-else class="h-6 w-6" />
+                </button>
 
             </div>
-            <div class="flex gap-2 py-2 border-t-2 border-gray-300 dark:border-neutral-700">
-                <button
-                    @click="sendReaction"
-                    class="text-gray-800 dark:text-gray-300 flex gap-1 items-center justify-center py-2 rounded-lg px-4 flex-1"
-                    :class="[
-                    post.current_user_has_reaction ?
-                    'bg-sky-100 hover:bg-sky-200 dark:bg-sky-900 dark:hover:bg-sky-950' :
-                    'bg-gray-100 dark:bg-neutral-900 hover:bg-gray-200 dark:hover:bg-neutral-950'
-                ]"
-                >
-                    <HandThumbUpIcon class="w-6 h-6"/>
-                    <span class="mr-2">{{ post.num_of_reactions }}</span>
-                    {{ post.current_user_has_reaction ? 'Не нравится' : 'Нравится' }}
-                </button>
-                <DisclosureButton
-                    class="text-gray-800 dark:text-gray-300 flex gap-1 items-center justify-center py-2 bg-gray-100 rounded-lg hover:bg-gray-200 px-4 flex-1 dark:bg-neutral-900 dark:hover:bg-neutral-950"
-                >
-                    <ChatBubbleLeftEllipsisIcon class="w-6 h-6"/>
-                    <span class="mr-2">{{ post.num_of_comments }}</span>
-                    Комментарии
-                </DisclosureButton>
-                <button
-                    v-if="isPinned"
-                    class="flex items-center rounded-full p-1.5 bg-gray-100 dark:bg-neutral-700 dark:hover:bg-neutral-800 hover:bg-gray-200 text-sky-600 hover:text-sky-500">
-                    <PinBook class="h-5 w-5" />
-                </button>
-                <button
-                    v-else
-                    class="flex items-center rounded-full p-1.5 bg-gray-100 dark:bg-neutral-700 dark:hover:bg-neutral-800 hover:bg-gray-200 text-gray-600 hover:text-gray-500">
-                    <UnpinBook class="h-5 w-5" />
-                </button>
-            </div>
-            <DisclosurePanel class="mt-3 max-h-[400px] overflow-auto">
+            <DisclosurePanel class="mt-3 max-h-[600px] overflow-auto">
                 <CommentList :post="post" :data="{comments: post.comments}"/>
             </DisclosurePanel>
         </Disclosure>

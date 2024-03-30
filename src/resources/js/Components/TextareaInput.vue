@@ -50,7 +50,7 @@ function onInputChange(event) {
 
 <template>
     <textarea
-        class="border-gray-300 dark:bg-neutral-900 dark:border-neutral-700 dark:text-gray-300 focus:border-sky-500 dark:focus:border-sky-600 focus:ring-sky-500 dark:focus:ring-sky-600 rounded-md shadow-sm"
+        class="border-gray-300 dark:bg-neutral-900 dark:border-neutral-700 dark:text-gray-300 focus:border-sky-500 dark:focus:border-sky-600 focus:ring-sky-500 dark:focus:ring-sky-600 rounded-[20px] shadow-sm"
         :value="modelValue"
         @input="onInputChange"
         ref="input"

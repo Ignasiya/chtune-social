@@ -1,7 +1,7 @@
 <script setup>
 
 import {Menu, MenuButton, MenuItem, MenuItems} from "@headlessui/vue";
-import {EllipsisHorizontalIcon, PencilIcon, TrashIcon, EyeIcon, ClipboardIcon, BookmarkIcon} from
+import {EllipsisHorizontalIcon, PencilIcon, TrashIcon, EyeIcon, ClipboardIcon} from
         "@heroicons/vue/20/solid/index.js";
 import {usePage, Link} from "@inertiajs/vue3";
 import {computed} from "vue";
@@ -22,26 +22,14 @@ const group = usePage().props.group;
 
 const user = computed(() => props.comment?.user || props.post?.user);
 
-defineEmits(['edit', 'delete', 'pin'])
+defineEmits(['edit', 'delete'])
 
 const editAllowed = computed(() => user.value.id === authUser.id);
-
-const pinAllowed = computed(() => {
-    return user.value.id === authUser.id ||
-        props.post.group && props.post.group.role === 'admin'
-});
 
 const deleteAllowed = computed(() => {
     if (user.value.id === authUser.id) return true;
     if (props.post.user.id === authUser.id) return true;
     return !props.comment && props.post.group?.role === 'admin';
-})
-
-const isPinned = computed(() => {
-    if (group?.id) {
-        return group?.pinned_post_id === props.post.id;
-    }
-    return authUser?.pinned_post_id === props.post.id;
 })
 
 function copyToClipboard() {
@@ -115,24 +103,6 @@ function copyToClipboard() {
                             aria-hidden="true"
                         />
                         Скопировать URL
-                    </button>
-                </MenuItem>
-                <MenuItem
-                    class="px-1 py-1"
-                    v-if="pinAllowed && !comment"
-                    v-slot="{ active }">
-                    <button
-                        @click="$emit('pin')"
-                        :class="[
-                              active ? 'bg-sky-600 text-white' : 'text-gray-600 dark:text-gray-300',
-                              'group flex w-full items-center rounded-md px-1 py-1 text-sm',
-                            ]"
-                    >
-                        <BookmarkIcon
-                            class="mr-2 h-4 w-4"
-                            aria-hidden="true"
-                        />
-                        {{ isPinned ? 'Открепить' : 'Закрепить' }}
                     </button>
                 </MenuItem>
                 <MenuItem
