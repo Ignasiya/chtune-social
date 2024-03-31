@@ -3,33 +3,32 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\NotificationResource;
-use App\Models\Notification;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class NotificationController extends Controller
 {
-    public function show(Request $request)
+    public function show()
     {
-        $notifications = Notification::query()
-            ->where('user_id', '=', Auth::id())
-            ->latest()
-            ->paginate(5);
-
-        $notifications = NotificationResource::collection($notifications);
-
-        if ($request->wantsJson()) {
-            return $notifications;
-        }
+        $notifications = Auth::user()
+            ->unreadNotifications()
+            ->paginate(10);
 
         return response([
-            'count_notifications' => Auth::user()->countNotifications,
-            'notifications' => $notifications
-        ]);
+            'notifications' => NotificationResource::collection($notifications)
+        ], 200);
     }
 
-    public function update()
+    public function update(Request $request, string $notificationId = null)
     {
+        if (!$notificationId) {
+            return back();
+        }
 
+        $notification = Auth::user()->unreadNotifications()->find($notificationId);
+        $notification->update(['read_at' => now()]);
+
+        return back();
     }
 }

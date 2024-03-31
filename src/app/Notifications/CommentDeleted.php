@@ -19,7 +19,6 @@ class CommentDeleted extends Notification
      */
     public function __construct(public Comment $comment, public Post $post)
     {
-        //
     }
 
     /**
@@ -29,7 +28,7 @@ class CommentDeleted extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     /**
@@ -39,8 +38,8 @@ class CommentDeleted extends Notification
     {
         return (new MailMessage)
             ->subject('Комментарий удален')
-            ->line('Ваш комментарий "' . Str::words($this->comment->comment, 5) . '" удален.')
-            ->action('Перейти к записи', url(route('post.view', $this->post->id)));
+            ->line($this->getNotificationText())
+            ->action('Перейти к записи', $this->getPostURL());
     }
 
     /**
@@ -51,7 +50,18 @@ class CommentDeleted extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            //
+            'message' => $this->getNotificationText(),
+            'post_url' => $this->getPostURL(),
         ];
+    }
+
+    private function getNotificationText(): string
+    {
+        return 'Ваш комментарий "' . Str::words($this->comment->comment, 5) . '" удален.';
+    }
+
+    private function getPostURL(): string
+    {
+        return url(route('post.view', $this->post->id));
     }
 }

@@ -108,12 +108,12 @@ function onCommentDelete(comment) {
     <div class="flex flex-col gap-3">
         <div v-for="comment of data.comments" class="flex gap-2" :key="comment.id">
 
-            <UserHeader class="my-2" :user="post.user"/>
+            <UserHeader class="my-2" :user="comment.user"/>
 
             <div class="flex flex-col gap-1 flex-1">
                 <div class="flex flex-col gap-2 bg-sky-100 dark:bg-neutral-700 rounded-[20px] p-3">
                     <div class="flex justify-between">
-                        <PostUserHeader :avatar="true" :post="post"/>
+                        <PostUserHeader :avatar="true" :post="comment"/>
 
                         <PostDropdown
                             :comment="comment"

@@ -76,9 +76,4 @@ class User extends Authenticatable implements MustVerifyEmail
     {
         return $this->belongsToMany(User::class, 'followers', 'follower_id', 'user_id');
     }
-
-    public function countNotifications(): int
-    {
-        return $this->hasMany(Notification::class, 'user_id')->count();
-    }
 }

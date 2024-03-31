@@ -18,7 +18,6 @@ class RequestToJoinGroup extends Notification
      */
     public function __construct(public Group $group, public User $user)
     {
-        //
     }
 
     /**
@@ -28,7 +27,7 @@ class RequestToJoinGroup extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     /**
@@ -38,8 +37,8 @@ class RequestToJoinGroup extends Notification
     {
         return (new MailMessage)
             ->subject('Запрос на вступление в группу')
-            ->line('Пользователь "' . $this->user->name . '" хочет вступить в группу "' . $this->group->name . '"')
-            ->action('Запрос на вступление', url(route('group.profile', $this->group->slug)));
+            ->line($this->getNotificationText())
+            ->action('Запрос на вступление', $this->getPostURL());
     }
 
     /**
@@ -50,7 +49,18 @@ class RequestToJoinGroup extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            //
+            'message' => $this->getNotificationText(),
+            'post_url' => $this->getPostURL(),
         ];
+    }
+
+    private function getNotificationText(): string
+    {
+        return 'Пользователь "' . $this->user->name . '" хочет вступить в группу "' . $this->group->name . '"';
+    }
+
+    private function getPostURL(): string
+    {
+        return url(route('group.profile', $this->group->slug));
     }
 }

@@ -28,7 +28,7 @@ class PostCreated extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     /**
@@ -38,9 +38,9 @@ class PostCreated extends Notification
     {
         return (new MailMessage)
             ->subject('Новая запись')
-            ->lineIf(!!$this->group,'Новая запись опубликована в группе "' . $this->group?->name . '".')
-            ->lineIf(!$this->group, 'Новая запись опубликована пользователем "' . $this->user->name . '".')
-            ->action('Перейти к записи', url(route('post.view', $this->post->id)));
+            ->lineIf(!!$this->group, $this->getNotificationText('в группе "' . $this->group?->name . '".'))
+            ->lineIf(!$this->group, $this->getNotificationText('пользователем "' . $this->user->name . '".'))
+            ->action('Перейти к записи', $this->getPostURL());
     }
 
     /**
@@ -50,8 +50,24 @@ class PostCreated extends Notification
      */
     public function toArray(object $notifiable): array
     {
+        if (!!$this->group) {
+            $text = 'в группе "' . $this->group?->name . '".';
+        } else {
+            $text = 'пользователем "' . $this->user->name . '".';
+        }
         return [
-            //
+            'message' => $this->getNotificationText($text),
+            'post_url' => $this->getPostURL(),
         ];
+    }
+
+    private function getNotificationText(string $text): string
+    {
+        return 'Новая запись опубликована ';
+    }
+
+    private function getPostURL(): string
+    {
+        return url(route('post.view', $this->post->id));
     }
 }

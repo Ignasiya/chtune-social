@@ -37,15 +37,31 @@ class CommentCreated extends Notification
     {
         return (new MailMessage)
             ->subject('Новый комментарий записи')
-            ->line('Пользователь "' . $this->comment->user->username . '" оставил новый комментарий под Вашей записью.')
+            ->line($this->getNotificationText())
             ->line('"' . $this->comment->comment . '"')
-            ->action('Перейти к записи', url(route('post.view', $this->post->id)));
+            ->action('Перейти к записи', $this->getPostURL());
     }
 
-    public function toDatabase(object $notifiable): array
+    /**
+     * Get the array representation of the notification.
+     *
+     * @return array<string, mixed>
+     */
+    public function toArray(object $notifiable): array
     {
         return [
-            //
+            'message' => $this->getNotificationText(),
+            'post_url' => $this->getPostURL(),
         ];
+    }
+
+    private function getNotificationText(): string
+    {
+        return 'Пользователь "' . $this->comment->user->username . '" оставил новый комментарий под Вашей записью.';
+    }
+
+    private function getPostURL(): string
+    {
+        return url(route('post.view', $this->post->id));
     }
 }

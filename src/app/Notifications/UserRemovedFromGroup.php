@@ -16,7 +16,6 @@ class UserRemovedFromGroup extends Notification
      */
     public function __construct(public Group $group)
     {
-        //
     }
 
     /**
@@ -26,7 +25,7 @@ class UserRemovedFromGroup extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     /**
@@ -36,8 +35,8 @@ class UserRemovedFromGroup extends Notification
     {
         return (new MailMessage)
             ->subject('Вас удалили из группы')
-            ->line('Вас удалили из группы "' . $this->group->name .'".')
-            ->action('Перейти в группу', url(route('group.profile', $this->group->slug)));
+            ->line($this->getNotificationText())
+            ->action('Перейти в группу', $this->getPostURL());
     }
 
     /**
@@ -48,7 +47,18 @@ class UserRemovedFromGroup extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            //
+            'message' => $this->getNotificationText(),
+            'post_url' => $this->getPostURL(),
         ];
+    }
+
+    private function getNotificationText(): string
+    {
+        return 'Вас удалили из группы "' . $this->group->name .'".';
+    }
+
+    private function getPostURL(): string
+    {
+        return url(route('group.profile', $this->group->slug));
     }
 }

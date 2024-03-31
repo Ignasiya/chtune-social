@@ -27,7 +27,7 @@ class RequestApproved extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     /**
@@ -37,8 +37,8 @@ class RequestApproved extends Notification
     {
         return (new MailMessage)
             ->subject('Запрос ' . $this->approved)
-            ->line('Ваш запрос на вступление в группу "' . $this->group->name . '" ' . $this->approved)
-            ->action('Перейти в группу', url(route('group.profile', $this->group->slug)));
+            ->line($this->getNotificationText())
+            ->action('Перейти в группу', $this->getPostURL());
     }
 
     /**
@@ -49,7 +49,18 @@ class RequestApproved extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            //
+            'message' => $this->getNotificationText(),
+            'post_url' => $this->getPostURL(),
         ];
+    }
+
+    private function getNotificationText(): string
+    {
+        return 'Ваш запрос на вступление в группу "' . $this->group->name . '" ' . $this->approved;
+    }
+
+    private function getPostURL(): string
+    {
+        return url(route('group.profile', $this->group->slug));
     }
 }

@@ -132,7 +132,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [NotificationController::class, 'show'])
             ->name('notification.show');
 
-        Route::patch('/', [NotificationController::class, 'update'])
+        Route::patch('/{id?}', [NotificationController::class, 'update'])
             ->name('notification.update');
     });
 });

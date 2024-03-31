@@ -16,7 +16,6 @@ class PostDeleted extends Notification
      */
     public function __construct(public Group $group)
     {
-        //
     }
 
     /**
@@ -26,7 +25,7 @@ class PostDeleted extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     /**
@@ -36,8 +35,8 @@ class PostDeleted extends Notification
     {
         return (new MailMessage)
             ->subject('Запись удалена')
-            ->line('Ваша запись удалена в группе "' . $this->group->name . '".')
-            ->action('Перейти к группе', url(route('group.profile', $this->group->slug)));
+            ->line($this->getNotificationText())
+            ->action('Перейти к группе', $this->getPostURL());
     }
 
     /**
@@ -48,7 +47,18 @@ class PostDeleted extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            //
+            'message' => $this->getNotificationText(),
+            'post_url' => $this->getPostURL(),
         ];
+    }
+
+    private function getNotificationText(): string
+    {
+        return 'Ваша запись удалена в группе "' . $this->group->name . '".';
+    }
+
+    private function getPostURL(): string
+    {
+        return url(route('group.profile', $this->group->slug));
     }
 }

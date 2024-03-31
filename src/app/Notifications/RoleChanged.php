@@ -26,7 +26,7 @@ class RoleChanged extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     /**
@@ -36,8 +36,8 @@ class RoleChanged extends Notification
     {
         return (new MailMessage)
             ->subject('Роль в группе изменена')
-            ->line('Роль в группе "' . $this->group->name .'" изменена на "' . $this->role .'"')
-            ->action('Перейти в группу', url(route('group.profile', $this->group->slug)));
+            ->line($this->getNotificationText())
+            ->action('Перейти в группу', $this->getPostURL());
     }
 
     /**
@@ -48,7 +48,18 @@ class RoleChanged extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            //
+            'message' => $this->getNotificationText(),
+            'post_url' => $this->getPostURL(),
         ];
+    }
+
+    private function getNotificationText(): string
+    {
+        return 'Роль в группе "' . $this->group->name .'" изменена на "' . $this->role .'"';
+    }
+
+    private function getPostURL(): string
+    {
+        return url(route('group.profile', $this->group->slug));
     }
 }

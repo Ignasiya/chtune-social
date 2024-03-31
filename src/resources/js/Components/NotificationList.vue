@@ -1,49 +1,24 @@
 <script setup>
 import {Popover, PopoverButton, PopoverPanel} from "@headlessui/vue";
 import {BellAlertIcon} from "@heroicons/vue/24/solid/index.js";
-import {onMounted, ref, watch} from "vue";
 import axiosClient from "@/axiosClient.js";
 import {usePage} from "@inertiajs/vue3";
 
 const page = usePage();
 
-const notifications = defineModel({
-    type: Array,
-    required: true,
+const props = defineProps({
+    notifications: Array,
 });
 
-const loadMoreIntersect = ref(null);
-const allNotifications = ref({
-    data: [],
-    next: null
-})
-
-onMounted(() => {
-    const observer = new IntersectionObserver(
-        (entries) => entries.forEach(entry => entry.isIntersecting && loadMore()), {
-            rootMargin: '-250px 0px 0px 0px'
-        })
-    observer.observe(loadMoreIntersect.value)
-})
-
-watch(() => page.notifications, () => {
-    if (page.notifications) {
-        allNotifications.value = {
-            data: page.notifications.data,
-            next: page.notifications.links.next
-        }
-    }
-}, {deep: true, immediate: true});
-
-function loadMore() {
-    if (!allNotifications.value.next) {
-        return;
-    }
-    axiosClient.get(allNotifications.value.next)
+function loadNotifications() {
+    axiosClient.get(route('notification.show'))
         .then(({data}) => {
-            allNotifications.value.data = [...allNotifications.value.data, ...data.data]
-            allNotifications.value.next = data.links.next
+            page.props.notifications = data.notifications;
         })
+}
+
+function updateNotifications(id) {
+    axiosClient.patch(route('notification.update',  id))
 }
 
 </script>
@@ -51,6 +26,7 @@ function loadMore() {
 <template>
     <Popover v-slot="{ open }" class="relative">
         <PopoverButton
+            @click="loadNotifications"
             :class="open ?
             'text-white bg-sky-500' :
             'bg-black/5 dark:bg-neutral-700 dark:hover:bg-neutral-800 hover:bg-gray-200 text-sky-600 hover:text-sky-500'"
@@ -68,29 +44,24 @@ function loadMore() {
             leave-to-class="translate-y-1 opacity-0"
         >
             <PopoverPanel
-                class="absolute right-0 z-40 mt-3 w-screen max-w-sm px-4 sm:px-0"
+                class="absolute right-0 z-40 mt-3 w-screen sm:max-w-[350px] px-4 sm:px-0"
             >
                 <div
-                    class="overflow-hidden rounded-[20px] ml-2 bg-sky-50 border-2 border-sky-500 dark:bg-sky-950 shadow-lg ring-1 ring-black/5">
-                    <div
-                        class="grid gap-8 p-7 lg:grid-cols-2">
-                        <a
-                            v-for="notification of allNotifications.data"
-                            :key="notification.id"
-                            :href="notification.href"
-                            class="-m-3 flex items-center rounded-lg p-2 transition duration-150 ease-in-out hover:bg-gray-50 focus:outline-none focus-visible:ring focus-visible:ring-orange-500/50"
-                        >
-                            <p class="text-sm text-gray-500">
-                                {{ notification.message }}
-                            </p>
-                            <p>
-                                {{ notification.created_at }}
-                            </p>
-                            <p>
-                                {{ notification.is_read }}
-                            </p>
-                        </a>
-                    </div>
+                    class="max-h-[200px] overflow-auto p-2 rounded-lg ml-2 bg-sky-50 border-2 border-sky-500 dark:bg-sky-950 shadow-lg ring-1 ring-black/5">
+                    <a
+                        v-for="notification of page.props.notifications"
+                        :key="notification.id"
+                        :href="notification.data.post_url"
+                        @click="updateNotifications(notification.id)"
+                        class="p-1 flex flex-col rounded-lg transition duration-150 ease-in-out hover:bg-sky-200 dark:hover:bg-sky-800 focus:outline-none focus-visible:ring focus-visible:ring-orange-500/50"
+                    >
+                        <p class="text-sm text-gray-600 dark:text-gray-300">
+                            {{ notification.data.message }}
+                        </p>
+                        <small class="text-sl text-gray-400">
+                            {{ notification.updated_at }}
+                        </small>
+                    </a>
                 </div>
             </PopoverPanel>
         </transition>

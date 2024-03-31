@@ -26,7 +26,7 @@ class FollowUser extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     /**
@@ -41,9 +41,9 @@ class FollowUser extends Notification
         }
         return (new MailMessage)
             ->subject($subject)
-            ->lineIf($this->follow, 'Пользователь "' . $this->follower->username .'" подписался на Вас.')
-            ->lineIf(!$this->follow, 'Пользователь "' . $this->follower->username .'" отписался от Вас.')
-            ->action('Перейти в профиль', url(route('profile', $this->follower)));
+            ->lineIf($this->follow, $this->getNotificationText('подписался на'))
+            ->lineIf(!$this->follow, $this->getNotificationText('отписался от'))
+            ->action('Перейти в профиль', $this->getPostURL());
     }
 
     /**
@@ -53,8 +53,24 @@ class FollowUser extends Notification
      */
     public function toArray(object $notifiable): array
     {
+        if (!!$this->follow) {
+            $text = 'подписался на';
+        } else {
+            $text = 'отписался от';
+        }
         return [
-            //
+            'message' => $this->getNotificationText($text),
+            'post_url' => $this->getPostURL(),
         ];
+    }
+
+    private function getNotificationText(string $text): string
+    {
+        return 'Пользователь "' . $this->follower->username . '" ' . $text .' Вас.';
+    }
+
+    private function getPostURL(): string
+    {
+        return url(route('profile', $this->follower));
     }
 }

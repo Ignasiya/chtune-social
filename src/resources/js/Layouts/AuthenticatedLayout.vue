@@ -14,7 +14,6 @@ import Modal from "@/Components/Modal.vue";
 import {Tab, TabGroup, TabList} from "@headlessui/vue";
 import TabItem from "@/Components/TabItem.vue";
 import NotificationList from "@/Components/NotificationList.vue";
-import axiosClient from "@/axiosClient.js";
 
 const showingNavigationDropdown = ref(false);
 const keywords = ref(usePage().props.search || '');
@@ -41,13 +40,6 @@ function openSearch() {
 
 function onSearchHide() {
     showSearch.value = false;
-}
-
-function loadNotifications() {
-    axiosClient.get(route('notification.show'))
-        .then(({data}) => {
-            notifications.value = data.listNotifications
-        })
 }
 
 function toggleDarkMode() {
@@ -119,7 +111,7 @@ function toggleDarkMode() {
                         <MoonIcon class="w-5 h-5"/>
                     </button>
 
-                    <NotificationList @click="loadNotifications" v-model="notifications" v-if="authUser" />
+                    <NotificationList v-if="authUser" />
 
                     <div class="hidden sm:flex sm:items-center">
                         <!-- Settings Dropdown -->

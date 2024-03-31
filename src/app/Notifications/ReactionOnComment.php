@@ -27,7 +27,7 @@ class ReactionOnComment extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     /**
@@ -37,9 +37,9 @@ class ReactionOnComment extends Notification
     {
         return (new MailMessage)
             ->subject('Новая реакция на комментарий')
-            ->line('Пользователь "'. $this->user->name .'" отреагировал на Ваш комментарий.')
+            ->line($this->getNotificationText())
             ->line('"' . $this->comment->comment . '"')
-            ->action('Перейти к записи', url(route('post.view', $this->post->id)));
+            ->action('Перейти к записи', $this->getPostURL());
     }
 
     /**
@@ -50,7 +50,18 @@ class ReactionOnComment extends Notification
     public function toArray(object $notifiable): array
     {
         return [
-            //
+            'message' => $this->getNotificationText(),
+            'post_url' => $this->getPostURL(),
         ];
+    }
+
+    private function getNotificationText(): string
+    {
+        return 'Пользователь "'. $this->user->name .'" отреагировал на Ваш комментарий.';
+    }
+
+    private function getPostURL(): string
+    {
+        return url(route('post.view', $this->post->id));
     }
 }
