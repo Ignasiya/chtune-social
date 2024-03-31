@@ -67,7 +67,7 @@ function copyToClipboard() {
             leave-to-class="transform scale-95 opacity-0"
         >
             <MenuItems
-                class="absolute z-30 right-0 mt-2 w-40 origin-top-right divide-y divide-gray-100 dark:divide-neutral-900 rounded-md bg-white dark:bg-neutral-900 shadow-lg focus:outline-none"
+                class="absolute z-30 right-10 top-0 w-40 origin-top-right divide-y divide-gray-100 dark:divide-neutral-900 rounded-md bg-white dark:bg-neutral-900 shadow-lg focus:outline-none"
             >
                 <MenuItem
                     v-if="!comment"

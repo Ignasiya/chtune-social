@@ -9,6 +9,10 @@ const props = defineProps({
     showTime: {
         type: Boolean,
         default: true
+    },
+    avatar: {
+        type: Boolean,
+        default: false
     }
 })
 
@@ -26,7 +30,7 @@ const dateFormatted = computed(() => {
 
 <template>
     <div class="flex items-center gap-2 dark:text-gray-300">
-        <UserHeader :user="post.user"/>
+        <UserHeader v-if="!avatar" :user="post.user"/>
         <div>
             <h4 class="flex items-center font-bold">
                 <Link :href="route('profile', post.user.username)" class="hover:underline">

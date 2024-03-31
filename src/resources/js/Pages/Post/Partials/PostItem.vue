@@ -97,24 +97,25 @@ function pinUnpinPost() {
 </script>
 
 <template>
-    <div
-        class="bg-white border dark:bg-neutral-800 dark:border-neutral-700 dark:text-gray-300 rounded-[20px] p-4 mb-3 shadow-md">
-        <div class="flex justify-between items-center mb-3">
-            <PostUserHeader :post="post"/>
-            <PostDropdown :post="post" @edit="openEditModal" @delete="deletePost"/>
-        </div>
-        <div class="mb-3">
-            <ReadMoreReadLess :content="postBody"/>
-            <UrlPreview :preview="post.preview" :url="post.preview_url"/>
-        </div>
-        <div class="grid gap-3 mb-3" :class="[
+    <Disclosure v-slot="{ open }" as="div"
+                class="text-gray-700 dark:text-gray-300 border-2 border-gray-300 dark:border-neutral-700 rounded-[20px] mb-3">
+        <div
+            class="bg-white dark:bg-neutral-800 dark:border-neutral-700 rounded-[20px] p-4 shadow-md">
+            <div class="flex justify-between items-center mb-3">
+                <PostUserHeader :post="post"/>
+                <PostDropdown :post="post" @edit="openEditModal" @delete="deletePost"/>
+            </div>
+            <div class="mb-3">
+                <ReadMoreReadLess :content="postBody"/>
+                <UrlPreview :preview="post.preview" :url="post.preview_url"/>
+            </div>
+            <div class="grid gap-3 mb-3" :class="[
             post.attachments.length === 1 ? 'grid-cols-1' : 'grid-cols-2'
         ]">
-            <PostAttachments :attachments="post.attachments" @attachmentClick="openAttachment"/>
-        </div>
-        <Disclosure v-slot="{ open }">
+                <PostAttachments :attachments="post.attachments" @attachmentClick="openAttachment"/>
+            </div>
             <!-- Секция Лайков и Комментов -->
-            <div class="flex gap-2 items-center justify-between py-2 border-t border-gray-300 dark:border-neutral-700">
+            <div class="flex gap-2 items-center justify-between pt-2 border-t border-gray-300 dark:border-neutral-700">
 
                 <div class="flex gap-3 items-center">
 
@@ -125,8 +126,8 @@ function pinUnpinPost() {
                             post.current_user_has_reaction ? 'text-sky-600 hover:text-sky-500' :
                             'text-gray-600 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-200'
                         ]">
-                        <HandLike v-if="post.current_user_has_reaction" class="h-6 w-6" />
-                        <HandUnlike v-else class="h-6 w-6" />
+                        <HandLike v-if="post.current_user_has_reaction" class="h-6 w-6"/>
+                        <HandUnlike v-else class="h-6 w-6"/>
                         <span v-if="post.num_of_reactions > 0" class="mx-1">{{ post.num_of_reactions }}</span>
                     </button>
 
@@ -145,15 +146,17 @@ function pinUnpinPost() {
                     :class="[
                         isPinned ? 'text-sky-600 hover:text-sky-500' : 'text-gray-600 dark:text-gray-300 hover:text-gray-700 dark:hover:text-gray-200'
                     ]">
-                    <PinBook v-if="isPinned" class="h-6 w-6" />
-                    <UnpinBook v-else class="h-6 w-6" />
+                    <PinBook v-if="isPinned" class="h-6 w-6"/>
+                    <UnpinBook v-else class="h-6 w-6"/>
                 </button>
 
             </div>
-            <DisclosurePanel class="mt-3 max-h-[600px] overflow-auto">
-                <CommentList :post="post" :data="{comments: post.comments}"/>
-            </DisclosurePanel>
-        </Disclosure>
-    </div>
+        </div>
+
+        <DisclosurePanel class="max-h-[600px] overflow-auto p-4">
+            <CommentList :post="post" :data="{comments: post.comments}"/>
+        </DisclosurePanel>
+
+    </Disclosure>
 </template>
 
