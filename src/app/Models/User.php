@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -16,6 +17,7 @@ use Spatie\Sluggable\SlugOptions;
  * @property mixed $followings
  * @property mixed $id
  * @property int|null $pinned_post_id
+ * @property int countNotifications
  */
 class User extends Authenticatable implements MustVerifyEmail
 {
@@ -73,5 +75,10 @@ class User extends Authenticatable implements MustVerifyEmail
     public function followings(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'followers', 'follower_id', 'user_id');
+    }
+
+    public function countNotifications(): int
+    {
+        return $this->hasMany(Notification::class, 'user_id')->count();
     }
 }

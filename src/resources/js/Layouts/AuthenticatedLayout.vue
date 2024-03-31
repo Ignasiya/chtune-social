@@ -7,15 +7,18 @@ import ResponsiveNavLink from '@/Components/ResponsiveNavLink.vue';
 import {Link, router, usePage} from '@inertiajs/vue3';
 import TextInput from "@/Components/TextInput.vue";
 import UserHeader from "@/Components/UserHeader.vue";
-import {MagnifyingGlassIcon, MoonIcon, BellAlertIcon, HomeIcon as HomeSol, UsersIcon as UsersSol} from
+import {MagnifyingGlassIcon, MoonIcon, HomeIcon as HomeSol, UsersIcon as UsersSol} from
         '@heroicons/vue/24/solid'
 import {HomeIcon as HomeOut, UsersIcon as UsersOut} from '@heroicons/vue/24/outline'
 import Modal from "@/Components/Modal.vue";
 import {Tab, TabGroup, TabList} from "@headlessui/vue";
 import TabItem from "@/Components/TabItem.vue";
+import NotificationList from "@/Components/NotificationList.vue";
+import axiosClient from "@/axiosClient.js";
 
 const showingNavigationDropdown = ref(false);
 const keywords = ref(usePage().props.search || '');
+const notifications = ref([]);
 
 const authUser = usePage().props.auth.user;
 
@@ -38,6 +41,13 @@ function openSearch() {
 
 function onSearchHide() {
     showSearch.value = false;
+}
+
+function loadNotifications() {
+    axiosClient.get(route('notification.show'))
+        .then(({data}) => {
+            notifications.value = data.listNotifications
+        })
 }
 
 function toggleDarkMode() {
@@ -108,13 +118,9 @@ function toggleDarkMode() {
                             class="flex items-center rounded-full p-1.5 bg-gray-100 dark:bg-neutral-700 dark:hover:bg-neutral-800 hover:bg-gray-200 text-sky-600 hover:text-sky-500">
                         <MoonIcon class="w-5 h-5"/>
                     </button>
-                    <div v-if="authUser" class="ms-3 relative inline-flex items-center">
-                        <button
-                            @click=""
-                            class="flex items-center rounded-full p-1.5 bg-black/5 dark:bg-neutral-700 dark:hover:bg-neutral-800 hover:bg-gray-200 text-sky-600 hover:text-sky-500">
-                            <BellAlertIcon class="w-5 h-5"/>
-                        </button>
-                    </div>
+
+                    <NotificationList @click="loadNotifications" v-model="notifications" v-if="authUser" />
+
                     <div class="hidden sm:flex sm:items-center">
                         <!-- Settings Dropdown -->
                         <div class="ms-3 relative inline-flex items-center">

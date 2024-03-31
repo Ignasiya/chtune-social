@@ -3,6 +3,7 @@
 use App\Http\Controllers\ActivityController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SearchController;
@@ -25,6 +26,7 @@ Route::get('/group/approve-invitation/{token}', [GroupController::class, 'approv
     ->name('group.approveInvitation');
 
 Route::middleware('auth')->group(function () {
+
     // Пользователь
     Route::post('/user/follow/{user}', [UserController::class, 'followUser'])
         ->name('user.follow');
@@ -123,6 +125,15 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/{group:slug}/{search?}', [SearchController::class, 'searchUsersInGroup'])
             ->name('search.usersGroup');
+    });
+
+    // Уведомления
+    Route::prefix('/notification')->group(function () {
+        Route::get('/', [NotificationController::class, 'show'])
+            ->name('notification.show');
+
+        Route::patch('/', [NotificationController::class, 'update'])
+            ->name('notification.update');
     });
 });
 

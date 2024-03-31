@@ -27,7 +27,7 @@ class CommentCreated extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     /**
@@ -42,12 +42,7 @@ class CommentCreated extends Notification
             ->action('Перейти к записи', url(route('post.view', $this->post->id)));
     }
 
-    /**
-     * Get the array representation of the notification.
-     *
-     * @return array<string, mixed>
-     */
-    public function toArray(object $notifiable): array
+    public function toDatabase(object $notifiable): array
     {
         return [
             //

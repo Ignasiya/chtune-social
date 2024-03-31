@@ -6,15 +6,6 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Storage;
 
-/**
- * @property mixed id
- * @property mixed name
- * @property mixed role
- * @property mixed status
- * @property mixed groupId
- * @property mixed username
- * @property mixed avatar_path
- */
 class GroupUserResource extends JsonResource
 {
     /**
