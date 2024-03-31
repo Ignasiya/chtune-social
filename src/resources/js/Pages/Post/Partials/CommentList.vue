@@ -65,7 +65,6 @@ function deleteComment(comment) {
     }
 }
 
-
 function updateComment() {
     axiosClient.put(route('comment.update', editingComment.value.id), editingComment.value)
         .then(({data}) => {
