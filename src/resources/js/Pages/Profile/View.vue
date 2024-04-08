@@ -48,28 +48,22 @@ const props = defineProps({
     photos: Array
 });
 
-function onCoverChange(event) {
-    imagesForm.cover = event.target.files[0];
-    if (imagesForm.cover) {
-        const reader = new FileReader();
-        reader.onload = () => {
-            coverImageSrc.value = reader.result;
-        }
-        reader.readAsDataURL(imagesForm.cover);
+function resetImage(type) {
+    if (type === 'avatar') {
+        imagesForm.avatar = null;
+        avatarImageSrc.value = null;
+    } else if (type === 'cover') {
+        imagesForm.cover = null;
+        coverImageSrc.value = null;
     }
 }
 
-function resetCoverImage() {
-    imagesForm.cover = null;
-    coverImageSrc.value = null;
-}
-
-function submitCoverImage() {
+function submitImage(type) {
     imagesForm.post(route('profile.updateImage'), {
         preserveScroll: true,
         onSuccess: () => {
             showNotification.value = true;
-            resetCoverImage();
+            resetImage(type);
             setTimeout(() => {
                 showNotification.value = false;
             }, 3000);
@@ -77,33 +71,21 @@ function submitCoverImage() {
     });
 }
 
-function onAvatarChange(event) {
-    imagesForm.avatar = event.target.files[0];
-    if (imagesForm.avatar) {
+function onImageChange(event, type) {
+    const file = event.target.files[0];
+    if (file) {
         const reader = new FileReader();
         reader.onload = () => {
-            avatarImageSrc.value = reader.result;
+            if (type === 'cover') {
+                imagesForm.cover = file;
+                coverImageSrc.value = reader.result;
+            } else if (type === 'avatar') {
+                imagesForm.avatar = file;
+                avatarImageSrc.value = reader.result;
+            }
         }
-        reader.readAsDataURL(imagesForm.avatar);
+        reader.readAsDataURL(file);
     }
-}
-
-function resetAvatarImage() {
-    imagesForm.avatar = null;
-    avatarImageSrc.value = null;
-}
-
-function submitAvatarImage() {
-    imagesForm.post(route('profile.updateImage'), {
-        preserveScroll: true,
-        onSuccess: () => {
-            showNotification.value = true;
-            resetAvatarImage();
-            setTimeout(() => {
-                showNotification.value = false;
-            }, 3000);
-        }
-    });
 }
 
 function followUser() {
@@ -161,17 +143,17 @@ function searchFollowings() {
                             <CameraIcon class="h-3 w-3 mr-2"/>
                             Обновить обложку
                             <input type="file" class="absolute left-0 right-0 bottom-0 top-0 opacity-0"
-                                   @change="onCoverChange"/>
+                                   @change="onImageChange($event,'cover')"/>
                         </button>
                         <div v-else class="flex gap-2 p-2 opacity-0 group-hover:opacity-100">
                             <button
-                                @click="resetCoverImage"
+                                @click="resetImage('cover')"
                                 class="flex bg-gray-50 hover:bg-gray-100 text-gray-800 py-1 px-2 text-xs items-center">
                                 <XMarkIcon class="h-3 w-3 mr-2"/>
                                 Отмена
                             </button>
                             <button
-                                @click="submitCoverImage"
+                                @click="submitImage('cover')"
                                 class="flex bg-gray-800 hover:bg-gray-900 text-gray-100 py-1 px-2 text-xs items-center">
                                 <CheckIcon class="h-3 w-3 mr-2"/>
                                 Сохранить
@@ -190,16 +172,16 @@ function searchFollowings() {
                                     class="absolute left-0 right-0 bottom-0 top-0 bg-black/50 text-gray-200 rounded-full opacity-0 flex items-center justify-center group-hover/avatar:opacity-100">
                                     <CameraIcon class="h-8 w-8"/>
                                     <input type="file" class="absolute left-0 right-0 bottom-0 top-0 opacity-0"
-                                           @change="onAvatarChange"/>
+                                           @change="onImageChange($event,'avatar')"/>
                                 </button>
                                 <div v-else class="absolute top-1 right-0 flex flex-col gap-2">
                                     <button
-                                        @click="resetAvatarImage"
+                                        @click="resetImage('avatar')"
                                         class="h-7 w-7 flex items-center justify-center bg-red-500/80 text-white rounded-full">
                                         <XMarkIcon class="h-5 w-5"/>
                                     </button>
                                     <button
-                                        @click="submitAvatarImage"
+                                        @click="submitImage('avatar')"
                                         class="h-7 w-7 flex items-center justify-center bg-emerald-500 text-white rounded-full">
                                         <CheckIcon class="h-5 w-5"/>
                                     </button>

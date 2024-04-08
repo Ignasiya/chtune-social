@@ -147,11 +147,11 @@ html.dark a.ck.ck-button:not(.ck-disabled):hover,
 html.dark .ck.ck-button:not(.ck-disabled):active,
 html.dark a.ck.ck-button:not(.ck-disabled):active,
 html.dark .ck.ck-button.ck-on,
-html.dark a.ck.ck-button.ck-on{
+html.dark a.ck.ck-button.ck-on {
     background-color: rgb(44, 39, 39);
 }
 
-html.dark .ck.ck-editor__main>.ck-editor__editable {
+html.dark .ck.ck-editor__main > .ck-editor__editable {
     background-color: rgb(56, 54, 54);
     color: white;
 }

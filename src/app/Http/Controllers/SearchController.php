@@ -94,7 +94,6 @@ class SearchController extends Controller
         ]);
     }
 
-
     public function searchUsersInGroup(Group $group, ?string $search = null)
     {
         $query = User::query()

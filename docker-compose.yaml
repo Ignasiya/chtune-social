@@ -10,7 +10,7 @@ services:
       - '80:80'
     expose:
       - 80
-      - 5173
+      - 3000
     networks:
       - app
     depends_on:
@@ -28,7 +28,7 @@ services:
       - '3000:3000'
     environment:
       - HOST=0.0.0.0
-      - PORT=5173
+      - PORT=3000
     networks:
       - app
     depends_on:
