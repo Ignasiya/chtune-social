@@ -84,6 +84,10 @@ function loadMore() {
             @editClick="openEditModal"
             @attachmentClick="openAttachmentPreviewModal"/>
 
+        <div v-if="!posts.length" class="py-8 text-gray-600 dark:text-gray-300 text-center">
+            Стена пустая, подпищитесь на кого-нибудь
+        </div>
+
         <div ref="loadMoreIntersect"></div>
 
         <PostModal

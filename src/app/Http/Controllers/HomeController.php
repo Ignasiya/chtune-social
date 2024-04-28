@@ -3,10 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Enums\GroupUserStatus;
-use App\Http\Resources\GroupResource;
 use App\Http\Resources\PostResource;
-use App\Http\Resources\UserResource;
-use App\Models\Group;
 use App\Models\Post;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;

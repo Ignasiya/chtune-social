@@ -239,8 +239,8 @@ function searchFollowings() {
                     <TabPanels class="mt-2">
                         <TabPanel>
                             <template v-if="posts">
+                                <CreatePost v-if="isMyProfile"/>
                                 <div v-if="posts.data.length">
-                                    <CreatePost v-if="isMyProfile"/>
                                     <PostList :posts="posts.data" class="flex-1"/>
                                 </div>
                                 <div v-else class="py-8 text-gray-600 dark:text-gray-300 text-center">
