@@ -5,12 +5,13 @@ namespace App\Http\Controllers;
 use App\Models\Follower;
 use App\Models\User;
 use App\Notifications\FollowUser;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
-    public function followUser(Request $request, User $user)
+    public function __invoke(Request $request, User $user): RedirectResponse
     {
         $data = $request->validate([
             'follow' => ['boolean']

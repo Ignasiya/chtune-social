@@ -8,21 +8,15 @@ use App\Models\Group;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class ActivityController extends Controller
 {
-    public function index(Request $request)
+    public function index(Request $request): Response
     {
         $user = $request->user();
 
-        $groups = Group::query()
-            ->with('currentUserGroup')
-            ->select(['groups.*'])
-            ->join('group_users AS gu', 'gu.group_id', 'groups.id')
-            ->where('gu.user_id', Auth::id())
-            ->orderBy('gu.role')
-            ->orderBy('name', 'desc')
-            ->get();
+        $groups = $user->groups()->orderByPivot('role')->orderBy('name', 'desc')->get();
 
         return Inertia::render('Activity', [
             'followings' => UserResource::collection($user->followings),

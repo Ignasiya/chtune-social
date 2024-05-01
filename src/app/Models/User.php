@@ -12,13 +12,6 @@ use Laravel\Sanctum\HasApiTokens;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
-/**
- * @property mixed $followers
- * @property mixed $followings
- * @property mixed $id
- * @property int|null $pinned_post_id
- * @property int countNotifications
- */
 class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable;
@@ -59,12 +52,10 @@ class User extends Authenticatable implements MustVerifyEmail
         'password' => 'hashed',
     ];
 
-    public function getSlugOptions(): SlugOptions
+    public function groups(): BelongsToMany
     {
-        return SlugOptions::create()
-            ->generateSlugsFrom('name')
-            ->saveSlugsTo('username')
-            ->doNotGenerateSlugsOnUpdate();
+        return $this->belongsToMany(Group::class, 'group_users')
+            ->withPivot('role');
     }
 
     public function followers(): BelongsToMany
@@ -75,5 +66,23 @@ class User extends Authenticatable implements MustVerifyEmail
     public function followings(): BelongsToMany
     {
         return $this->belongsToMany(User::class, 'followers', 'follower_id', 'user_id');
+    }
+
+    public function posts(): HasMany
+    {
+        return $this->hasMany(Post::class);
+    }
+
+    public function reactions(): HasMany
+    {
+        return $this->hasMany(Reaction::class);
+    }
+
+    public function getSlugOptions(): SlugOptions
+    {
+        return SlugOptions::create()
+            ->generateSlugsFrom('name')
+            ->saveSlugsTo('username')
+            ->doNotGenerateSlugsOnUpdate();
     }
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ActivityController;
+use App\Http\Controllers\CommentController;
 use App\Http\Controllers\GroupController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\NotificationController;
@@ -9,6 +10,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
+
 
 Route::get('/', [HomeController::class, 'index'])->middleware(['auth', 'verified'])
     ->name('home');
@@ -28,112 +30,88 @@ Route::get('/group/approve-invitation/{token}', [GroupController::class, 'approv
 Route::middleware('auth')->group(function () {
 
     // Пользователь
-    Route::post('/user/follow/{user}', [UserController::class, 'followUser'])
-        ->name('user.follow');
+    Route::post('/user/follow/{user}', UserController::class)->name('user.follow');
 
     // Профиль пользователя
-    Route::prefix('/profile')->group(function () {
-        Route::post('/update-images', [ProfileController::class, 'updateImage'])
-            ->name('profile.updateImage');
+    Route::prefix('/profile')->controller(ProfileController::class)->group(function () {
 
-        Route::patch('/', [ProfileController::class, 'update'])
-            ->name('profile.update');
+        Route::post('/update-images', 'updateImage')->name('profile.updateImage');
 
-        Route::delete('/', [ProfileController::class, 'destroy'])
-            ->name('profile.destroy');
+        Route::patch('/', 'update')->name('profile.update');
+
+        Route::delete('/', 'destroy')->name('profile.destroy');
     });
 
     // Записи
-    Route::prefix('/post')->group(function () {
-        Route::get('/{post}', [PostController::class, 'view'])
-            ->name('post.view');
+    Route::prefix('/post')->controller(PostController::class)->group(function () {
 
-        Route::post('/', [PostController::class, 'store'])
-            ->name('post.create');
+        Route::get('/{post}', 'view')->name('post.view');
 
-        Route::put('/{post}', [PostController::class, 'update'])
-            ->name('post.update');
+        Route::post('/', 'store')->name('post.create');
 
-        Route::delete('/{post}', [PostController::class, 'destroy'])
-            ->name('post.destroy');
+        Route::put('/{post}', 'update')->name('post.update');
 
-        Route::get('/download/{attachment}', [PostController::class, 'downloadAttachment'])
-            ->name('post.download');
+        Route::delete('/{post}', 'destroy')->name('post.destroy');
 
-        Route::post('/{post}/reaction', [PostController::class, 'postReaction'])
-            ->name('post.reaction');
+        Route::get('/download/{attachment}', 'downloadAttachment')->name('post.download');
 
-        Route::post('/{post}/comment', [PostController::class, 'createComment'])
-            ->name('post.comment.create');
+        Route::post('/{post}/reaction', 'postReaction')->name('post.reaction');
 
-        Route::post('/fetch-url-preview', [PostController::class, 'fetchUrlPreview'])
-            ->name('post.fetchUrlPreview');
+        Route::post('/fetch-url-preview', 'fetchUrlPreview')->name('post.fetchUrlPreview');
 
-        Route::post('/{post}/pin', [PostController::class, 'pinUnpin'])
-            ->name('post.pinUnpin');
+        Route::post('/{post}/pin', 'pinUnpin')->name('post.pinUnpin');
     });
 
     // Комментарии
-    Route::prefix('/comment')->group(function () {
-        Route::delete('/{comment}', [PostController::class, 'deleteComment'])
-            ->name('comment.delete');
+    Route::prefix('/comment')->controller(CommentController::class)->group(function () {
 
-        Route::put('/{comment}', [PostController::class, 'updateComment'])
-            ->name('comment.update');
+        Route::post('/{post}/comment', 'store')->name('post.comment.create');
 
-        Route::post('/{comment}/reaction', [PostController::class, 'commentReaction'])
-            ->name('comment.reaction');
+        Route::delete('/{comment}', 'destroy')->name('comment.delete');
+
+        Route::put('/{comment}', 'update')->name('comment.update');
+
+        Route::post('/{comment}/reaction', 'commentReaction')->name('comment.reaction');
     });
 
     // Группы
-    Route::prefix('/group')->group(function () {
-        Route::post('/', [GroupController::class, 'store'])
-            ->name('group.create');
+    Route::prefix('/group')->controller(GroupController::class)->group(function () {
 
-        Route::put('/{group:slug}', [GroupController::class, 'update'])
-            ->name('group.update');
+        Route::post('/', 'store')->name('group.create');
 
-        Route::post('/update-images/{group:slug}', [GroupController::class, 'updateImage'])
-            ->name('group.updateImage');
+        Route::put('/{group:slug}', 'update')->name('group.update');
 
-        Route::post('/invite/{group:slug}', [GroupController::class, 'inviteUsers'])
-            ->name('group.inviteUsers');
+        Route::post('/update-images/{group:slug}', 'updateImage')->name('group.updateImage');
 
-        Route::post('/join/{group:slug}', [GroupController::class, 'join'])
-            ->name('group.join');
+        Route::post('/invite/{group:slug}', 'inviteUsers')->name('group.inviteUsers');
 
-        Route::post('/approve-request/{group:slug}', [GroupController::class, 'approveRequest'])
-            ->name('group.approveRequest');
+        Route::post('/join/{group:slug}', 'join')->name('group.join');
 
-        Route::post('/change-role/{group:slug}', [GroupController::class, 'changeRole'])
-            ->name('group.changeRole');
+        Route::post('/approve-request/{group:slug}', 'approveRequest')->name('group.approveRequest');
 
-        Route::delete('/remove-user/{group:slug}', [GroupController::class, 'removeUser'])
-            ->name('group.removeUser');
+        Route::post('/change-role/{group:slug}', 'changeRole')->name('group.changeRole');
+
+        Route::delete('/remove-user/{group:slug}', 'removeUser')->name('group.removeUser');
     });
 
     // Поиск
-    Route::prefix('/search')->group(function () {
-        Route::get('/global/{search?}', [SearchController::class, 'search'])
-            ->name('search');
+    Route::prefix('/search')->controller(SearchController::class)->group(function () {
 
-        Route::get('/followers/{search?}', [SearchController::class, 'searchFollowers'])
-            ->name('search.followers');
+        Route::get('/global/{search?}', 'search')->name('search');
 
-        Route::get('/followings/{search?}', [SearchController::class, 'searchFollowings'])
-            ->name('search.followings');
+        Route::get('/followers/{search?}', 'searchFollowers')->name('search.followers');
 
-        Route::get('/{group:slug}/{search?}', [SearchController::class, 'searchUsersInGroup'])
-            ->name('search.usersGroup');
+        Route::get('/followings/{search?}', 'searchFollowings')->name('search.followings');
+
+        Route::get('/{group:slug}/{search?}', 'searchUsersInGroup')->name('search.usersGroup');
     });
 
     // Уведомления
-    Route::prefix('/notification')->group(function () {
-        Route::get('/', [NotificationController::class, 'show'])
-            ->name('notification.show');
+    Route::prefix('/notification')->controller(NotificationController::class)->group(function () {
 
-        Route::patch('/{id?}', [NotificationController::class, 'update'])
-            ->name('notification.update');
+        Route::get('/', 'show')->name('notification.show');
+
+        Route::patch('/{id?}', 'update')->name('notification.update');
     });
 });
 

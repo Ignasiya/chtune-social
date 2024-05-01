@@ -7,20 +7,13 @@ use App\Http\Enums\GroupUserStatus;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
-/**
- * @property mixed approvedUsers
- * @property mixed adminUsers
- * @property mixed pendingUsers
- * @property bool isAdmin
- * @property int $id
- * @property int|null $pinned_post_id
- */
 class Group extends Model
 {
     use HasFactory;
@@ -29,12 +22,15 @@ class Group extends Model
 
     protected $fillable = ['name', 'user_id', 'auto_approval', 'about', 'cover_path', 'thumbnail_path', 'pinned_post_id'];
 
-    public function getSlugOptions(): SlugOptions
+    public function users(): BelongsToMany
     {
-        return SlugOptions::create()
-            ->generateSlugsFrom('name')
-            ->saveSlugsTo('slug')
-            ->doNotGenerateSlugsOnUpdate();
+        return $this->belongsToMany(User::class, 'group_users')
+            ->withPivot('role');
+    }
+
+    public function posts(): HasMany
+    {
+        return $this->hasMany(Post::class);
     }
 
     public function currentUserGroup(): HasOne
@@ -82,5 +78,13 @@ class Group extends Model
     {
         return $this->belongsToMany(User::class, 'group_users')
             ->wherePivot('status', GroupUserStatus::APPROVED->value);
+    }
+
+    public function getSlugOptions(): SlugOptions
+    {
+        return SlugOptions::create()
+            ->generateSlugsFrom('name')
+            ->saveSlugsTo('slug')
+            ->doNotGenerateSlugsOnUpdate();
     }
 }
