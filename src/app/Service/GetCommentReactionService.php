@@ -2,7 +2,6 @@
 
 namespace App\Service;
 
-use App\Http\Enums\ReactionEnum;
 use App\Models\Comment;
 use App\Models\Reaction;
 
@@ -22,11 +21,7 @@ class GetCommentReactionService
      */
     public function __invoke(Comment $comment, int $userId, string $reaction): array
     {
-        $existingReaction = Reaction::query()
-            ->where('user_id', $userId)
-            ->where('object_id', $comment->id)
-            ->where('object_type', Comment::class)
-            ->first();
+        $existingReaction = Reaction::reactionUserComment($userId, $comment)->first();
 
         if ($existingReaction) {
             $existingReaction->delete();
@@ -42,10 +37,7 @@ class GetCommentReactionService
             $reactionCreated = true;
         }
 
-        $numOfReactions = Reaction::query()
-            ->where('object_id', $comment->id)
-            ->where('object_type', Comment::class)
-            ->count();
+        $numOfReactions = Reaction::numOfReactions($comment)->count();
 
         return [
             'num_of_reactions' => $numOfReactions,

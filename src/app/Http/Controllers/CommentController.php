@@ -85,7 +85,7 @@ class CommentController extends Controller
 
     public function commentReaction(
         GetCommentReactionService $getCommentReactionService,
-        CommentReactionRequest $request, Comment $comment): Application|Response|ResponseFactory
+        CommentReactionRequest $request, Comment $comment): Response
     {
         $data = $request->validated();
         $userId = Auth::id();
