@@ -13,7 +13,7 @@ services:
     depends_on:
       - php
 
-  php:
+  server:
     build: ./docker
     working_dir: ${PATH_ROOT}
     restart: unless-stopped

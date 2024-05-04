@@ -1,6 +1,6 @@
-***SPA приложение социальная сеть "Chtune" на стэке Laravel и Vue + Tailwind CSS***
+# SPA приложение социальная сеть "Chtune" на стэке Laravel и Vue + Tailwind CSS
 
-==================================================
+==================================================================
 
 ## Функциональные возможности:
 
@@ -28,21 +28,20 @@
 Документация по функциональным возможностям](docs/functional-requirements.md).
 
 ## Запуск проекта:
-````
-docker compose up
-````
-Установка composer:
-````
-docker compose exec php composer install
-````
-Для миграции:
-````
-docker compose exec php php artisan key:generate
-docker compose exec php php artisan migrate
-docker compose exec php php artisan storage:link
-````
-npm, версия 20x:
-````
-docker compose exec php npm install
-docker compose exec php npm run build
-````
+
+### Команды Make
+
+| Команда                 | Описание                                                        |
+|-------------------------|-----------------------------------------------------------------|
+| `make init`             | Полная установка проекта с нуля                                 |
+| `make up`               | Запускает Docker-контейнеры                                     |
+| `make down`             | Удаляет Docker-контейнеры                                       |
+| `make restart`          | Перезапускает Docker-контейнеры                                 |
+| `make composer-install` | Устанавливает зависимости Composer                              |
+| `make app`              | Открывает терминал внутри Docker-контейнера PHP                 |
+| `make db`               | Открывает терминал внутри Docker-контейнера MySQL               |
+| `make prepare`          | Генерирует новый ключ приложения и создает символическую ссылку |
+| `make migrate`          | Запускает миграции базы данных                                  |
+| `make npm-install`      | Устанавливает все зависимости Node.js                           |
+| `make npm-run`          | Собирает и минифицирует JavaScript и CSS-файлы для продакшена   |
+| `make npm-dev`          | Запускает сборку JavaScript и CSS-файлов в режиме разработк     |
