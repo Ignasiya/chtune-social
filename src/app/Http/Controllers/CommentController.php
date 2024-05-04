@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Enums\ReactionEnum;
+use App\Http\Requests\CommentReactionRequest;
+use App\Http\Requests\StoreCommentRequest;
 use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdateCommentRequest;
 use App\Http\Requests\UpdatePostRequest;
@@ -19,9 +21,13 @@ use App\Notifications\PostCreated;
 use App\Notifications\PostDeleted;
 use App\Notifications\ReactionOnComment;
 use App\Notifications\ReactionOnPost;
+use App\Service\GetCommentReactionService;
 use DOMDocument;
 use Exception;
+use Illuminate\Contracts\Routing\ResponseFactory;
+use Illuminate\Foundation\Application;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -31,12 +37,9 @@ use Illuminate\Validation\Rule;
 
 class CommentController extends Controller
 {
-    public function store(Request $request, Post $post)
+    public function store(StoreCommentRequest $request, Post $post): Application|Response|ResponseFactory
     {
-        $data = $request->validate([
-            'comment' => ['required'],
-            'parent_id' => ['nullable', 'exists:comments,id']
-        ]);
+        $data = $request->validated();
 
         $comment = Comment::create([
             'post_id' => $post->id,
@@ -52,7 +55,7 @@ class CommentController extends Controller
         return response(new CommentResource($comment), 201);
     }
 
-    public function destroy(Comment $comment)
+    public function destroy(Comment $comment): Application|Response|ResponseFactory
     {
         $id = Auth::id();
         $post = $comment->post;
@@ -69,7 +72,7 @@ class CommentController extends Controller
         return response('Не доступа для удаления комментария', 403);
     }
 
-    public function update(UpdateCommentRequest $request, Comment $comment)
+    public function update(UpdateCommentRequest $request, Comment $comment): CommentResource
     {
         $data = $request->validated();
 
@@ -80,45 +83,20 @@ class CommentController extends Controller
         return new CommentResource($comment);
     }
 
-    public function commentReaction(Request $request, Comment $comment)
+    public function commentReaction(
+        GetCommentReactionService $getCommentReactionService,
+        CommentReactionRequest $request, Comment $comment): Application|Response|ResponseFactory
     {
-        $data = $request->validate([
-            'reaction' => [Rule::enum(ReactionEnum::class)],
-        ]);
-
+        $data = $request->validated();
         $userId = Auth::id();
-        $reaction = Reaction::query()
-            ->where('user_id', $userId)
-            ->where('object_id', $comment->id)
-            ->where('object_type', Comment::class)
-            ->first();
 
-        if ($reaction) {
-            $hasReaction = false;
-            $reaction->delete();
-        } else {
-            $hasReaction = true;
-            Reaction::create([
-                'object_id' => $comment->id,
-                'object_type' => Comment::class,
-                'user_id' => $userId,
-                'type' => $data['reaction']
-            ]);
+        $reaction = $getCommentReactionService($comment, $userId, $data['reaction']);
 
-            if (!$comment->isOwner($userId)) {
-                $user = User::where('id', $userId)->first();
-                $comment->user->notify(new ReactionOnComment($comment->post, $comment, $user));
-            }
+        if ($reaction['current_user_has_reaction'] && !$comment->isOwner($userId)) {
+            $user = User::where('id', $userId)->first();
+            $comment->user->notify(new ReactionOnComment($comment->post, $comment, $user));
         }
 
-        $reactions = Reaction::query()
-            ->where('object_id', $comment->id)
-            ->where('object_type', Comment::class)
-            ->count();
-
-        return response([
-            'num_of_reactions' => $reactions,
-            'current_user_has_reaction' => $hasReaction,
-        ]);
+        return response($reaction);
     }
 }

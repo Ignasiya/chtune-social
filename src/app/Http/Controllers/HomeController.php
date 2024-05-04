@@ -12,7 +12,10 @@ use Inertia\Response;
 
 class HomeController extends Controller
 {
-    public function index(GetPostsByFollowersAndGroupService $getPostsByFollowersAndGroup, Request $request): AnonymousResourceCollection|Response
+    public function index(
+        GetPostsByFollowersAndGroupService $getPostsByFollowersAndGroup,
+        Request $request
+    ): AnonymousResourceCollection|Response
     {
         $posts = $getPostsByFollowersAndGroup(Auth::id());
 
