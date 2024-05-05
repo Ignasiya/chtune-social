@@ -1,7 +1,4 @@
-export APP_NAME=chtune-social
-export DOCKER_COMPOSE_FILE=docker-compose.yml
-
-init: init-env up composer-install npm-install prepare migrate
+init: init-env up composer-install npm-install prepare wait-db migrate
 
 up:
 	docker compose up -d
@@ -19,6 +16,11 @@ app:
 
 db:
 	docker-compose exec mysql bash
+
+wait-db:
+	while ! (docker compose exec mysql bash -c 'mysql -u$$MYSQL_USER -p$$MYSQL_PASSWORD $$MYSQL_DATABASE -e "SHOW TABLES;"'); do \
+		sleep 10; \
+	done; \
 
 prepare:
 	docker compose exec server php artisan key:generate
