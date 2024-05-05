@@ -11,9 +11,9 @@ services:
     networks:
       - app
     depends_on:
-      - php
+      - server
 
-  php:
+  server:
     build: ./docker
     working_dir: ${PATH_ROOT}
     restart: unless-stopped
@@ -38,7 +38,6 @@ services:
       MYSQL_USER: ${DB_USERNAME}
       MYSQL_PASSWORD: ${DB_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
-      MYSQL_ALLOW_EMPTY_PASSWORD: 1
     ports:
       - "8006:3306"
     networks:
