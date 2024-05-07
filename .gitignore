@@ -1,5 +1,4 @@
 # Laravel - Server folder
-/src/*.lock
 /src/vendor
 /src/.env
 /src/.phpunit.cache
