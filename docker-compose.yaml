@@ -16,6 +16,7 @@ services:
   server:
     build:
       context: ./docker
+      dockerfile: php.Dockerfile
     restart: unless-stopped
     volumes:
       - ./src:/var/www/html/app
@@ -25,20 +26,19 @@ services:
     depends_on:
       - mysql
 
-# по-хорошему тоже нужна сборка образа,
-# чтобы прокинуть id юзера для фикса прав
   node:
-    image: node:latest
+    build:
+      context: ./docker
+      dockerfile: node.Dockerfile
     volumes:
       - ./src:/var/www/html/app
-    working_dir: /var/www/html/app
     ports:
       - '${PORT_NPM_DEV:-3000}:3000'
     networks:
       - app
     depends_on:
       - server
-    command: bash -c "npm install && npm run dev"
+    command: ["node", "-e", "setInterval(function() {}, 1000);"]
 
   mysql:
     image: mysql:8.0
