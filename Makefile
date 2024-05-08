@@ -1,21 +1,26 @@
-init: init-env up composer-install npm-install prepare wait-db migrate
+dc := docker compose
+php := $(dc) exec server
+node := $(dc) exec node
+mysql := $(dc) exec mysql
+
+init: down init-env up composer-install npm-install prepare wait-db migrate
 
 up:
-	docker compose up -d
+	$(dc) up -d
 
 down:
-	docker compose down
+	$(dc) down
 
 restart: down up
 
 composer-install:
-	docker compose exec server composer install
+	$(php) composer install
 
 app:
-	docker-compose exec server bash
+	$(php) bash
 
 db:
-	docker-compose exec mysql bash
+	$(mysql) bash
 
 wait-db:
 	while ! (docker compose exec mysql bash -c 'mysql -u$$MYSQL_USER -p$$MYSQL_PASSWORD $$MYSQL_DATABASE -e "SHOW TABLES;"'); do \
@@ -23,21 +28,24 @@ wait-db:
 	done; \
 
 prepare:
-	docker compose exec server php artisan key:generate
-	docker compose exec server php artisan storage:link
+	$(php) php artisan key:generate
+	$(php) php artisan storage:link
 
 migrate:
-	docker compose exec server php artisan migrate
+	$(php) php artisan migrate
 
 npm-install:
-	docker compose exec node npm install
+	$(node) npm install
 
 npm-run:
-	docker compose exec node npm run build
+	$(node) npm run build
 
 npm-dev:
-	docker compose exec node npm run dev
+	$(node) npm run dev
 
 init-env:
 	cp .env.example .env
 	cp ./src/.env.example ./src/.env
+
+image-build:
+	$(dc) build --build-arg UID=$$(id -u) --build-arg GID=$$(id -g)
