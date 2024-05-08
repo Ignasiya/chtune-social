@@ -1,5 +1,7 @@
 FROM php:8.3-fpm
 
+ARG PATH_APP
+
 # Install dependencies
 RUN apt-get update && apt-get install -y \
     build-essential \
@@ -25,8 +27,16 @@ ENV COMPOSER_ALLOW_SUPERUSER 1
 RUN apt-get update && apt-get install zip unzip
 RUN docker-php-ext-install pdo_mysql
 
-# npm install
-RUN curl -sL https://deb.nodesource.com/setup_20.x | bash -
-RUN apt-get install -y nodejs
+# User perpmisson
+RUN adduser --disabled-password --gecos '' --uid 1000 appuser
+
+RUN mkdir -p "${PATH_APP}"
+
+RUN chown -R appuser:appuser ${PATH_APP} && \
+    chmod -R 775 ${PATH_APP}
+
+WORKDIR ${PATH_APP}
+
+USER appuser
 
 CMD ["php-fpm"]

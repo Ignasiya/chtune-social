@@ -30,13 +30,13 @@ migrate:
 	docker compose exec server php artisan migrate
 
 npm-install:
-	docker compose exec server npm install
+	docker compose exec node npm install
 
 npm-run:
-	docker compose exec server npm run build
+	docker compose exec node npm run build
 
 npm-dev:
-	docker compose exec server npm run dev
+	docker compose exec node npm run dev
 
 init-env:
 	cp .env.example .env

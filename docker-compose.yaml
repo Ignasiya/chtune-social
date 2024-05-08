@@ -1,37 +1,53 @@
 version: "3.8"
 
+volumes:
+  mysql-data:
+
 services:
   nginx:
     image: nginx:stable-alpine
     volumes:
       - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
-      - ./src:${PATH_ROOT}
+      - ./src:/${PATH_ROOT}
     ports:
-      - '8000:80'
+      - '${PORT_APP:-8000}:80'
     networks:
       - app
     depends_on:
       - server
 
   server:
-    build: ./docker
-    working_dir: ${PATH_ROOT}
+    build:
+      context: ./docker
+      args:
+        PATH_APP: ${PATH_ROOT:application}
     restart: unless-stopped
     tty: true
     volumes:
-      - ./src:${PATH_ROOT}
+      - ./src:/${PATH_ROOT}
       - ./docker/php.ini:/usr/local/etc/php/conf.d/php-custom.ini
-    ports:
-      - '3000:3000'
     networks:
       - app
     depends_on:
       - mysql
 
+  node:
+    image: node:latest
+    working_dir: /${PATH_ROOT}
+    volumes:
+      - ./src:/${PATH_ROOT}
+    ports:
+      - '${PORT_NPM_DEV:-3000}:3000'
+    networks:
+      - app
+    depends_on:
+      - server
+    command: ["node", "-e", "setInterval(function() {}, 1000);"]
+
   mysql:
     image: mysql:8.0
     volumes:
-      - ./mysql:/var/lib/mysql
+      - mysql-data:/var/lib/mysql
     environment:
       MYSQL_ROOT_HOST: '%'
       MYSQL_DATABASE: ${DB_DATABASE}
@@ -39,15 +55,15 @@ services:
       MYSQL_PASSWORD: ${DB_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
     ports:
-      - "8006:3306"
+      - "${PORT_MYSQL:-8006}:3306"
     networks:
       - app
 
   mailpit:
     image: axllent/mailpit:latest
     ports:
-      - '1025:1025'
-      - '8025:8025'
+      - '${PORT_MAIL:-1025}:1025'
+      - '${PORT_MAIL_UI:-8025}:8025'
     networks:
       - app
 
