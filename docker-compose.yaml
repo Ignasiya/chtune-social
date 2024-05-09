@@ -15,20 +15,19 @@ services:
 
   server:
     build:
-      context: ./docker
+      context: ./docker/php-fpm
     restart: unless-stopped
     volumes:
       - ./src:/var/www/html/app
-      - ./docker/php.ini:/usr/local/etc/php/conf.d/php-custom.ini
+      - ./docker/php-fpm/php.ini:/usr/local/etc/php/conf.d/999-zzz-custom.ini
     networks:
       - app
     depends_on:
       - mysql
 
-# по-хорошему тоже нужна сборка образа,
-# чтобы прокинуть id юзера для фикса прав
   node:
-    image: node:latest
+    build:
+      context: ./docker/node
     volumes:
       - ./src:/var/www/html/app
     working_dir: /var/www/html/app
