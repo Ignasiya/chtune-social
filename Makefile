@@ -3,7 +3,7 @@ php := $(dc) exec server
 node := $(dc) exec node
 mysql := $(dc) exec mysql
 
-init: init-env down image-build up composer-install prepare wait-db migrate
+init: init-env down image-build up composer-install npm-install prepare wait-db migrate
 refresh: clear init
 
 up:
