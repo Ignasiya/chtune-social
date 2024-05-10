@@ -37,7 +37,7 @@ services:
       - app
     depends_on:
       - server
-    command: ["node", "-e", "setInterval(function() {}, 1000);"]
+    command: bash -c "npm install && npm run dev"
 
   mysql:
     image: mysql:8.0
