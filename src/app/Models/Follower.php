@@ -9,7 +9,7 @@ class Follower extends Model
 {
     use HasFactory;
 
-    const UPDATED_AT = null;
+    const null UPDATED_AT = null;
 
     protected $fillable = ['user_id', 'follower_id'];
 }

@@ -131,7 +131,7 @@ class ProfileController extends Controller
                 Storage::disk('public')->delete($user->cover_path);
             }
             $path = $cover->store('user-' . $user->id, 'public');
-            $user->update(['cover_path' => $path]);
+            $user->update(['cover_path' => Storage::url($path)]);
             $success = 'Ваша обложка обновлена.';
         }
 
@@ -140,7 +140,7 @@ class ProfileController extends Controller
                 Storage::disk('public')->delete($user->avatar_path);
             }
             $path = $avatar->store('user-' . $user->id, 'public');
-            $user->update(['avatar_path' => $path]);
+            $user->update(['avatar_path' => Storage::url($path)]);
             $success = 'Ваш аватар обновлен.';
         }
 

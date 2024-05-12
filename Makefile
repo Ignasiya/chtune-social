@@ -3,7 +3,7 @@ php := $(dc) exec server
 node := $(dc) exec node
 mysql := $(dc) exec mysql
 
-init: init-env down image-build up composer-install npm-install prepare wait-db migrate
+init: init-env down image-build up composer-install npm-install prepare wait-db migrate seed
 refresh: clear init
 
 up:
@@ -70,3 +70,6 @@ src/.env:
 
 image-build:
 	$(dc) build --build-arg UID=$$(id -u) --build-arg GID=$$(id -g)
+
+seed:
+	$(php) php artisan db:seed --class=DatabaseSeeder

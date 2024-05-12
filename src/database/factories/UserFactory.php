@@ -12,10 +12,7 @@ use Illuminate\Support\Str;
  */
 class UserFactory extends Factory
 {
-    /**
-     * The current password being used by the factory.
-     */
-    protected static ?string $password;
+    protected $model = User::class;
 
     /**
      * Define the model's default state.
@@ -25,12 +22,25 @@ class UserFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->name(),
+            'name' => fake()->firstName() . ' ' . fake()->lastName(),
             'email' => fake()->unique()->safeEmail(),
-            'email_verified_at' => now(),
-            'password' => static::$password ??= Hash::make('password'),
+            'email_verified_at' => fake()->dateTimeBetween('-1 years'),
+            'password' => Hash::make(fake()->password()),
             'remember_token' => Str::random(10),
+            'avatar_path' => 'https://i.pravatar.cc/300',
         ];
+    }
+
+    public function withUsername(): UserFactory
+    {
+        return $this->state(function (array $attributes) {
+            $user = User::create($attributes);
+            $slugOptions = $user->getSlugOptions();
+            $user->username = $slugOptions->generate($user->name);
+            $user->save();
+
+            return $user->toArray();
+        });
     }
 
     /**

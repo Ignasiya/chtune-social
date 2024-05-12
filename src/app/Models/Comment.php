@@ -9,8 +9,10 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 
 /**
- * @property mixed $post
- * @property mixed $user
+ * @property Post $post
+ * @property User $user
+ * @property int $id
+ * @property int $user_id
  */
 class Comment extends Model
 {

@@ -16,7 +16,7 @@ class GetPostsByFollowersAndGroupService
      */
     public function __invoke(int $userId): LengthAwarePaginator
     {
-        $posts = Post::postsForTimeline($userId)
+        return Post::postsForTimeline($userId)
             ->whereHas('user.followers', function ($query) use ($userId) {
                 $query->where('followers.follower_id', $userId);
             })
@@ -26,8 +26,6 @@ class GetPostsByFollowersAndGroupService
             })
             ->whereNot('posts.user_id', $userId)
             ->paginate(10);
-
-        return $posts;
     }
 
 //        $posts = Post::postsForTimeline($userId)

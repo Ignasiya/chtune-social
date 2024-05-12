@@ -153,7 +153,7 @@ class GroupController extends Controller
                 Storage::disk('public')->delete($group->cover_path);
             }
             $path = $cover->store('group-' . $group->id, 'public');
-            $group->update(['cover_path' => $path]);
+            $group->update(['cover_path' => Storage::url($path)]);
             $success = 'Обложка группы обновлена.';
         }
 
@@ -162,7 +162,7 @@ class GroupController extends Controller
                 Storage::disk('public')->delete($group->thumbnail_path);
             }
             $path = $thumbnail->store('group-' . $group->id, 'public');
-            $group->update(['thumbnail_path' => $path]);
+            $group->update(['thumbnail_path' => Storage::url($path)]);
             $success = 'Иконка группы обновлена.';
         }
 
