@@ -14,6 +14,11 @@ use Illuminate\Support\Facades\Auth;
 use Spatie\Sluggable\HasSlug;
 use Spatie\Sluggable\SlugOptions;
 
+/**
+ * @property int $user_id
+ * @property bool $auto_approval
+ * @property int $id
+ */
 class Group extends Model
 {
     use HasFactory;

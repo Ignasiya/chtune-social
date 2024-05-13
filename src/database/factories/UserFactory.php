@@ -21,13 +21,15 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        $uniqueNumber = fake()->numberBetween(1, 70);
+
         return [
             'name' => fake()->firstName() . ' ' . fake()->lastName(),
             'email' => fake()->unique()->safeEmail(),
             'email_verified_at' => fake()->dateTimeBetween('-1 years'),
             'password' => Hash::make(fake()->password()),
             'remember_token' => Str::random(10),
-            'avatar_path' => 'https://i.pravatar.cc/300',
+            'avatar_path' => 'https://i.pravatar.cc/300?img=' . $uniqueNumber,
         ];
     }
 

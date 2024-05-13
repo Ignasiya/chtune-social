@@ -6,12 +6,11 @@ use App\Http\Enums\GroupUserRole;
 use App\Http\Enums\GroupUserStatus;
 use App\Http\Enums\ReactionEnum;
 use App\Models\Comment;
-use App\Models\Follower;
 use App\Models\Group;
-use App\Models\GroupUser;
 use App\Models\Post;
 use App\Models\Reaction;
 use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -24,105 +23,115 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // Пользователи
-        User::factory()->create([
+        $hero = User::factory()->create([
             'name' => 'Иван Иванов',
             'email' => 'test@example.com',
             'password' => Hash::make('12345Cs!')
         ]);
 
-        User::factory(99)->create();
-
-        $users = User::all();
+        $users = User::factory(99)->create();
+        $users->push($hero);
 
         // Подписчики
-        foreach ($users as $user) {
-            $followers = $users->filter(function ($follower) use ($user) {
-                return $follower->id !== $user->id;
-            })->random(fake()->numberBetween(1, 10));
+        $users->each(function ($user) use ($users) {
+            $followers = $users->except($user->id)->random(fake()->numberBetween(1, 10));
 
-            $followerData = $followers->map(function ($follower) use ($user) {
-                return [
-                    'user_id' => $user->id,
-                    'follower_id' => $follower->id,
-                ];
-            })->toArray();
-
-            Follower::insert($followerData);
-        }
+            $user->followers()->attach($followers->pluck('id'));
+        });
 
         // Группы
-        Group::factory(20)->create([
-            'user_id' => function () use ($users) {
-                return $users->random();
-            },
-        ])->each(function ($group) use ($users) {
+        $groups = Group::factory(40)
+            ->make(['user_id' => fn($attributes) => $users->random()->id])
+            ->each(function ($group) use ($users) {
+                $group->save();
 
-            $groupUsers = [
-                [
-                    'user_id' => $group->user_id,
-                    'group_id' => $group->id,
-                    'role' => GroupUserRole::ADMIN->value,
-                    'status' => GroupUserStatus::APPROVED->value,
-                    'token' => null,
-                    'token_expire_date' => null,
-                    'token_used' => null,
-                    'created_by' => $group->user_id,
-                ]
-            ];
+                $groupUsers = $this->generateGroupUsers($group, $users);
 
-            $usersRandom = $users->random(fake()->numberBetween(1, 15));
-
-            foreach ($usersRandom as $user) {
-                if ($group->user_id !== $user->id) {
-                    $groupUsers[] = [
-                        'user_id' => $user->id,
-                        'group_id' => $group->id,
-                        'role' => fake()->randomElement(array_column(GroupUserRole::cases(), 'value')),
-                        'status' => $group->auto_approval ? GroupUserStatus::APPROVED->value : fake()->randomElement(array_column(GroupUserStatus::cases(), 'value')),
-                        'token' => $user->status === GroupUserStatus::PENDING->value ? Str::random(32) : null,
-                        'token_expire_date' => $user->status === GroupUserStatus::PENDING->value ? now()->addDays() : null,
-                        'token_used' => $user->status === GroupUserStatus::APPROVED->value ? now() : null,
-                        'created_by' => $group->user_id,
-                    ];
-                }
-            }
-
-            GroupUser::insert($groupUsers);
-        });
-
-        $groups = Group::all();
+                $group->users()->attach($groupUsers);
+            });
 
         // Посты
-        Post::factory(100)->create([
-            'user_id' => function () use ($users) {
-                return $users->random();
-            },
-            'group_id' => function () use ($groups) {
-                if (rand(1, 10) <= 7) {
-                    return $groups->random();
-                }
-                return null;
-            },
-        ])->each(function ($post) use ($users, $groups) {
+        $posts = Post::factory(100)
+            ->make([
+                'user_id' => fn($attributes) => $users->random()->id,
+                'group_id' => fn($attributes) => $this->getRandomGroupId($groups),
+                ])
+            ->each(function ($post) use ($users, $groups) {
+                $post->save();
 
-            $this->createComments($post, null, $users, rand(1, 2));
+                $this->createComments($post, $users, fake()->numberBetween(1, 2));
+                $this->createReactions($post, $users);
+            });
+    }
 
-            $this->createReactions($post, $users);
-        });
+    /**
+     * С 70% шансом добавляет к посту группу
+     * @param Collection|null $groups
+     * @return int|null
+     */
+    private function getRandomGroupId(?Collection $groups): ?int
+    {
+        if (is_null($groups) || $groups->isEmpty() || fake()->boolean(70)) {
+            return null;
+        }
+
+        return $groups->random()->id;
+    }
+
+    /**
+     * Наполняет таблицу groups и group_users
+     * @param Group $group
+     * @param Collection $users
+     * @return array[]
+     */
+    private function generateGroupUsers(Group $group, Collection $users): array
+    {
+        $groupUsers = [
+            [
+                'group_id' => $group->id,
+                'user_id' => $group->user_id,
+                'role' => GroupUserRole::ADMIN->value,
+                'status' => GroupUserStatus::APPROVED->value,
+                'token' => null,
+                'token_expire_date' => null,
+                'token_used' => null,
+                'created_by' => $group->user_id,
+            ]
+        ];
+
+        $randomUsers = $users->except($group->user_id)->random(fake()->numberBetween(1, 15));
+
+        foreach ($randomUsers as $user) {
+            $groupUsers[] = [
+                'group_id' => $group->id,
+                'user_id' => $user->id,
+                'role' => fake()->randomElement(array_column(GroupUserRole::cases(), 'value')),
+                'status' => $group->auto_approval ? GroupUserStatus::APPROVED->value : fake()->randomElement(array_column(GroupUserStatus::cases(), 'value')),
+                'token' => $user->status === GroupUserStatus::PENDING->value ? Str::random(32) : null,
+                'token_expire_date' => $user->status === GroupUserStatus::PENDING->value ? now()->addDays() : null,
+                'token_used' => $user->status === GroupUserStatus::APPROVED->value ? now() : null,
+                'created_by' => $group->user_id,
+            ];
+        }
+
+        return $groupUsers;
     }
 
     /**
      * Создает комментарий под постом или комментарием
-     * @param $post
-     * @param $commentParent
-     * @param $users
+     * @param Post $post
+     * @param Comment|null $commentParent
+     * @param Collection $users
      * @param int $numComments
      * @param bool $isFirstRecursion
      * @return void
      */
-    private function createComments($post, $commentParent, $users, int $numComments, bool $isFirstRecursion = true): void
+    private function createComments(
+        Post $post, Collection $users,
+        int $numComments,
+        Comment $commentParent = null,
+        bool $isFirstRecursion = true): void
     {
-
         for ($i = 0; $i < $numComments; $i++) {
             $comment = Comment::factory()->make([
                 'post_id' => $post->id,
@@ -133,7 +142,7 @@ class DatabaseSeeder extends Seeder
             $comment->save();
 
             if ($isFirstRecursion) {
-                $this->createComments($post, $comment, $users, rand(1, 3), false);
+                $this->createComments($post, $users, rand(1, 3), $comment, false);
             }
 
             $this->createReactions($comment, $users);
@@ -142,11 +151,11 @@ class DatabaseSeeder extends Seeder
 
     /**
      * Создает реакции на пост или коммент
-     * @param $object
-     * @param $users
+     * @param Post|Comment $object
+     * @param Collection $users
      * @return void
      */
-    private function createReactions($object, $users): void
+    private function createReactions(Post|Comment $object, Collection $users): void
     {
         $numReactions = rand(1, 3);
         $usedUsers = collect();
