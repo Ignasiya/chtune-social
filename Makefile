@@ -73,3 +73,6 @@ image-build:
 
 seed:
 	$(php) php artisan db:seed --class=DatabaseSeeder
+
+seed-refresh:
+	$(php) php artisan migrate:fresh --seed

@@ -62,6 +62,9 @@ function updateNotifications(id) {
                             {{ notification.updated_at }}
                         </small>
                     </a>
+                    <div v-if="!page.props.notifications.length" class="py-2 text-gray-600 dark:text-gray-300 text-center">
+                        Пока уведомления отсутствуют
+                    </div>
                 </div>
             </PopoverPanel>
         </transition>

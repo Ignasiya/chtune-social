@@ -7,6 +7,7 @@ use App\Http\Enums\GroupUserStatus;
 use App\Http\Enums\ReactionEnum;
 use App\Models\Comment;
 use App\Models\Group;
+use App\Models\GroupUser;
 use App\Models\Post;
 use App\Models\Reaction;
 use App\Models\User;
@@ -40,7 +41,7 @@ class DatabaseSeeder extends Seeder
         });
 
         // Группы
-        $groups = Group::factory(40)
+        $groups = Group::factory(80)
             ->make(['user_id' => fn($attributes) => $users->random()->id])
             ->each(function ($group) use ($users) {
                 $group->save();
@@ -51,27 +52,32 @@ class DatabaseSeeder extends Seeder
             });
 
         // Посты
-        $posts = Post::factory(100)
+        $posts = Post::factory(200)
             ->make([
                 'user_id' => fn($attributes) => $users->random()->id,
-                'group_id' => fn($attributes) => $this->getRandomGroupId($groups),
+                'group_id' => fn($attributes) => $this->getRandomGroupId($attributes['user_id']),
                 ])
-            ->each(function ($post) use ($users, $groups) {
+            ->each(function ($post) use ($users) {
                 $post->save();
 
-                $this->createComments($post, $users, fake()->numberBetween(1, 2));
-                $this->createReactions($post, $users);
+                $usersForComment = $post->group_id ? Group::find($post->group_id)->users()->get() : $users;
+
+                $this->createComments($post, $usersForComment, fake()->numberBetween(2, 4));
+                $this->createReactions($post, $usersForComment);
             });
     }
 
     /**
      * С 70% шансом добавляет к посту группу
-     * @param Collection|null $groups
+     * @param int $user_id
      * @return int|null
      */
-    private function getRandomGroupId(?Collection $groups): ?int
+    private function getRandomGroupId(int $user_id): ?int
     {
-        if (is_null($groups) || $groups->isEmpty() || fake()->boolean(70)) {
+        $user = User::find($user_id);
+        $groups = $user->groups()->get();
+
+        if ($groups->isEmpty() || fake()->boolean(30)) {
             return null;
         }
 
@@ -99,7 +105,7 @@ class DatabaseSeeder extends Seeder
             ]
         ];
 
-        $randomUsers = $users->except($group->user_id)->random(fake()->numberBetween(1, 15));
+        $randomUsers = $users->except($group->user_id)->random(fake()->numberBetween(5, 15));
 
         foreach ($randomUsers as $user) {
             $groupUsers[] = [
@@ -136,13 +142,13 @@ class DatabaseSeeder extends Seeder
             $comment = Comment::factory()->make([
                 'post_id' => $post->id,
                 'user_id' => $users->random()->id,
-                'parent_id' => $commentParent ? $commentParent->id : $post->id,
+                'parent_id' => $commentParent?->id,
             ]);
 
             $comment->save();
 
             if ($isFirstRecursion) {
-                $this->createComments($post, $users, rand(1, 3), $comment, false);
+                $this->createComments($post, $users, rand(2, 5), $comment, false);
             }
 
             $this->createReactions($comment, $users);
@@ -157,10 +163,9 @@ class DatabaseSeeder extends Seeder
      */
     private function createReactions(Post|Comment $object, Collection $users): void
     {
-        $numReactions = rand(1, 3);
         $usedUsers = collect();
 
-        for ($i = 0; $i < $numReactions; $i++) {
+        for ($i = 0; $i < rand(2, 5); $i++) {
             $user = $users->diff($usedUsers)->random();
             $usedUsers->push($user);
 
