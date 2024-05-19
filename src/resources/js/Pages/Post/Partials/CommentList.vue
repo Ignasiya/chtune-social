@@ -41,7 +41,7 @@ function createComment() {
     })
         .then(({data}) => {
             newCommentText.value = '';
-            props.data.comments.unshift(data);
+            props.data.comments.push(data);
             if (props.parentComment) {
                 props.parentComment.num_of_comments++;
             }
