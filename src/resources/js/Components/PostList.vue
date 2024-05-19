@@ -88,7 +88,7 @@ function loadMore() {
             Стена пустая, подпищитесь на кого-нибудь
         </div>
 
-        <div ref="loadMoreIntersect"></div>
+        <div ref="loadMoreIntersect" class="invisible"></div>
 
         <PostModal
             :post="editPost"
