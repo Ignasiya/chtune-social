@@ -28,19 +28,19 @@ class GetPostsByFollowersAndGroupService
             ->paginate(10);
     }
 
-//        $posts = Post::postsForTimeline($userId)
-//            ->leftJoin('followers AS f', function ($join) use ($userId) {
-//                $join->on('f.user_id', '=', 'posts.user_id')
-//                    ->where('f.follower_id', '=', $userId);
-//            })
-//            ->leftJoin('group_users AS gu', function ($join) use ($userId) {
-//                $join->on('gu.group_id', '=', 'posts.group_id')
-//                    ->where('gu.user_id', '=', $userId)
-//                    ->where('gu.status', GroupUserStatus::APPROVED->value);
-//            })
-//            ->whereNotNull('f.follower_id')
-//            ->orWhereNotNull('gu.group_id')
-//            ->whereNot('posts.user_id', '=', $userId)
-//            ->paginate(10);
+    //        $posts = Post::postsForTimeline($userId)
+    //            ->leftJoin('followers AS f', function ($join) use ($userId) {
+    //                $join->on('f.user_id', '=', 'posts.user_id')
+    //                    ->where('f.follower_id', '=', $userId);
+    //            })
+    //            ->leftJoin('group_users AS gu', function ($join) use ($userId) {
+    //                $join->on('gu.group_id', '=', 'posts.group_id')
+    //                    ->where('gu.user_id', '=', $userId)
+    //                    ->where('gu.status', GroupUserStatus::APPROVED->value);
+    //            })
+    //            ->whereNotNull('f.follower_id')
+    //            ->orWhereNotNull('gu.group_id')
+    //            ->whereNot('posts.user_id', '=', $userId)
+    //            ->paginate(10);
 
 }

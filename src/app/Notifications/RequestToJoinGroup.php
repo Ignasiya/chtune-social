@@ -5,7 +5,6 @@ namespace App\Notifications;
 use App\Models\Group;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -35,7 +34,7 @@ class RequestToJoinGroup extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage)
+        return (new MailMessage())
             ->subject('Запрос на вступление в группу')
             ->line($this->getNotificationText())
             ->action('Запрос на вступление', $this->getPostURL());

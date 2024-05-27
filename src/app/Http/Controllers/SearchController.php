@@ -110,9 +110,9 @@ class SearchController extends Controller
         }
 
         $users = $query->where(function ($query) use ($search) {
-                $query->where('name', 'like', "%$search%")
-                    ->orWhere('username', 'like', "%$search%");
-            });
+            $query->where('name', 'like', "%$search%")
+                ->orWhere('username', 'like', "%$search%");
+        });
 
         return response([
             'users' => UserResource::collection($users->get())

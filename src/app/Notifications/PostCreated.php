@@ -6,7 +6,6 @@ use App\Models\Group;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -36,7 +35,7 @@ class PostCreated extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage)
+        return (new MailMessage())
             ->subject('Новая запись')
             ->lineIf(!!$this->group, $this->getNotificationText('в группе "' . $this->group?->name . '".'))
             ->lineIf(!$this->group, $this->getNotificationText('пользователем "' . $this->user->name . '".'))

@@ -3,7 +3,6 @@
 namespace Database\Factories;
 
 use App\Http\Enums\ReactionEnum;
-use App\Models\Comment;
 use App\Models\Post;
 use App\Models\Reaction;
 use App\Models\User;

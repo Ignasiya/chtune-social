@@ -25,7 +25,6 @@ use App\Notifications\RoleChanged;
 use App\Notifications\UserRemovedFromGroup;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Notification;
@@ -33,7 +32,6 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 use Inertia\Inertia;
-use Inertia\Response;
 
 class GroupController extends Controller
 {
@@ -62,7 +60,7 @@ class GroupController extends Controller
                 'posts' => null,
                 'users' => [],
                 'requests' => [],
-                'photos'=> []
+                'photos' => []
             ]);
         }
 
@@ -206,9 +204,9 @@ class GroupController extends Controller
 
         if (!$groupUser) {
             $errorTitle = 'Приглашение не действительно';
-        } else if ($groupUser->token_used || $groupUser->status === GroupUserStatus::APPROVED->value) {
+        } elseif ($groupUser->token_used || $groupUser->status === GroupUserStatus::APPROVED->value) {
             $errorTitle = 'Приглашение уже использовано';
-        } else if ($groupUser->token_expire_date < Carbon::now()) {
+        } elseif ($groupUser->token_expire_date < Carbon::now()) {
             $errorTitle = 'Срок приглашение закончился';
         }
 

@@ -4,7 +4,6 @@ namespace App\Notifications;
 
 use App\Models\Group;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -34,7 +33,7 @@ class RoleChanged extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage)
+        return (new MailMessage())
             ->subject('Роль в группе изменена')
             ->line($this->getNotificationText())
             ->action('Перейти в группу', $this->getPostURL());

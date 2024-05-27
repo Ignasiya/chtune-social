@@ -14,7 +14,7 @@ class PostAttachment extends Model
 {
     use HasFactory;
 
-    CONST UPDATED_AT = null;
+    public const UPDATED_AT = null;
 
     protected $fillable = [
         'post_id',
@@ -29,8 +29,8 @@ class PostAttachment extends Model
     {
         parent::boot();
 
-        static::deleted(function (self $model){
-                Storage::disk('public')->delete($model->path);
+        static::deleted(function (self $model) {
+            Storage::disk('public')->delete($model->path);
         });
     }
 }

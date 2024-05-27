@@ -5,7 +5,6 @@ namespace App\Notifications;
 use App\Models\Comment;
 use App\Models\Post;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Str;
@@ -36,7 +35,7 @@ class CommentDeleted extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage)
+        return (new MailMessage())
             ->subject('Комментарий удален')
             ->line($this->getNotificationText())
             ->action('Перейти к записи', $this->getPostURL());

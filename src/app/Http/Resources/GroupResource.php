@@ -6,7 +6,6 @@ use DOMDocument;
 use DOMXPath;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
 
 class GroupResource extends JsonResource

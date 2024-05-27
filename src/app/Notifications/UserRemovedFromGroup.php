@@ -33,7 +33,7 @@ class UserRemovedFromGroup extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage)
+        return (new MailMessage())
             ->subject('Вас удалили из группы')
             ->line($this->getNotificationText())
             ->action('Перейти в группу', $this->getPostURL());

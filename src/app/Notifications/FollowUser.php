@@ -4,7 +4,6 @@ namespace App\Notifications;
 
 use App\Models\User;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -39,7 +38,7 @@ class FollowUser extends Notification
         } else {
             $subject = 'Пользователь отписался';
         }
-        return (new MailMessage)
+        return (new MailMessage())
             ->subject($subject)
             ->lineIf($this->follow, $this->getNotificationText('подписался на'))
             ->lineIf(!$this->follow, $this->getNotificationText('отписался от'))

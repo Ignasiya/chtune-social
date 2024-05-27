@@ -7,7 +7,6 @@ use App\Http\Enums\GroupUserStatus;
 use App\Http\Enums\ReactionEnum;
 use App\Models\Comment;
 use App\Models\Group;
-use App\Models\GroupUser;
 use App\Models\Post;
 use App\Models\Reaction;
 use App\Models\User;
@@ -42,7 +41,7 @@ class DatabaseSeeder extends Seeder
 
         // Группы
         $groups = Group::factory(80)
-            ->make(['user_id' => fn($attributes) => $users->random()->id])
+            ->make(['user_id' => fn ($attributes) => $users->random()->id])
             ->each(function ($group) use ($users) {
                 $group->save();
 
@@ -54,8 +53,8 @@ class DatabaseSeeder extends Seeder
         // Посты
         $posts = Post::factory(200)
             ->make([
-                'user_id' => fn($attributes) => $users->random()->id,
-                'group_id' => fn($attributes) => $this->getRandomGroupId($attributes['user_id']),
+                'user_id' => fn ($attributes) => $users->random()->id,
+                'group_id' => fn ($attributes) => $this->getRandomGroupId($attributes['user_id']),
                 ])
             ->each(function ($post) use ($users) {
                 $post->save();
@@ -133,11 +132,12 @@ class DatabaseSeeder extends Seeder
      * @return void
      */
     private function createComments(
-        Post $post, Collection $users,
+        Post $post,
+        Collection $users,
         int $numComments,
         Comment $commentParent = null,
-        bool $isFirstRecursion = true): void
-    {
+        bool $isFirstRecursion = true
+    ): void {
         for ($i = 0; $i < $numComments; $i++) {
             $comment = Comment::factory()->make([
                 'post_id' => $post->id,
