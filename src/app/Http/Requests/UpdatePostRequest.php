@@ -9,6 +9,7 @@ class UpdatePostRequest extends StorePostRequest
     /**
      * Determine if the user is authorized to make this request.
      */
+    #[\Override]
     public function authorize(): bool
     {
         $post = $this->route('post');

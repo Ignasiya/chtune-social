@@ -6,7 +6,6 @@ use App\Models\Group;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
-use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -36,10 +35,10 @@ class PostCreated extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage)
+        return (new MailMessage())
             ->subject('Новая запись')
-            ->lineIf(!!$this->group, $this->getNotificationText('в группе "' . $this->group?->name . '".'))
-            ->lineIf(!$this->group, $this->getNotificationText('пользователем "' . $this->user->name . '".'))
+            ->lineIf((bool) $this->group, $this->getNotificationText())
+            ->lineIf(!$this->group, $this->getNotificationText())
             ->action('Перейти к записи', $this->getPostURL());
     }
 
@@ -50,18 +49,18 @@ class PostCreated extends Notification
      */
     public function toArray(object $notifiable): array
     {
-        if (!!$this->group) {
+        if ((bool) $this->group) {
             $text = 'в группе "' . $this->group?->name . '".';
         } else {
             $text = 'пользователем "' . $this->user->name . '".';
         }
         return [
-            'message' => $this->getNotificationText($text),
+            'message' => $this->getNotificationText(),
             'post_url' => $this->getPostURL(),
         ];
     }
 
-    private function getNotificationText(string $text): string
+    private function getNotificationText(): string
     {
         return 'Новая запись опубликована ';
     }

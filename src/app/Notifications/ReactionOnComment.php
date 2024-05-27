@@ -35,7 +35,7 @@ class ReactionOnComment extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage)
+        return (new MailMessage())
             ->subject('Новая реакция на комментарий')
             ->line($this->getNotificationText())
             ->line('"' . $this->comment->comment . '"')

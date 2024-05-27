@@ -4,7 +4,6 @@ namespace App\Notifications;
 
 use App\Models\Comment;
 use App\Models\Post;
-use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -35,7 +34,7 @@ class CommentCreated extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage)
+        return (new MailMessage())
             ->subject('Новый комментарий записи')
             ->line($this->getNotificationText())
             ->line('"' . $this->comment->comment . '"')

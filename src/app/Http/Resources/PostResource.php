@@ -13,6 +13,7 @@ class PostResource extends JsonResource
      *
      * @return array<string, mixed>
      */
+    #[\Override]
     public function toArray(Request $request): array
     {
         $comments = $this->comments;
@@ -37,7 +38,6 @@ class PostResource extends JsonResource
     /**
      * @param Comment[] $comments
      * @param int|null $parentId
-     * @return array
      */
     private static function convertCommentsIntoTree($comments, int $parentId = null): array
     {

@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Auth;
 
 class InviteUsersRequest extends FormRequest
 {
-    public ?Group $group;
+    public ?Group $group = null;
     public ?User $user = null;
     public ?GroupUser $groupUser = null;
 

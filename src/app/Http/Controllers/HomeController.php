@@ -15,8 +15,7 @@ class HomeController extends Controller
     public function index(
         GetPostsByFollowersAndGroupService $getPostsByFollowersAndGroup,
         Request $request
-    ): AnonymousResourceCollection|Response
-    {
+    ): AnonymousResourceCollection|Response {
         $posts = $getPostsByFollowersAndGroup(Auth::id());
 
         $posts = PostResource::collection($posts);

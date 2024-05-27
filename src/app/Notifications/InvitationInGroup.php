@@ -33,7 +33,7 @@ class InvitationInGroup extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage)
+        return (new MailMessage())
             ->subject('Приглашение в группу')
             ->line($this->getNotificationText())
             ->action('Вступить в группу', $this->getPostURL())

@@ -77,12 +77,13 @@ class StorePostRequest extends FormRequest
         ];
     }
 
+    #[\Override]
     protected function prepareForValidation(): void
     {
         $body = $this->input('body') ?: '';
         $previewUrl = $this->input('preview_url') ?: '';
 
-        $trimmedBody = trim(strip_tags($body));
+        $trimmedBody = trim(strip_tags((string) $body));
         if ($trimmedBody === $previewUrl) {
             $body = '';
         }
@@ -93,6 +94,7 @@ class StorePostRequest extends FormRequest
         ]);
     }
 
+    #[\Override]
     public function messages(): array
     {
         return [

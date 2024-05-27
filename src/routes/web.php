@@ -9,22 +9,27 @@ use App\Http\Controllers\PostController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SearchController;
 use App\Http\Controllers\UserController;
+use App\Models\Group;
+use App\Models\User;
+use App\Service\GetPostsByFollowersAndGroupService;
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Route;
+use Inertia\Response;
 
-
-Route::get('/', [HomeController::class, 'index'])->middleware(['auth', 'verified'])
+Route::get('/', fn (GetPostsByFollowersAndGroupService $getPostsByFollowersAndGroup, Request $request): AnonymousResourceCollection|Response => (new HomeController())->index($getPostsByFollowersAndGroup, $request))->middleware(['auth', 'verified'])
     ->name('home');
 
-Route::get('/activity', [ActivityController::class, 'index'])->middleware(['auth', 'verified'])
+Route::get('/activity', fn (Request $request): Response => (new ActivityController())->index($request))->middleware(['auth', 'verified'])
     ->name('activity');
 
-Route::get('/u/{user:username}', [ProfileController::class, 'index'])
+Route::get('/u/{user:username}', fn (Request $request, User $user) => (new ProfileController())->index($request, $user))
     ->name('profile');
 
-Route::get('/g/{group:slug}', [GroupController::class, 'profile'])
+Route::get('/g/{group:slug}', fn (Request $request, Group $group) => (new GroupController())->profile($request, $group))
     ->name('group.profile');
 
-Route::get('/group/approve-invitation/{token}', [GroupController::class, 'approveInvitation'])
+Route::get('/group/approve-invitation/{token}', fn (string $token) => (new GroupController())->approveInvitation($token))
     ->name('group.approveInvitation');
 
 Route::middleware('auth')->group(function () {

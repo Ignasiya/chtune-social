@@ -2,38 +2,21 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Enums\ReactionEnum;
 use App\Http\Requests\CommentReactionRequest;
 use App\Http\Requests\StoreCommentRequest;
-use App\Http\Requests\StorePostRequest;
 use App\Http\Requests\UpdateCommentRequest;
-use App\Http\Requests\UpdatePostRequest;
 use App\Http\Resources\CommentResource;
-use App\Http\Resources\PostResource;
 use App\Models\Comment;
 use App\Models\Post;
-use App\Models\PostAttachment;
-use App\Models\Reaction;
 use App\Models\User;
 use App\Notifications\CommentCreated;
 use App\Notifications\CommentDeleted;
-use App\Notifications\PostCreated;
-use App\Notifications\PostDeleted;
 use App\Notifications\ReactionOnComment;
-use App\Notifications\ReactionOnPost;
 use App\Service\GetCommentReactionService;
-use DOMDocument;
-use Exception;
 use Illuminate\Contracts\Routing\ResponseFactory;
 use Illuminate\Foundation\Application;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\Storage;
-use Illuminate\Validation\Rule;
 
 class CommentController extends Controller
 {
@@ -43,7 +26,7 @@ class CommentController extends Controller
 
         $comment = Comment::create([
             'post_id' => $post->id,
-            'comment' => nl2br($data['comment']),
+            'comment' => nl2br((string) $data['comment']),
             'user_id' => Auth::id(),
             'parent_id' => $data['parent_id'] ?: null
         ]);
@@ -77,7 +60,7 @@ class CommentController extends Controller
         $data = $request->validated();
 
         $comment->update([
-            'comment' => nl2br($data['comment'])
+            'comment' => nl2br((string) $data['comment'])
         ]);
 
         return new CommentResource($comment);
@@ -85,8 +68,9 @@ class CommentController extends Controller
 
     public function commentReaction(
         GetCommentReactionService $getCommentReactionService,
-        CommentReactionRequest $request, Comment $comment): Response
-    {
+        CommentReactionRequest $request,
+        Comment $comment
+    ): Response {
         $data = $request->validated();
         $userId = Auth::id();
 

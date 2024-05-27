@@ -14,7 +14,9 @@ use Spatie\Sluggable\SlugOptions;
 
 class User extends Authenticatable implements MustVerifyEmail
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens;
+    use HasFactory;
+    use Notifiable;
     use HasSlug;
 
     /**

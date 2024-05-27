@@ -22,6 +22,7 @@ class ProfileUpdateRequest extends FormRequest
         ];
     }
 
+    #[\Override]
     public function messages(): array
     {
         return [

@@ -13,6 +13,7 @@ class PostAttachmentResource extends JsonResource
      *
      * @return array<string, mixed>
      */
+    #[\Override]
     public function toArray(Request $request): array
     {
         return [

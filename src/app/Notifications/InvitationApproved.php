@@ -34,7 +34,7 @@ class InvitationApproved extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage)
+        return (new MailMessage())
             ->subject('Пользователь вступил в группу')
             ->line($this->getNotificationText())
             ->action('Показать группу', $this->getNotificationText());

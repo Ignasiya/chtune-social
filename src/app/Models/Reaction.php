@@ -17,7 +17,7 @@ class Reaction extends Model
 {
     use HasFactory;
 
-    const UPDATED_AT = null;
+    public const UPDATED_AT = null;
 
     protected $fillable = ['object_id', 'object_type', 'user_id', 'type'];
 

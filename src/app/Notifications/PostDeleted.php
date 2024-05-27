@@ -33,7 +33,7 @@ class PostDeleted extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        return (new MailMessage)
+        return (new MailMessage())
             ->subject('Запись удалена')
             ->line($this->getNotificationText())
             ->action('Перейти к группе', $this->getPostURL());
