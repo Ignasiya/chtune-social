@@ -25,6 +25,7 @@ class PostAttachment extends Model
         'created_by'
     ];
 
+    #[\Override]
     protected static function boot(): void
     {
         parent::boot();

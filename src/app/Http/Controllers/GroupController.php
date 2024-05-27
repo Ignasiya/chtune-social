@@ -210,8 +210,8 @@ class GroupController extends Controller
             $errorTitle = 'Срок приглашение закончился';
         }
 
-        if ($errorTitle) {
-            return \inertia('Error', compact('errorTitle'));
+        if ($errorTitle !== '' && $errorTitle !== '0') {
+            return \inertia('Error', ['errorTitle' => $errorTitle]);
         }
 
         $groupUser->status = GroupUserStatus::APPROVED->value;

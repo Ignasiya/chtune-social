@@ -26,7 +26,7 @@ class CommentController extends Controller
 
         $comment = Comment::create([
             'post_id' => $post->id,
-            'comment' => nl2br($data['comment']),
+            'comment' => nl2br((string) $data['comment']),
             'user_id' => Auth::id(),
             'parent_id' => $data['parent_id'] ?: null
         ]);
@@ -60,7 +60,7 @@ class CommentController extends Controller
         $data = $request->validated();
 
         $comment->update([
-            'comment' => nl2br($data['comment'])
+            'comment' => nl2br((string) $data['comment'])
         ]);
 
         return new CommentResource($comment);

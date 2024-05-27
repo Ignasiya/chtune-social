@@ -48,7 +48,7 @@ class FollowUser extends Notification
      */
     public function toArray(object $notifiable): array
     {
-        $text = !$this->follow ? 'отписался от' : 'подписался на';
+        $text = $this->follow ? 'подписался на' : 'отписался от';
         return [
             'message' => $this->getNotificationText($text),
             'post_url' => $this->getPostURL(),
