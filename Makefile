@@ -76,3 +76,18 @@ seed:
 
 seed-refresh:
 	$(php) php artisan migrate:fresh --seed
+
+php-fixer run:
+	 $(php) vendor/bin/php-cs-fixer fix
+
+php-fixer check:
+	 $(php) vendor/bin/php-cs-fixer fix --dry-run --diff
+
+php-stan:
+	 $(php) vendor/bin/phpstan analyse --memory-limit=512M
+
+php-rector run:
+	$(php) vendor/bin/rector process
+
+php-rector check:
+	$(php) vendor/bin/rector process --dry-run

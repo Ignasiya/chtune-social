@@ -33,11 +33,7 @@ class FollowUser extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        if ($this->follow) {
-            $subject = 'Новый подписчик';
-        } else {
-            $subject = 'Пользователь отписался';
-        }
+        $subject = $this->follow ? 'Новый подписчик' : 'Пользователь отписался';
         return (new MailMessage())
             ->subject($subject)
             ->lineIf($this->follow, $this->getNotificationText('подписался на'))
@@ -52,11 +48,7 @@ class FollowUser extends Notification
      */
     public function toArray(object $notifiable): array
     {
-        if (!!$this->follow) {
-            $text = 'подписался на';
-        } else {
-            $text = 'отписался от';
-        }
+        $text = !$this->follow ? 'отписался от' : 'подписался на';
         return [
             'message' => $this->getNotificationText($text),
             'post_url' => $this->getPostURL(),

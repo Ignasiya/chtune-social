@@ -10,9 +10,6 @@ class GetPostsByFollowersAndGroupService
 {
     /**
      * Get timeline posts for the given user ID by followers and group.
-     *
-     * @param  int  $userId
-     * @return LengthAwarePaginator
      */
     public function __invoke(int $userId): LengthAwarePaginator
     {
